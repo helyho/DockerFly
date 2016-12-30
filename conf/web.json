@@ -1,0 +1,21 @@
+{
+	"Host"   				: "0.0.0.0",              	// 服务 IP 地址,默认0.0.0.0
+	"Port"   				: 28083,					// 服务端口,默认8080
+	"Timeout"				: 30,						// 连接超时时间(s),默认30秒
+	"ContextPath"			: "WEBAPP",					// 上下文路径,绝对路径 "/"起始,相对路径 非"/" 起始
+	"MatchRouteIgnoreCase"  : true,                     // 匹配路由不区分大小写,默认是 false
+	"CharacterSet"			: "UTF-8",					// 默认字符集,默认 UTF-8
+	"SessionContainer" 	 	: "java.util.Hashtable",	// Session 容器类,默认java.util.Hashtable
+	"SessionTimeout"    	: 30,						// Session 会话超时时间(m),默认30分钟
+	"KeepAliveTimeout"  	: 60,						// KeepAlive 超时时间(s),默认60秒,如果值小于0则不启用 KeepAlive 设置 (该参数同样会被应用到 WebSocket 的连接保持上)
+	"Gzip"              	: true,					// 是否启用Gzip压缩
+	"AccessLog"				: false,						// 是否记录access.log
+
+    "Modules": [
+        {
+            "Name": "Vestful 模块",                                      //模块名称
+            "Path": "ajax",                                              //模块路径
+            "ClassName": "org.voovan.vestful.RestfulContext"             //模块处理器
+        }
+    ]
+}

@@ -1,0 +1,67 @@
+body, h1, h2, h3, h4, h5, h6,
+.uk-navbar-nav > li > a {
+    font-family: "Proxima Nova", "Helvetica Neue", Helvetica, "PingFang SC", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+}
+
+html, body {
+    margin: 0px;
+    height: 100%;
+}
+
+.logo_icon {
+    height: 23px;
+    width: 23px;
+    margin-right: 5px;
+}
+
+.icon {
+    margin-right: 5px;
+    height: 15px;
+    width: 15px;
+}
+
+.mr5 {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+th{
+    background-color: papayawhip;
+}
+
+.created, .running {
+    background-color: #ebf7fd;
+    color: #2d7091;
+    border-color: rgba(45, 112, 145, 0.3);
+    border: 1px solid #ddd;
+}
+
+.restarting, .paused {
+    background: #f2fae3;
+    color: #659f13;
+    border-color: rgba(101, 159, 19, 0.3);
+    border: 1px solid #ddd;
+}
+
+.stop, .dead {
+    background: #fff1f0;
+    color: #d85030;
+    border-color: rgba(216, 80, 48, 0.3);
+    border: 1px solid #ddd;
+}
+
+.exited {
+    background: #fffceb;
+    color: #e28327;
+    border-color: rgba(226, 131, 39, 0.3);
+    border: 1px solid #ddd;
+}
+
+#containerList td{
+    cursor:hand;
+}
+
+
+
+
+

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DockerFly</title>
+</head>
+<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+<link rel="stylesheet" href="css/uikit/uikit.css"/>
+<script src="js/common/jquery.min.js"></script>
+<script src="js/common/vue.min.js"></script>
+<script src="js/common/uikit.js"></script>
+
+<link rel="stylesheet" href="css/main.css"/>
+<script lang="javascript" src="js/utils.js"></script>
+<script lang="javascript">
+    doImport("org.voovan.docker.command.Container.CmdContainerList")
+    doImport("org.voovan.docker.command.Container.CmdContainerStart")
+    doImport("org.voovan.docker.command.Container.CmdContainerStop")
+    doImport("org.voovan.docker.command.Container.CmdContainerRemove")
+    doImport("org.voovan.docker.command.Container.CmdContainerPause")
+    doImport("org.voovan.docker.command.Container.CmdContainerUnPause")
+
+    function init() {
+        containerListVue = new Vue({
+            el: '#ContainerApp',
+            data: {
+                containerList: null
+            },
+            methods: {
+                //查询方法
+                query: function () {
+                    try{
+                        var cmdContainerList = new CmdContainerList();
+                        cmdContainerList.all(true)
+                        nameOrId = $("#nameOrId").val();
+                        status = $("#status").val();
+
+                        if (nameOrId != "") {
+                            cmdContainerList.name(nameOrId);
+                        }
+
+                        if (status != "ALL") {
+                            cmdContainerList.status("[" + status + "]");
+                        }
+
+                        //cmdContainerList.label("author","helyho");
+                        containerListVue.containerList = cmdContainerList.send()
+                        cmdContainerList.release();
+                    }catch(e){
+                        alertError(e)
+                    }
+                },
+
+                //启动方法
+                start: function (container) {
+                    if(container.state=="paused"){
+                        cmdContainerUnPause = new CmdContainerUnPause(container.id)
+                        cmdContainerUnPause.send()
+                    }else{
+                        cmdContainerStart = new CmdContainerStart(container.id);
+                        cmdContainerStart.send()
+                        cmdContainerStart.release()
+                    }
+                    this.query()
+                },
+
+                //停止方法
+                stop: function (container) {
+                    try {
+                        cmdContainerStop = new CmdContainerStop(container.id);
+                        cmdContainerStop.send()
+                        cmdContainerStop.release()
+                    }catch(e){
+                        alertError(e)
+                    }
+                    this.query()
+                },
+
+                //移除方法
+                remove: function (container) {
+                    name = container.names[0]
+                    id = container.id
+                    try {
+                        UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>"+delFirestChar(name)+"</span> ?", function(){
+                            cmdContainerRemove = new CmdContainerRemove(id);
+                            cmdContainerRemove.send()
+                            cmdContainerRemove.release()
+                        });
+                    }catch(e){
+                        alertError(e)
+                    }
+                    this.query()
+                },
+
+                //暂停和恢复方法
+                pause: function(container){
+                    try{
+                        cmdContainerPause = new CmdContainerPause(container.id)
+                        cmdContainerPause.send()
+                    }catch(e){
+                        alertError(e)
+                    }
+                    this.query()
+                }
+
+
+            }
+
+        });
+
+        containerListVue.query()
+    }
+
+
+
+
+
+</script>
+<body onload="init()">
+<div id="ContainerApp" class="uk-grid" style="height:100%">
+    <div class="uk-width-1-6 sidebar">
+        <div class="uk-panel uk-panel-box" style="height: 100%;">
+            <h3 class="uk-panel-title"><img src="img/favicon.ico" class="logo_icon"/>DockerFly</h3>
+
+            <ul class="uk-nav uk-nav-side uk-nav-parent-icon" data-uk-nav>
+                <h3 class="uk-nav-divider"></h3>
+                <li><a href="#"><span class="icon uk-icon-dashboard"></span>Summery</a></li>
+                <h3 class="uk-nav-divider"></h3>
+                <li><a href="#"><span class="icon uk-icon-ship"></span>Swarm</a></li>
+                <li><a href="#"><span class="icon uk-icon-server"></span>Service</a></li>
+                <h3 class="uk-nav-divider"></h3>
+                <li><a href="#"><span class="icon uk-icon-tasks"></span>Contianer</a></li>
+                <li><a href="#"><span class="icon uk-icon-building"></span>Volume</a></li>
+                <li><a href="#"><span class="icon uk-icon-globe"></span>Network</a></li>
+                <h3 class="uk-nav-divider"></h3>
+                <li><a href="#"><span class="icon uk-icon-archive"></span>Image</a></li>
+
+            </ul>
+        </div>
+    </div>
+    <div class="uk-width-5-6" style="padding-right: 32px;">
+        <div class="uk-panel"></div>
+        <h3 class="uk-text-middle">Container manager</h3>
+        <div class="uk-panel uk-panel-box uk-text-bold">
+            <div class="uk-grid">
+                <div class="uk-width-5-6 uk-form">
+                    <span class="mr5">Name:</span><input class="uk-form-width-medium" id="nameOrId"
+                                                         type="text" placeholder="name or id">
+                    <span class="mr5">Status:</span>
+                    <select id="status">
+                        <option value="ALL">All</option>
+                        <option value="created">created</option>
+                        <option value="restarting">restarting</option>
+                        <option value="running">running</option>
+                        <option value="paused">paused</option>
+                        <option value="exited">exited</option>
+                        <option value="dead">dead</option>
+                    </select>
+                    <input class="uk-button uk-button-small" type="button" value="Query" v-on:click="query()"/>
+                </div>
+                <div class="uk-width-1-6 uk-text-right">
+                    <input class="uk-button uk-button-small uk-button-primary" type="button" value="add"/>
+                </div>
+            </div>
+        </div>
+        <table id="containerList" class="uk-table uk-overflow-container uk-panel-box">
+            <caption>Container list</caption>
+            <thead>
+            <tr>
+                <th class="uk-text-center">NO.</th>
+                <th>Name</th>
+                <th>Image</th>
+                <th>Export Port</th>
+                <th>IP</th>
+                <th class="uk-text-center">Status</th>
+                <th class="uk-text-center">Operation</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr v-for="(container,index) in containerList">
+                <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
+                <td class="uk-text-bold uk-text-middle uk-text-primary">
+                    {{container.names[0]|delFirestChar|shortDockerId(18)}}
+                </td>
+                <td class="uk-text-middle">{{container.image | shortDockerId(12)}}</td>
+                <td class="uk-text-middle">
+                    <div v-for="port in container.ports">
+                        <code>{{port.Type}}/{{port.PrivatePort}}:{{port.PublicPort}}</code>
+                    </div>
+                </td>
+                <td class="uk-text-middle">
+                    <code v-if="container.networkSettings.networks.bridge.ipAddress!=''">
+                        {{container.networkSettings.networks.bridge.ipAddress}}
+                    </code>
+                </td>
+                <td :class="container.state" class="uk-text-center uk-text-bold uk-text-middle">
+                    {{container.state.toUpperCase()}}
+                </td>
+                <td class="uk-text-center uk-text-middle">
+                    <div class="uk-button-group">
+                        <input class="uk-button uk-button-small " type="button" value="View"/>
+                        <input class="uk-button uk-button-small uk-button-primary" type="button" value="Start" :disabled="container.state=='running'" v-on:click="start(container)"/>
+                        <input class="uk-button uk-button-small uk-button-success" type="button" value="Stop"  :disabled="container.state!='running'"  v-on:click="stop(container)"/>
+                        <input class="uk-button uk-button-small uk-button-warning" type="button" value="Pause" :disabled="container.state=='paused' || container.state!='running' "  v-on:click="pause(container)"/>
+                        <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove" v-on:click="remove(container)"/>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
