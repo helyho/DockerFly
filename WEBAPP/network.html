@@ -84,11 +84,12 @@
                         cmdNetworkCreate.name(name);
                         cmdNetworkCreate.driver(driver);
 
-                        if(gateway!=null && subnet!=null && ipRange!=null){
+                        if(gateway!="" && subnet!="" && ipRange!=""){
                             cmdNetworkCreate.IPAMConfig(subnet,ipRange,gateway)
                         }
 
                         cmdNetworkCreate.send();
+                        cmdNetworkCreate.close();
                         createNetworkDialog.hide();
                         UIkit.modal.alert("Create volume success.");
                         networkListVue.query();
@@ -156,7 +157,7 @@
     <div id="createNetworkDialog" class="uk-modal">
         <div class="uk-modal-dialog uk-overflow-container">
             <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
-            <div class="uk-modal-header"><h2 class="uk-text-success">Create a new volume</h2></div>
+            <div class="uk-modal-header"><h2 class="uk-text-success">Create a new network</h2></div>
             <div class="uk-form">
                 <table id="volumeList" class="uk-table uk-overflow-container uk-panel-box">
                     <tr>

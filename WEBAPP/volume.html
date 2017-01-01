@@ -71,6 +71,7 @@
                         cmdVolumeCreate.name(name);
                         cmdVolumeCreate.driver(driver);
                         cmdVolumeCreate.send();
+                        cmdVolumeCreate.close();
                         createVolumeDialog.hide();
                         UIkit.modal.alert("Create volume success.");
                         volumeListVue.query();

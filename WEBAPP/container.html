@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="css/main.css"/>
 <script lang="javascript" src="js/utils.js"></script>
 <script lang="javascript">
+    doImport("org.voovan.docker.command.Container.CmdContainerCreate")
     doImport("org.voovan.docker.command.Container.CmdContainerList")
     doImport("org.voovan.docker.command.Container.CmdContainerStart")
     doImport("org.voovan.docker.command.Container.CmdContainerStop")
@@ -20,11 +21,18 @@
     doImport("org.voovan.docker.command.Container.CmdContainerPause")
     doImport("org.voovan.docker.command.Container.CmdContainerUnPause")
 
+    doImport("org.voovan.docker.command.Image.CmdImageListInfo")
+    doImport("org.voovan.docker.command.Network.CmdNetworkList")
+    doImport("org.voovan.docker.command.Volume.CmdVolumeList")
+
     function init() {
         containerListVue = new Vue({
             el: '#ContainerApp',
             data: {
-                containerList: null
+                containerList: null,
+                networkList: null,
+                volumeList: null,
+                imageList: null
             },
             methods: {
                 //查询方法
@@ -111,6 +119,104 @@
                         alertError(e)
                     }
                     this.query()
+                },
+                openCreateDialog: function () {
+                    containerListVue.getImageList();
+                    containerListVue.getNetworkList();
+                    containerListVue.getVolumeList();
+
+                    createContainerDialog = UIkit.modal("#createContainerDialog");
+                    createContainerDialog.show();
+                },
+                getImageList: function(){
+                    var cmdImageListInfo = new CmdImageListInfo();
+
+                    containerListVue.imageList = cmdImageListInfo.send().sortBy("Created");
+                    cmdImageListInfo.close();
+                    cmdImageListInfo.release();
+                },
+                getNetworkList: function(){
+                    var cmdNetworkList = new CmdNetworkList();
+                    //cmdNetworkList.type("custom");
+                    containerListVue.networkList = cmdNetworkList.send().sortBy("name");
+                    cmdNetworkList.close();
+                    cmdNetworkList.release();
+                },
+                getVolumeList: function(){
+                    var cmdVolumeList = new CmdVolumeList();
+                    containerListVue.volumeList = cmdVolumeList.send().sortBy("name");
+                    cmdVolumeList.close();
+                    cmdVolumeList.release();
+                },
+                create: function () {
+                    try {
+
+                        var cpuPeriod = 100000;
+                        var name    = $("#createContainerDialog #name").val();
+                        var image   = $("#createContainerDialog #image").val();
+                        var command = $("#createContainerDialog #command").val();
+                        var env     = $("#createContainerDialog #env").val();
+                        var cpuQuota = $("#createContainerDialog #cpuQuota").val();
+                        var memory  = $("#createContainerDialog #memory").val();
+                        var network = $("#createContainerDialog #network").val();
+                        var hostPort    = $("#createContainerDialog #hostPort").val();
+                        var containerPort    = $("#createContainerDialog #containerPort").val();
+                        var protocol    = $("#createContainerDialog #protocol").val();
+                        var volume  = $("#createContainerDialog #volume").val();
+                        var linkContainer    = $("#createContainerDialog #linkContainer").val();
+                        var linkName    = $("#createContainerDialog #linkName").val();
+
+                        cmdContainerCreate = new CmdContainerCreate(name);
+                        cmdContainerCreate.cpuPeriod(cpuPeriod);
+
+                        if(image!=""){
+                            cmdContainerCreate.image(image);
+                        }
+
+                        if(command!=""){
+                            cmdContainerCreate.cmd(command.split(" "));
+                        }
+
+                        if(env!=""){
+                            //aaa=aaa,bbb=bbb
+                            cmdContainerCreate.env(env.split(","));
+                        }
+
+                        if(cpuQuota!=""){
+                            cmdContainerCreate.cpuQuota(cpuQuota*cpuPeriod);
+                        }
+
+                        if(memory!=""){
+                            cmdContainerCreate.memory(memory);
+                        }
+
+                        if(network!=""){
+                            cmdContainerCreate.network(network);
+                        }
+
+                        if(containerPort!="" && hostPort!=null){
+                            cmdContainerCreate.exposePort(containerPort, protocol,[hostPort]);
+                        }
+                        if(volume!=""){
+                            cmdContainerCreate.volume([volume+":/"+volume]);
+                        }
+
+                        if(linkContainer!=""){
+                            if(linkName!=null){
+                                linkContainer = linkContainer+":"+linkName;
+                            }else{
+                                linkContainer = linkContainer+":"+linkName;
+                            }
+                            cmdContainerCreate.link([linkContainer]);
+                        }
+                        cmdContainerCreate.send();
+                        cmdContainerCreate.close();
+                        createContainerDialog.hide();
+                        UIkit.modal.alert("Create volume success.");
+                        containerListVue.query();
+                    } catch (e) {
+                        alertError(e);
+                    }
                 }
             }
         });
@@ -140,7 +246,8 @@
                     <input class="uk-button uk-button-small" type="button" value="Query" @click="query()"/>
                 </div>
                 <div class="uk-width-1-6 uk-text-right">
-                    <input class="uk-button uk-button-small uk-button-primary" type="button" value="add"/>
+                    <input class="uk-button uk-button-small uk-button-primary" type="button"
+                           value="Create" @click="openCreateDialog"/>
                 </div>
             </div>
         </div>
@@ -171,8 +278,8 @@
                     </div>
                 </td>
                 <td class="uk-text-middle">
-                    <code v-if="container.networkSettings.networks.bridge.ipAddress!=''">
-                        {{container.networkSettings.networks.bridge.ipAddress}}
+                    <code v-for="(network,networkName) in container.networkSettings.networks">
+                        {{networkName}}:{{network.ipAddress}}
                     </code>
                 </td>
                 <td :class="container.state" class="uk-text-center uk-text-bold uk-text-middle">
@@ -190,6 +297,99 @@
             </tr>
             </tbody>
         </table>
+    </div>
+    <div id="createContainerDialog" class="uk-modal">
+        <div class="uk-modal-dialog uk-modal-dialog-large uk-overflow-container">
+            <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
+            <div class="uk-modal-header"><h2 class="uk-text-success">Create a new container</h2></div>
+            <div class="uk-form">
+                <table id="volumeList" class="uk-table uk-overflow-container uk-panel-box">
+                    <tr>
+                        <td>Name:</td>
+                        <td><input class="uk-form-width-medium" id="name" type="text" value="test-1-2"/></td>
+                    </tr>
+                    <tr>
+                        <td>Image:</td>
+                        <td>
+                            <select id="image" class="uk-form-width-medium">
+                                <option v-for="image in imageList"
+                                        :value="image.id|shortDockerId(12)">{{image.repoTags[0]}}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Command:</td>
+                        <td><input class="uk-form-width-large" id="command" type="text" value="ping 127.0.0.1"/></td>
+                    </tr>
+                    <tr>
+                        <td>Env:</td>
+                        <td><input class="uk-form-width-large" id="env" type="text" value="author=helyho"/></td>
+                    </tr>
+                    <tr>
+                        <td>CPU Quota:</td>
+                        <td><input id="cpuQuota" type="text" value="1"/></td>
+                    </tr>
+                    <tr>
+                        <td>Memory:</td>
+                        <td><input id="memory" type="text" value="64"/></td>
+                    </tr>
+                    <tr>
+                        <td>Network:</td>
+                        <td>
+                            <select id="network" class="uk-form-width-medium">
+                                <option value="" selected>nothing</option>
+                                <option v-for="network in networkList"
+                                        :value="network.id|shortDockerId(12)">{{network.name}}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Port:</td>
+                        <td>
+                            <input class="uk-form-width-mini" style="width: 55px"
+                                   id="hostPort" type="text" value="31111"/>
+                            :
+                            <input class="uk-form-width-mini" style="width: 55px"
+                                   id="containerPort" type="text" value="32222"/>
+                            /
+                            <select id="protocol">
+                                <option value="tcp" selected>tcp</option>
+                                <option value="udp">udp</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Volume:</td>
+                        <td>
+                            <select id="volume" class="uk-form-width-medium">
+                                <option value="" selected>nothing</option>
+                                <option v-for="volume in volumeList"
+                                        :value="volume.name">{{volume.name}}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Link:</td>
+                        <td>
+                            <select id="linkContainer" class="uk-form-width-medium">
+                                <option value="" selected>nothing</option>
+                                <option v-for="container in containerList"
+                                        value="{{container.id | shortDockerId(12)}}">{{container.names[0]|delFirestChar|shortDockerId(18)}}</option>
+                            </select>
+                            :
+                            <input id="linkName" type="text"/>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="uk-text-right" colspan="2">
+                            <input id="create" class="uk-button uk-button-primary" style="color:white"
+                                   type="button" value="Create" @click="create()">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 

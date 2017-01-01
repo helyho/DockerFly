@@ -43,7 +43,7 @@ function shortDockerId(value,length){
     }
 
     if(value.indexOf(".") && value.length > 16){
-        value = value.substr(0,length) + "...";
+        value = value.substr(0,length);
     }
 
     return value;
