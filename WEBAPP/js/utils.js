@@ -22,9 +22,11 @@ function currentTimeMills(){
 
 //展示错误信息
 function alertError(e){
-    errObj = eval("err_"+currentTimeMills()+" = "+e.message);
-    if(errObj.errMsg!=""){
+    try {
+        var errObj = eval("err_" + currentTimeMills() + " = " + e.message);
         UIkit.modal.alert(errObj.errMsg);
+    }catch(e){
+        UIkit.modal.alert(e.message);
     }
 }
 

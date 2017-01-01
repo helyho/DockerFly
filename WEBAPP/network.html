@@ -43,7 +43,8 @@
 
                         //cmdContainerList.label("author","helyho");
 
-                        networkListVue.networkList = cmdNetworkList.send().sortBy("name",true)
+                        networkListVue.networkList = cmdNetworkList.send().sortBy("name");
+                        cmdNetworkList.close();
                         cmdNetworkList.release();
                     }catch(e){
                         alertError(e)
@@ -56,9 +57,10 @@
                         UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>"+name+"</span> ?", function(){
                             try {
                                 cmdNetworkRemove = new CmdNetworkRemove(id);
-                                cmdNetworkRemove.send()
-                                cmdNetworkRemove.release()
-                                networkListVue.query()
+                                cmdNetworkRemove.send();
+                                cmdNetworkRemove.close();
+                                cmdNetworkRemove.release();
+                                networkListVue.query();
                             }catch(e){
                                 alertError(e)
                             }
