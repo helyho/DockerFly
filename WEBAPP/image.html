@@ -40,7 +40,7 @@
                 },
                 //移除方法
                 remove: function (image) {
-                    name = image.name
+                    name = image.repoTags.length > 0 ? image.repoTags[0] : "";
                     id = image.id
                     UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>"+name+"</span> ?", function(){
                         try {
