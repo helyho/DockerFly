@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DockerFly</title>
+</head>
+<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+<link rel="stylesheet" href="css/uikit/uikit.css"/>
+<script src="js/common/jquery.min.js"></script>
+<script src="js/common/vue.min.js"></script>
+<script src="js/common/uikit.js"></script>
+
+<link rel="stylesheet" href="css/main.css"/>
+<script lang="javascript" src="js/utils.js"></script>
+<script lang="javascript">
+    doImport("org.voovan.docker.command.Network.CmdNetworkList")
+    doImport("org.voovan.docker.command.Network.CmdNetworkCreate")
+    doImport("org.voovan.docker.command.Network.CmdNetworkRemove")
+
+    function init() {
+        networkListVue = new Vue({
+            el: '#networkApp',
+            data: {
+                networkList: null
+            },
+            methods: {
+                //查询方法
+                query: function () {
+                    try{
+                        var cmdNetworkList = new CmdNetworkList();
+                        cmdNetworkList.type("custom");
+
+                        nameOrId = $("#nameOrId").val();
+                        driver = $("#driver").val();
+
+                        if (nameOrId != "") {
+                            cmdNetworkList.name(nameOrId);
+                        }
+
+                        if (driver != "ALL") {
+                            cmdNetworkList.driver(driver);
+                        }
+
+                        //cmdContainerList.label("author","helyho");
+
+                        networkListVue.networkList = cmdNetworkList.send().sortBy("name",true)
+                        cmdNetworkList.release();
+                    }catch(e){
+                        alertError(e)
+                    }
+                },
+                //移除方法
+                remove: function (network) {
+                    name = network.name
+                    id = network.id
+                        UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>"+name+"</span> ?", function(){
+                            try {
+                                cmdNetworkRemove = new CmdNetworkRemove(id);
+                                cmdNetworkRemove.send()
+                                cmdNetworkRemove.release()
+                                networkListVue.query()
+                            }catch(e){
+                                alertError(e)
+                            }
+                        });
+
+                },
+            }
+        });
+        networkListVue.query()
+    }
+</script>
+<body onload="init()" class="frameBody">
+<div id="networkApp" class="uk-grid" style="height:100%">
+    <div class="uk-width-6-6" style="padding-right: 32px;">
+        <div class="uk-panel"></div>
+        <h3 class="uk-text-middle">Network manager</h3>
+        <div class="uk-panel uk-panel-box uk-text-bold">
+            <div class="uk-grid">
+                <div class="uk-width-5-6 uk-form">
+                    <span class="mr5">Name:</span><input class="uk-form-width-medium" id="nameOrId"
+                                                         type="text" placeholder="name or id">
+                    <span class="mr5">Status:</span>
+                    <select id="driver">
+                        <option value="ALL">All</option>
+                        <option value="bridge">created</option>
+                        <option value="overlay">restarting</option>
+                        <option value="host">running</option>
+                        <option value="null">paused</option>
+                    </select>
+                    <input class="uk-button uk-button-small" type="button" value="Query" @click="query()"/>
+                </div>
+                <div class="uk-width-1-6 uk-text-right">
+                    <input class="uk-button uk-button-small uk-button-primary" type="button" value="add"/>
+                </div>
+            </div>
+        </div>
+        <table id="networkList" class="uk-table uk-overflow-container uk-panel-box">
+            <caption>Network list</caption>
+            <thead>
+            <tr>
+                <th class="uk-text-center uk-width-1-10">NO.</th>
+                <th class="uk-width-3-10">Name</th>
+                <th class="uk-width-2-10">Driver</th>
+                <th class="uk-width-2-10">Subnet</th>
+                <th class="uk-text-center">Operation</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr v-for="(network,index) in networkList">
+                <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
+                <td class="uk-text-bold uk-text-middle uk-text-primary">{{network.name}}</td>
+                <td >{{network.driver}}</td>
+                <td class="uk-text-bold uk-text-middle uk-text-success">{{network.ipam.config.length > 0 ? network.ipam.config[0].Subnet : ""}}</td>
+                <td class="uk-text-center uk-text-middle">
+                    <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove" @click="remove(network)"/>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

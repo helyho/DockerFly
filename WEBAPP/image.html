@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DockerFly</title>
+</head>
+<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+<link rel="stylesheet" href="css/uikit/uikit.css"/>
+<script src="js/common/jquery.min.js"></script>
+<script src="js/common/vue.min.js"></script>
+<script src="js/common/uikit.js"></script>
+
+<link rel="stylesheet" href="css/main.css"/>
+<script lang="javascript" src="js/utils.js"></script>
+<script lang="javascript">
+    doImport("org.voovan.docker.command.Image.CmdHubImageInfo")
+    doImport("org.voovan.docker.command.Image.CmdImageListInfo")
+    doImport("org.voovan.docker.command.Image.CmdImageRemove")
+
+    function init() {
+        imageListVue = new Vue({
+            el: '#imageApp',
+            data: {
+                imageList: null,
+                hubImageList: null
+            },
+            methods: {
+                //查询方法
+                query: function () {
+                    try{
+                        var cmdImageListInfo = new CmdImageListInfo();
+
+                        imageListVue.imageList = cmdImageListInfo.send().sortBy("Created");
+                        cmdImageListInfo.release();
+                    }catch(e){
+                        alertError(e)
+                    }
+                },
+                //移除方法
+                remove: function (image) {
+                    name = image.name
+                    id = image.id
+                        UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>"+name+"</span> ?", function(){
+                            try {
+                                cmdImageRemove = new CmdImageRemove(shortDockerId(id,12));
+                                cmdImageRemove.send()
+                                cmdImageRemove.release()
+                                imageListVue.query()
+                            }catch(e){
+                                alertError(e)
+                            }
+                        });
+
+
+                },
+                search: function(){
+
+                    name = $("#name").val();
+
+                    if (name == "") {
+                        return
+                    }
+                    cmdHubImageInfo = new CmdHubImageInfo();
+                    cmdHubImageInfo.term(name);
+                    cmdHubImageInfo.limit(10);
+                    imageListVue.hubImageList = cmdHubImageInfo.send().sortBy("star_count",true);
+                    cmdHubImageInfo.release();
+
+                    var hubImageList = UIkit.modal("#hubImageListDialog");
+                    hubImageList.show();
+                }
+            }
+        });
+        imageListVue.query()
+    }
+</script>
+<body onload="init()" class="frameBody">
+<div id="imageApp" class="uk-grid" style="height:100%">
+    <div class="uk-width-6-6" style="padding-right: 32px;">
+        <div class="uk-panel"></div>
+        <h3 class="uk-text-middle">Image manager</h3>
+        <div class="uk-panel uk-panel-box uk-text-bold">
+            <div class="uk-grid">
+                <div class="uk-width-5-6 uk-form">
+                    <span class="mr5">Name:</span><input class="uk-form-width-medium" id="name"
+                                                         type="text" placeholder="image's name">
+                    <input class="uk-button uk-button-small" type="button" value="search" @click="search()"/>
+
+                </div>
+                <div class="uk-width-1-6 uk-text-right">
+                    <input class="uk-button uk-button-small" type="button" value="Query" @click="query()"/>
+                    <input class="uk-button uk-button-small uk-button-primary" type="button" value="add"/>
+                </div>
+            </div>
+        </div>
+        <table id="imageList" class="uk-table uk-overflow-container uk-panel-box">
+            <caption>Image list</caption>
+            <thead>
+            <tr>
+                <th class="uk-text-center uk-width-1-10">NO.</th>
+                <th class="uk-width-3-10">Name</th>
+                <th class="uk-width-1-10">ID</th>
+                <th class="uk-text-center uk-width-2-10">Created</th>
+                <th class="uk-width-1-10">Size(Mb)</th>
+                <th class="uk-text-center">Operation</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr v-for="(image,index) in imageList">
+                <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
+                <td class="uk-text-bold uk-text-middle uk-text-primary">
+                    <div v-for="repoTag,index in image.repoTags">
+                    {{repoTag}}
+                    </div>
+                </td>
+                <td class="uk-text-bold uk-text-middle uk-text-success">{{image.id|shortDockerId(12)}}</td>
+                <td class="uk-text-center">{{new Date(parseInt(image.created*1000)).format("yyyy-MM-dd hh:mm:ss")}}</td>
+                <td >{{(parseInt(image.size)/1024/1024).toFixed(2)}}</td>
+                <td class="uk-text-center uk-text-middle">
+                    <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove" @click="remove(image)"/>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="hubImageListDialog" class="uk-modal">
+        <div class="uk-modal-dialog uk-modal-dialog-large uk-overflow-container">
+            <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
+            <div class="uk-modal-header"><h2 class="uk-text-success">Search image list from docker hub</h2></div>
+            <table id="hubImageList" class="uk-table uk-overflow-container uk-panel-box">
+                <thead>
+                <tr>
+                    <th class="uk-text-center uk-width-1-10">NO.</th>
+                    <th class="uk-width-1-10">Name</th>
+                    <th class="uk-width-1-10">Star</th>
+                    <th class="uk-text-center uk-width-1-10">Official</th>
+                    <th class="uk-width-4-10">description</th>
+                    <th class="uk-text-center">Operation</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr v-for="(hubImage,index) in hubImageList " :key='hubImage.star_count'>
+                    <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
+                    <td class="uk-text-bold uk-text-middle uk-text-primary">
+                        {{hubImage.name}}
+                    </td>
+                    <td class="uk-text-bold uk-text-middle uk-text-success">{{hubImage.star_count}}</td>
+                    <td class="uk-text-center">{{hubImage.is_official}}</td>
+                    <td>{{hubImage.description}}</td>
+                    <td class="uk-text-center uk-text-middle">
+                        <input class="uk-button uk-button-small uk-button-primary" type="button" value="pull" @click=""/>
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

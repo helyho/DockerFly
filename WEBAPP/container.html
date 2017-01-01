@@ -44,7 +44,7 @@
                         }
 
                         //cmdContainerList.label("author","helyho");
-                        containerListVue.containerList = cmdContainerList.send()
+                        containerListVue.containerList = cmdContainerList.send().sortBy("id",true);
                         cmdContainerList.release();
                     }catch(e){
                         alertError(e)
@@ -85,11 +85,11 @@
                             cmdContainerRemove = new CmdContainerRemove(id);
                             cmdContainerRemove.send()
                             cmdContainerRemove.release()
+                            containerListVue.query()
                         });
                     }catch(e){
                         alertError(e)
                     }
-                    this.query()
                 },
 
                 //暂停和恢复方法
@@ -107,7 +107,7 @@
         containerListVue.query()
     }
 </script>
-<body onload="init()">
+<body onload="init()" class="frameBody">
 <div id="ContainerApp" class="uk-grid" style="height:100%">
     <div class="uk-width-6-6" style="padding-right: 32px;">
         <div class="uk-panel"></div>
@@ -127,7 +127,7 @@
                         <option value="exited">exited</option>
                         <option value="dead">dead</option>
                     </select>
-                    <input class="uk-button uk-button-small" type="button" value="Query" v-on:click="query()"/>
+                    <input class="uk-button uk-button-small" type="button" value="Query" @click="query()"/>
                 </div>
                 <div class="uk-width-1-6 uk-text-right">
                     <input class="uk-button uk-button-small uk-button-primary" type="button" value="add"/>
@@ -171,10 +171,10 @@
                 <td class="uk-text-center uk-text-middle">
                     <div class="uk-button-group">
                         <input class="uk-button uk-button-small " type="button" value="View"/>
-                        <input class="uk-button uk-button-small uk-button-primary" type="button" value="Start" :disabled="container.state=='running'" v-on:click="start(container)"/>
-                        <input class="uk-button uk-button-small uk-button-success" type="button" value="Stop"  :disabled="container.state!='running'"  v-on:click="stop(container)"/>
-                        <input class="uk-button uk-button-small uk-button-warning" type="button" value="Pause" :disabled="container.state=='paused' || container.state!='running' "  v-on:click="pause(container)"/>
-                        <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove" v-on:click="remove(container)"/>
+                        <input class="uk-button uk-button-small uk-button-primary" type="button" value="Start" :disabled="container.state=='running'" @click="start(container)"/>
+                        <input class="uk-button uk-button-small uk-button-success" type="button" value="Stop"  :disabled="container.state!='running'"  @click="stop(container)"/>
+                        <input class="uk-button uk-button-small uk-button-warning" type="button" value="Pause" :disabled="container.state=='paused' || container.state!='running' "  @click="pause(container)"/>
+                        <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove" @click="remove(container)"/>
                     </div>
                 </td>
             </tr>

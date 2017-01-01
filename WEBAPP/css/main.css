@@ -29,6 +29,10 @@ th{
     background-color: papayawhip;
 }
 
+.frameBody{
+    margin: 0px 35px 0px 35px;
+}
+
 .created, .running {
     background-color: #ebf7fd;
     color: #2d7091;
@@ -55,10 +59,6 @@ th{
     color: #e28327;
     border-color: rgba(226, 131, 39, 0.3);
     border: 1px solid #ddd;
-}
-
-#containerList td{
-    cursor:hand;
 }
 
 
