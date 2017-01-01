@@ -16,6 +16,7 @@
     doImport("org.voovan.docker.command.Image.CmdHubImageInfo")
     doImport("org.voovan.docker.command.Image.CmdImageListInfo")
     doImport("org.voovan.docker.command.Image.CmdImageRemove")
+    doImport("org.voovan.docker.command.Image.CmdImageCreate")
 
     function init() {
         imageListVue = new Vue({
@@ -40,34 +41,50 @@
                 remove: function (image) {
                     name = image.name
                     id = image.id
-                        UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>"+name+"</span> ?", function(){
-                            try {
-                                cmdImageRemove = new CmdImageRemove(shortDockerId(id,12));
-                                cmdImageRemove.send()
-                                cmdImageRemove.release()
-                                imageListVue.query()
-                            }catch(e){
-                                alertError(e)
-                            }
-                        });
+                    UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>"+name+"</span> ?", function(){
+                        try {
+                            cmdImageRemove = new CmdImageRemove(shortDockerId(id,12));
+                            cmdImageRemove.send()
+                            cmdImageRemove.release()
+                            imageListVue.query()
+                        }catch(e){
+                            alertError(e)
+                        }
+                    });
 
 
                 },
                 search: function(){
+                    try {
+                        name = $("#name").val();
 
-                    name = $("#name").val();
+                        if (name == "") {
+                            return
+                        }
+                        cmdHubImageInfo = new CmdHubImageInfo();
+                        cmdHubImageInfo.term(name);
+                        cmdHubImageInfo.limit(10);
+                        imageListVue.hubImageList = cmdHubImageInfo.send().sortBy("star_count",true);
+                        cmdHubImageInfo.release();
 
-                    if (name == "") {
-                        return
+                        hubImageList = UIkit.modal("#hubImageListDialog");
+                        hubImageList.show();
+                    }catch(e){
+                        alertError(e)
                     }
-                    cmdHubImageInfo = new CmdHubImageInfo();
-                    cmdHubImageInfo.term(name);
-                    cmdHubImageInfo.limit(10);
-                    imageListVue.hubImageList = cmdHubImageInfo.send().sortBy("star_count",true);
-                    cmdHubImageInfo.release();
+                },
+                pull: function(hubImage){
+                    try {
+                        cmdImageCreate = new CmdImageCreate();
+                        cmdImageCreate.fromImage(hubImage.name);
+                        cmdImageCreate.send()
+                        UIkit.modal.alert("Image "+ hubImage.name + " already pulled.");
+                        imageListVue.query()
+                        hubImageList.hide();
+                    }catch(e){
+                        alertError(e)
+                    }
 
-                    var hubImageList = UIkit.modal("#hubImageListDialog");
-                    hubImageList.show();
                 }
             }
         });
@@ -152,7 +169,7 @@
                     <td class="uk-text-center">{{hubImage.is_official}}</td>
                     <td>{{hubImage.description}}</td>
                     <td class="uk-text-center uk-text-middle">
-                        <input class="uk-button uk-button-small uk-button-primary" type="button" value="pull" @click=""/>
+                        <input class="uk-button uk-button-small uk-button-primary" type="button" value="pull" @click="pull(hubImage)"/>
                     </td>
 
                 </tr>
