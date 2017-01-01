@@ -26,7 +26,7 @@
             methods: {
                 //查询方法
                 query: function () {
-                    try{
+                    try {
                         var cmdVolumeList = new CmdVolumeList();
 
                         nameOrId = $("#nameOrId").val();
@@ -37,33 +37,50 @@
 
                         //cmdContainerList.label("author","helyho");
 
-                        volumeListVue.volumeList = cmdVolumeList.send().sortBy(name);
+                        volumeListVue.volumeList = cmdVolumeList.send().sortBy("name");
                         cmdVolumeList.close();
                         cmdVolumeList.release();
-                    }catch(e){
+                    } catch (e) {
                         alertError(e)
                     }
                 },
                 //移除方法
                 remove: function (volume) {
                     name = volume.name
-                        UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>"+name+"</span> ?", function(){
-                            try {
-                                cmdVolumeRemove = new CmdVolumeRemove(name);
-                                cmdVolumeRemove.send();
-                                cmdVolumeRemove.close();
-                                cmdVolumeRemove.release();
-                                volumeListVue.query();
-                            }catch(e){
-                                alertError(e)
-                            }
-                        });
-
-
+                    UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + name + "</span> ?", function () {
+                        try {
+                            cmdVolumeRemove = new CmdVolumeRemove(name);
+                            cmdVolumeRemove.send();
+                            cmdVolumeRemove.close();
+                            cmdVolumeRemove.release();
+                            volumeListVue.query();
+                        } catch (e) {
+                            alertError(e)
+                        }
+                    });
                 },
+                openCreateDialog: function () {
+                    createVolumeDialog = UIkit.modal("#createVolumeDialog");
+                    createVolumeDialog.show();
+                },
+                create: function () {
+                    try {
+                        var name = $("#createVolumeDialog #name").val();
+                        var driver = $("#createVolumeDialog #driver").val();
+                        cmdVolumeCreate = new CmdVolumeCreate();
+                        cmdVolumeCreate.name(name);
+                        cmdVolumeCreate.driver(driver);
+                        cmdVolumeCreate.send();
+                        createVolumeDialog.hide();
+                        UIkit.modal.alert("Create volume success.");
+                        volumeListVue.query();
+                    } catch (e) {
+                        alertError(e);
+                    }
+                }
             }
         });
-        volumeListVue.query()
+        volumeListVue.query();
     }
 </script>
 <body onload="init()" class="frameBody">
@@ -80,7 +97,8 @@
                     <input class="uk-button uk-button-small" type="button" value="Query" @click="query()"/>
                 </div>
                 <div class="uk-width-1-6 uk-text-right">
-                    <input class="uk-button uk-button-small uk-button-primary" type="button" value="add"/>
+                    <input class="uk-button uk-button-small uk-button-primary" type="button" value="Create"
+                           @click="openCreateDialog"/>
                 </div>
             </div>
         </div>
@@ -101,18 +119,47 @@
             <tr v-for="(volume,index) in volumeList">
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-primary">{{volume.name}}</td>
-                <td >{{volume.scope}}</td>
-                <td >{{volume.driver}}</td>
+                <td>{{volume.scope}}</td>
+                <td>{{volume.driver}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-success">{{volume.mountpoint}}</td>
                 <td class="uk-text-center uk-text-middle">
-                    <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove" @click="remove(volume)"/>
+                    <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
+                           @click="remove(volume)"/>
                 </td>
 
             </tr>
             </tbody>
         </table>
     </div>
+    <div id="createVolumeDialog" class="uk-modal">
+        <div class="uk-modal-dialog uk-overflow-container">
+            <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
+            <div class="uk-modal-header"><h2 class="uk-text-success">Create a new volume</h2></div>
+            <div class="uk-form">
+                <table id="volumeList" class="uk-table uk-overflow-container uk-panel-box">
+                    <tr>
+                        <td>Name:</td>
+                        <td><input id="name" type="text"/></td>
+                    </tr>
+                    <tr>
+                        <td>Driver:</td>
+                        <td>
+                            <select id="driver">
+                            <option value="local">local</option>
+                        </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="uk-text-right" colspan="2">
+                            <input id="create" class="uk-button uk-button-primary" style="color:white"
+                                   type="button" value="Create" @click="create()">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
-
+</div>
 </body>
 </html>
