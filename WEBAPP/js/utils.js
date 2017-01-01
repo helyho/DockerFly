@@ -1,22 +1,10 @@
-//扩展字符串的方法
-String.prototype.endWith=function(s){
-    if(s==null||s==""||this.length==0||s.length>this.length)
-        return false;
-    if(this.substring(this.length-s.length)==s)
-        return true;
-    else
-        return false;
-    return true;
-}
 
-String.prototype.startWith=function(s){
-    if(s==null||s==""||this.length==0||s.length>this.length)
-        return false;
-    if(this.substr(0,s.length)==s)
-        return true;
-    else
-        return false;
-    return true;
+//菜单选中标识
+function mainMenuActive(event){
+    $(event.target).parent().parent().children("li[class*='uk-active']").each(function(index,eli){
+        $(eli).removeClass("uk-active")
+    })
+    $(event.target).parent().addClass("uk-active")
 }
 
 
@@ -59,3 +47,23 @@ Vue.filter('delFirestChar',delFirestChar);
 
 Vue.filter('shortDockerId',shortDockerId);
 
+//扩展字符串的方法
+String.prototype.endWith=function(s){
+    if(s==null||s==""||this.length==0||s.length>this.length)
+        return false;
+    if(this.substring(this.length-s.length)==s)
+        return true;
+    else
+        return false;
+    return true;
+}
+
+String.prototype.startWith=function(s){
+    if(s==null||s==""||this.length==0||s.length>this.length)
+        return false;
+    if(this.substr(0,s.length)==s)
+        return true;
+    else
+        return false;
+    return true;
+}
