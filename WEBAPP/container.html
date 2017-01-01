@@ -85,17 +85,19 @@
                 remove: function (container) {
                     name = container.names[0]
                     id = container.id
-                    try {
+
                         UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>"+delFirestChar(name)+"</span> ?", function(){
-                            cmdContainerRemove = new CmdContainerRemove(id);
-                            cmdContainerRemove.send();
-                            cmdContainerRemove.close();
-                            cmdContainerRemove.release();
-                            containerListVue.query();
+                            try {
+                                cmdContainerRemove = new CmdContainerRemove(id);
+                                cmdContainerRemove.send();
+                                cmdContainerRemove.close();
+                                cmdContainerRemove.release();
+                                containerListVue.query();
+                            }catch(e){
+                                alertError(e)
+                            }
                         });
-                    }catch(e){
-                        alertError(e)
-                    }
+
                 },
 
                 //暂停和恢复方法
