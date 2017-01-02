@@ -259,7 +259,7 @@
                 <th>Name</th>
                 <th>Image</th>
                 <th>Export Port</th>
-                <th>IP</th>
+                <th>Network & IP</th>
                 <th class="uk-text-center">Status</th>
                 <th class="uk-text-center">Operation</th>
             </tr>
@@ -279,7 +279,7 @@
                 </td>
                 <td class="uk-text-middle">
                     <code v-for="(network,networkName) in container.networkSettings.networks">
-                        {{networkName}}:{{network.ipAddress}}
+                        {{networkName}}{{network.ipAddress==""?"":":"}}{{network.ipAddress}}
                     </code>
                 </td>
                 <td :class="container.state" class="uk-text-center uk-text-bold uk-text-middle">
@@ -311,7 +311,7 @@
                 <table id="volumeList" class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
                         <td>Name:</td>
-                        <td><input class="uk-form-width-medium" id="name" type="text" value="test-1-2"/></td>
+                        <td><input class="uk-form-width-medium" id="name" type="text" placeholder="contianer name"/></td>
                     </tr>
                     <tr>
                         <td>Image:</td>
@@ -325,25 +325,25 @@
                     </tr>
                     <tr>
                         <td>Command:</td>
-                        <td><input class="uk-form-width-large" id="command" type="text" value="ping 127.0.0.1"/></td>
+                        <td><input class="uk-form-width-large" id="command" type="text" placeholder="command to run"/></td>
                     </tr>
                     <tr>
                         <td>Env:</td>
-                        <td><input class="uk-form-width-large" id="env" type="text" value="author=helyho"/></td>
+                        <td><input class="uk-form-width-large" id="env" type="text" placeholder="like: author=dockerfly"/></td>
                     </tr>
                     <tr>
                         <td>CPU Quota:</td>
-                        <td><input id="cpuQuota" type="text" value="1"/></td>
+                        <td><input id="cpuQuota" type="text" class="uk-form-width-small" placeholder="cpu core count"/></td>
                     </tr>
                     <tr>
                         <td>Memory:</td>
-                        <td><input id="memory" type="text" value="64"/></td>
+                        <td><input id="memory" type="text" class="uk-form-width-small" placeholder="memory size (Mb)"/></td>
                     </tr>
                     <tr>
                         <td>Network:</td>
                         <td>
                             <select id="network" class="uk-form-width-medium">
-                                <option value="" selected>nothing</option>
+                                <option value="" selected>Nothing</option>
                                 <option v-for="network in networkList"
                                         :value="network.id|shortDockerId(12)">{{network.name}}
                                 </option>
@@ -354,11 +354,11 @@
                         <td>Port:</td>
                         <td>
                             <input class="uk-form-width-mini" style="width: 55px"
-                                   id="hostPort" type="text" value="31111"/>
-                            :
+                                   id="hostPort" type="text" value="host"/>
+                            &nbsp;:&nbsp;
                             <input class="uk-form-width-mini" style="width: 55px"
-                                   id="containerPort" type="text" value="32222"/>
-                            /
+                                   id="containerPort" type="text" value="guest"/>
+                            &nbsp;/&nbsp;
                             <select id="protocol">
                                 <option value="tcp" selected>tcp</option>
                                 <option value="udp">udp</option>
@@ -369,7 +369,7 @@
                         <td>Volume:</td>
                         <td>
                             <select id="volume" class="uk-form-width-medium">
-                                <option value="" selected>nothing</option>
+                                <option value="" selected>Nothing</option>
                                 <option v-for="volume in volumeList"
                                         :value="volume.name">{{volume.name}}
                                 </option>
@@ -380,14 +380,14 @@
                         <td>Link:</td>
                         <td>
                             <select id="linkContainer" class="uk-form-width-medium">
-                                <option value="" selected>nothing</option>
+                                <option value="" selected>Nothing</option>
                                 <option v-for="container in containerList"
                                         value="{{container.id | shortDockerId(12)}}">
                                     {{container.names[0]|delFirestChar|shortDockerId(18)}}
                                 </option>
                             </select>
                             :
-                            <input id="linkName" type="text"/>
+                            <input id="linkName" type="text" placeholder="name in contianer"/>
                         </td>
                     </tr>
 
