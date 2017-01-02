@@ -37,7 +37,7 @@
             methods: {
                 //查询方法
                 query: function () {
-                    try{
+                    try {
                         var cmdContainerList = new CmdContainerList();
                         cmdContainerList.all(true)
                         nameOrId = $("#nameOrId").val();
@@ -52,22 +52,22 @@
                         }
 
                         //cmdContainerList.label("author","helyho");
-                        containerListVue.containerList = cmdContainerList.send().sortBy("id",true);
+                        containerListVue.containerList = cmdContainerList.send().sortBy("id", true);
                         cmdContainerList.close();
                         cmdContainerList.release();
-                    }catch(e){
+                    } catch (e) {
                         alertError(e)
                     }
                 },
 
                 //启动方法
                 start: function (container) {
-                    if(container.state=="paused"){
+                    if (container.state == "paused") {
                         cmdContainerUnPause = new CmdContainerUnPause(container.id)
                         cmdContainerUnPause.send();
                         cmdContainerUnPause.close();
                         cmdContainerUnPause.release();
-                    }else{
+                    } else {
                         cmdContainerStart = new CmdContainerStart(container.id);
                         cmdContainerStart.send()
                         cmdContainerStart.close();
@@ -83,7 +83,7 @@
                         cmdContainerStop.send();
                         cmdContainerStop.close();
                         cmdContainerStop.release();
-                    }catch(e){
+                    } catch (e) {
                         alertError(e)
                     }
                     this.query()
@@ -94,28 +94,28 @@
                     name = container.names[0]
                     id = container.id
 
-                        UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>"+delFirestChar(name)+"</span> ?", function(){
-                            try {
-                                cmdContainerRemove = new CmdContainerRemove(id);
-                                cmdContainerRemove.send();
-                                cmdContainerRemove.close();
-                                cmdContainerRemove.release();
-                                containerListVue.query();
-                            }catch(e){
-                                alertError(e)
-                            }
-                        });
+                    UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + delFirestChar(name) + "</span> ?", function () {
+                        try {
+                            cmdContainerRemove = new CmdContainerRemove(id);
+                            cmdContainerRemove.send();
+                            cmdContainerRemove.close();
+                            cmdContainerRemove.release();
+                            containerListVue.query();
+                        } catch (e) {
+                            alertError(e)
+                        }
+                    });
 
                 },
 
                 //暂停和恢复方法
-                pause: function(container){
-                    try{
+                pause: function (container) {
+                    try {
                         cmdContainerPause = new CmdContainerPause(container.id)
                         cmdContainerPause.send();
                         cmdContainerPause.close();
                         cmdContainerPause.release();
-                    }catch(e){
+                    } catch (e) {
                         alertError(e)
                     }
                     this.query()
@@ -128,21 +128,21 @@
                     createContainerDialog = UIkit.modal("#createContainerDialog");
                     createContainerDialog.show();
                 },
-                getImageList: function(){
+                getImageList: function () {
                     var cmdImageListInfo = new CmdImageListInfo();
 
                     containerListVue.imageList = cmdImageListInfo.send().sortBy("Created");
                     cmdImageListInfo.close();
                     cmdImageListInfo.release();
                 },
-                getNetworkList: function(){
+                getNetworkList: function () {
                     var cmdNetworkList = new CmdNetworkList();
                     //cmdNetworkList.type("custom");
                     containerListVue.networkList = cmdNetworkList.send().sortBy("name");
                     cmdNetworkList.close();
                     cmdNetworkList.release();
                 },
-                getVolumeList: function(){
+                getVolumeList: function () {
                     var cmdVolumeList = new CmdVolumeList();
                     containerListVue.volumeList = cmdVolumeList.send().sortBy("name");
                     cmdVolumeList.close();
@@ -152,60 +152,60 @@
                     try {
 
                         var cpuPeriod = 100000;
-                        var name    = $("#createContainerDialog #name").val();
-                        var image   = $("#createContainerDialog #image").val();
+                        var name = $("#createContainerDialog #name").val();
+                        var image = $("#createContainerDialog #image").val();
                         var command = $("#createContainerDialog #command").val();
-                        var env     = $("#createContainerDialog #env").val();
+                        var env = $("#createContainerDialog #env").val();
                         var cpuQuota = $("#createContainerDialog #cpuQuota").val();
-                        var memory  = $("#createContainerDialog #memory").val();
+                        var memory = $("#createContainerDialog #memory").val();
                         var network = $("#createContainerDialog #network").val();
-                        var hostPort    = $("#createContainerDialog #hostPort").val();
-                        var containerPort    = $("#createContainerDialog #containerPort").val();
-                        var protocol    = $("#createContainerDialog #protocol").val();
-                        var volume  = $("#createContainerDialog #volume").val();
-                        var linkContainer    = $("#createContainerDialog #linkContainer").val();
-                        var linkName    = $("#createContainerDialog #linkName").val();
+                        var hostPort = $("#createContainerDialog #hostPort").val();
+                        var containerPort = $("#createContainerDialog #containerPort").val();
+                        var protocol = $("#createContainerDialog #protocol").val();
+                        var volume = $("#createContainerDialog #volume").val();
+                        var linkContainer = $("#createContainerDialog #linkContainer").val();
+                        var linkName = $("#createContainerDialog #linkName").val();
 
                         cmdContainerCreate = new CmdContainerCreate(name);
                         cmdContainerCreate.cpuPeriod(cpuPeriod);
 
-                        if(image!=""){
+                        if (image != "") {
                             cmdContainerCreate.image(image);
                         }
 
-                        if(command!=""){
+                        if (command != "") {
                             cmdContainerCreate.cmd(command.split(" "));
                         }
 
-                        if(env!=""){
+                        if (env != "") {
                             //aaa=aaa,bbb=bbb
                             cmdContainerCreate.env(env.split(","));
                         }
 
-                        if(cpuQuota!=""){
-                            cmdContainerCreate.cpuQuota(cpuQuota*cpuPeriod);
+                        if (cpuQuota != "") {
+                            cmdContainerCreate.cpuQuota(cpuQuota * cpuPeriod);
                         }
 
-                        if(memory!=""){
+                        if (memory != "") {
                             cmdContainerCreate.memory(memory);
                         }
 
-                        if(network!=""){
+                        if (network != "") {
                             cmdContainerCreate.network(network);
                         }
 
-                        if(containerPort!="" && hostPort!=null){
-                            cmdContainerCreate.exposePort(containerPort, protocol,[hostPort]);
+                        if (containerPort != "" && hostPort != null) {
+                            cmdContainerCreate.exposePort(containerPort, protocol, [hostPort]);
                         }
-                        if(volume!=""){
-                            cmdContainerCreate.volume([volume+":/"+volume]);
+                        if (volume != "") {
+                            cmdContainerCreate.volume([volume + ":/" + volume]);
                         }
 
-                        if(linkContainer!=""){
-                            if(linkName!=null){
-                                linkContainer = linkContainer+":"+linkName;
-                            }else{
-                                linkContainer = linkContainer+":"+linkName;
+                        if (linkContainer != "") {
+                            if (linkName != null) {
+                                linkContainer = linkContainer + ":" + linkName;
+                            } else {
+                                linkContainer = linkContainer + ":" + linkName;
                             }
                             cmdContainerCreate.link([linkContainer]);
                         }
@@ -288,10 +288,15 @@
                 <td class="uk-text-center uk-text-middle">
                     <div class="uk-button-group">
                         <input class="uk-button uk-button-small " type="button" value="View"/>
-                        <input class="uk-button uk-button-small uk-button-primary" type="button" value="Start" :disabled="container.state=='running'" @click="start(container)"/>
-                        <input class="uk-button uk-button-small uk-button-success" type="button" value="Stop"  :disabled="container.state!='running'"  @click="stop(container)"/>
-                        <input class="uk-button uk-button-small uk-button-warning" type="button" value="Pause" :disabled="container.state=='paused' || container.state!='running' "  @click="pause(container)"/>
-                        <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove" @click="remove(container)"/>
+                        <input class="uk-button uk-button-small uk-button-primary" type="button" value="Start"
+                               :disabled="container.state=='running'" @click="start(container)"/>
+                        <input class="uk-button uk-button-small uk-button-success" type="button" value="Stop"
+                               :disabled="container.state!='running'" @click="stop(container)"/>
+                        <input class="uk-button uk-button-small uk-button-warning" type="button" value="Pause"
+                               :disabled="container.state=='paused' || container.state!='running' "
+                               @click="pause(container)"/>
+                        <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
+                               @click="remove(container)"/>
                     </div>
                 </td>
             </tr>
@@ -313,7 +318,8 @@
                         <td>
                             <select id="image" class="uk-form-width-medium">
                                 <option v-for="image in imageList"
-                                        :value="image.id|shortDockerId(12)">{{image.repoTags[0]}}</option>
+                                        :value="image.id|shortDockerId(12)">{{image.repoTags[0]}}
+                                </option>
                             </select>
                         </td>
                     </tr>
@@ -339,7 +345,8 @@
                             <select id="network" class="uk-form-width-medium">
                                 <option value="" selected>nothing</option>
                                 <option v-for="network in networkList"
-                                        :value="network.id|shortDockerId(12)">{{network.name}}</option>
+                                        :value="network.id|shortDockerId(12)">{{network.name}}
+                                </option>
                             </select>
                         </td>
                     </tr>
@@ -364,7 +371,8 @@
                             <select id="volume" class="uk-form-width-medium">
                                 <option value="" selected>nothing</option>
                                 <option v-for="volume in volumeList"
-                                        :value="volume.name">{{volume.name}}</option>
+                                        :value="volume.name">{{volume.name}}
+                                </option>
                             </select>
                         </td>
                     </tr>
@@ -374,7 +382,9 @@
                             <select id="linkContainer" class="uk-form-width-medium">
                                 <option value="" selected>nothing</option>
                                 <option v-for="container in containerList"
-                                        value="{{container.id | shortDockerId(12)}}">{{container.names[0]|delFirestChar|shortDockerId(18)}}</option>
+                                        value="{{container.id | shortDockerId(12)}}">
+                                    {{container.names[0]|delFirestChar|shortDockerId(18)}}
+                                </option>
                             </select>
                             :
                             <input id="linkName" type="text"/>

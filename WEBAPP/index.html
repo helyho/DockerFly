@@ -15,13 +15,15 @@
 <script lang="javascript">
     function init() {
         $(".uk-nav-side").children("li").each(
-            function(index,eli){
-                    $(eli).click(
-                        function(event){
-                            mainMenuActive(event)
-                        }
-                    )}
-            )}
+            function (index, eli) {
+                $(eli).click(
+                    function (event) {
+                        mainMenuActive(event)
+                    }
+                )
+            }
+        )
+    }
 </script>
 <body onload="init()">
 <div id="ContainerApp" class="uk-grid" style="height:100%">
@@ -39,8 +41,9 @@
                 <li><a href="container.html" target="moduleFrame" onclick="mainMenuActive(event)">
                     <span class="icon uk-icon-tasks"></span>Contianer
                 </a></li>
-                <li><a  href="network.html" target="moduleFrame"><span class="icon uk-icon-globe"></span>Network</a></li>
-                <li><a  href="volume.html" target="moduleFrame"><span class="icon uk-icon-building"></span>Volume</a></li>
+                <li><a href="network.html" target="moduleFrame"><span class="icon uk-icon-globe"></span>Network</a></li>
+                <li><a href="volume.html" target="moduleFrame"><span class="icon uk-icon-building"></span>Volume</a>
+                </li>
                 <h3 class="uk-nav-divider"></h3>
                 <li><a href="image.html" target="moduleFrame"><span class="icon uk-icon-archive"></span>Image</a></li>
 
@@ -48,7 +51,7 @@
         </div>
     </div>
     <div class="uk-width-5-6" style="padding:0px">
-      <iframe name="moduleFrame" class="uk-width-6-6" style="height: 100%;float:right"></iframe>
+        <iframe name="moduleFrame" class="uk-width-6-6" style="height: 100%;float:right"></iframe>
     </div>
 </div>
 

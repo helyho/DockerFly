@@ -28,13 +28,13 @@
             methods: {
                 //查询方法
                 query: function () {
-                    try{
+                    try {
                         var cmdImageListInfo = new CmdImageListInfo();
 
                         imageListVue.imageList = cmdImageListInfo.send().sortBy("Created");
                         cmdImageListInfo.close();
                         cmdImageListInfo.release();
-                    }catch(e){
+                    } catch (e) {
                         alertError(e)
                     }
                 },
@@ -42,21 +42,21 @@
                 remove: function (image) {
                     name = image.repoTags.length > 0 ? image.repoTags[0] : "";
                     id = image.id
-                    UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>"+name+"</span> ?", function(){
+                    UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + name + "</span> ?", function () {
                         try {
-                            cmdImageRemove = new CmdImageRemove(shortDockerId(id,12));
+                            cmdImageRemove = new CmdImageRemove(shortDockerId(id, 12));
                             cmdImageRemove.send();
                             cmdImageRemove.close();
                             cmdImageRemove.release();
                             imageListVue.query();
-                        }catch(e){
+                        } catch (e) {
                             alertError(e)
                         }
                     });
 
 
                 },
-                search: function(){
+                search: function () {
                     try {
                         name = $("#name").val();
 
@@ -66,17 +66,17 @@
                         cmdHubImageInfo = new CmdHubImageInfo();
                         cmdHubImageInfo.term(name);
                         cmdHubImageInfo.limit(10);
-                        imageListVue.hubImageList = cmdHubImageInfo.send().sortBy("star_count",true);
+                        imageListVue.hubImageList = cmdHubImageInfo.send().sortBy("star_count", true);
                         cmdHubImageInfo.close();
                         cmdHubImageInfo.release();
 
                         hubImageList = UIkit.modal("#hubImageListDialog");
                         hubImageList.show();
-                    }catch(e){
+                    } catch (e) {
                         alertError(e)
                     }
                 },
-                pull: function(hubImage){
+                pull: function (hubImage) {
                     try {
                         cmdImageCreate = new CmdImageCreate();
                         cmdImageCreate.fromImage(hubImage.name);
@@ -84,10 +84,10 @@
                         cmdImageCreate.close();
 
                         hubImageList.hide();
-                        UIkit.modal.alert("Image "+ hubImage.name + " already pulled.");
+                        UIkit.modal.alert("Image " + hubImage.name + " already pulled.");
                         imageListVue.query();
 
-                    }catch(e){
+                    } catch (e) {
                         alertError(e)
                     }
 
@@ -132,15 +132,19 @@
             <tr v-for="(image,index) in imageList">
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-primary">
-                    <div v-for="repoTag,index in image.repoTags">
-                    {{repoTag}}
+                    <div v-if="image.repoTags.length!=0" v-for="repoTag,index in image.repoTags">
+                        {{repoTag}}
+                    </div>
+                    <div v-if="image.repoTags.length == 0" v-for="repoDigest,index in image.repoDigests">
+                        {{repoDigest.split("@")[0]}}
                     </div>
                 </td>
                 <td class="uk-text-bold uk-text-middle uk-text-success">{{image.id|shortDockerId(12)}}</td>
                 <td class="uk-text-center">{{new Date(parseInt(image.created*1000)).format("yyyy-MM-dd hh:mm:ss")}}</td>
-                <td >{{(parseInt(image.size)/1024/1024).toFixed(2)}}</td>
+                <td>{{(parseInt(image.size)/1024/1024).toFixed(2)}}</td>
                 <td class="uk-text-center uk-text-middle">
-                    <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove" @click="remove(image)"/>
+                    <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
+                           @click="remove(image)"/>
                 </td>
 
             </tr>
@@ -174,7 +178,8 @@
                     <td class="uk-text-center">{{hubImage.is_official}}</td>
                     <td>{{hubImage.description}}</td>
                     <td class="uk-text-center uk-text-middle">
-                        <input class="uk-button uk-button-small uk-button-primary" type="button" value="pull" @click="pull(hubImage)"/>
+                        <input class="uk-button uk-button-small uk-button-primary" type="button" value="pull"
+                               @click="pull(hubImage)"/>
                     </td>
 
                 </tr>
@@ -183,7 +188,5 @@
         </div>
     </div>
 </div>
-
-
 </body>
 </html>

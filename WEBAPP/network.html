@@ -26,7 +26,7 @@
             methods: {
                 //查询方法
                 query: function () {
-                    try{
+                    try {
                         var cmdNetworkList = new CmdNetworkList();
                         cmdNetworkList.type("custom");
 
@@ -46,7 +46,7 @@
                         networkListVue.networkList = cmdNetworkList.send().sortBy("name");
                         cmdNetworkList.close();
                         cmdNetworkList.release();
-                    }catch(e){
+                    } catch (e) {
                         alertError(e)
                     }
                 },
@@ -54,17 +54,17 @@
                 remove: function (network) {
                     name = network.name
                     id = network.id
-                        UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>"+name+"</span> ?", function(){
-                            try {
-                                cmdNetworkRemove = new CmdNetworkRemove(id);
-                                cmdNetworkRemove.send();
-                                cmdNetworkRemove.close();
-                                cmdNetworkRemove.release();
-                                networkListVue.query();
-                            }catch(e){
-                                alertError(e)
-                            }
-                        });
+                    UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + name + "</span> ?", function () {
+                        try {
+                            cmdNetworkRemove = new CmdNetworkRemove(id);
+                            cmdNetworkRemove.send();
+                            cmdNetworkRemove.close();
+                            cmdNetworkRemove.release();
+                            networkListVue.query();
+                        } catch (e) {
+                            alertError(e)
+                        }
+                    });
 
                 },
                 openCreateDialog: function () {
@@ -84,8 +84,8 @@
                         cmdNetworkCreate.name(name);
                         cmdNetworkCreate.driver(driver);
 
-                        if(gateway!="" && subnet!="" && ipRange!=""){
-                            cmdNetworkCreate.IPAMConfig(subnet,ipRange,gateway)
+                        if (gateway != "" && subnet != "" && ipRange != "") {
+                            cmdNetworkCreate.IPAMConfig(subnet, ipRange, gateway)
                         }
 
                         cmdNetworkCreate.send();
@@ -144,10 +144,13 @@
             <tr v-for="(network,index) in networkList">
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-primary">{{network.name}}</td>
-                <td >{{network.driver}}</td>
-                <td class="uk-text-bold uk-text-middle uk-text-success">{{network.ipam.config.length > 0 ? network.ipam.config[0].Subnet : ""}}</td>
+                <td>{{network.driver}}</td>
+                <td class="uk-text-bold uk-text-middle uk-text-success">{{network.ipam.config.length > 0 ?
+                    network.ipam.config[0].Subnet : ""}}
+                </td>
                 <td class="uk-text-center uk-text-middle">
-                    <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove" @click="remove(network)"/>
+                    <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
+                           @click="remove(network)"/>
                 </td>
 
             </tr>
