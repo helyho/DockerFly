@@ -23,7 +23,11 @@
             el: '#imageApp',
             data: {
                 imageList: null,
-                hubImageList: null
+                hubImageList: null,
+                searchParams:{
+                    name:"",
+                    limit:5
+                }
             },
             methods: {
                 //查询方法
@@ -58,14 +62,12 @@
                 },
                 search: function () {
                     try {
-                        name = $("#name").val();
-
-                        if (name == "") {
+                        if (this.searchParams.name == "") {
                             return
                         }
                         cmdHubImageInfo = new CmdHubImageInfo();
-                        cmdHubImageInfo.term(name);
-                        cmdHubImageInfo.limit(10);
+                        cmdHubImageInfo.term(this.searchParams.name);
+                        cmdHubImageInfo.limit(this.searchParams.limit);
                         imageListVue.hubImageList = cmdHubImageInfo.send().sortBy("star_count", true);
                         cmdHubImageInfo.close();
                         cmdHubImageInfo.release();
@@ -105,8 +107,17 @@
         <div class="uk-panel uk-panel-box uk-text-bold">
             <div class="uk-grid">
                 <div class="uk-width-5-6 uk-form">
-                    <span class="mr5">Name:</span><input class="uk-form-width-medium" id="name"
-                                                         type="text" placeholder="image's name">
+                    <span class="mr5">Name:</span>
+                    <input class="uk-form-width-medium" id="name"
+                           type="text" placeholder="image's name" v-model="searchParams.name"/>
+                    <select v-model="searchParams.limit">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                        <option value="40">40</option>
+                        <option value="50">50</option>
+                    </select>
                     <input class="uk-button uk-button-small" type="button" value="search" @click="search()"/>
 
                 </div>
@@ -130,7 +141,7 @@
 
             <tbody>
             <tr v-for="(image,index) in imageList">
-                <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
+                <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-primary">
                     <div v-if="image.repoTags.length!=0" v-for="repoTag,index in image.repoTags">
                         {{repoTag}}
@@ -170,7 +181,7 @@
 
                 <tbody>
                 <tr v-for="(hubImage,index) in hubImageList " :key='hubImage.star_count'>
-                    <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
+                    <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
                     <td class="uk-text-bold uk-text-middle uk-text-primary">
                         {{hubImage.name}}
                     </td>

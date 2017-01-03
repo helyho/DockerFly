@@ -32,7 +32,27 @@
                 containerList: null,
                 networkList: null,
                 volumeList: null,
-                imageList: null
+                imageList: null,
+                queryParams:{
+                    nameOrId:"",
+                    status:null
+                },
+                createParams:{
+                    cpuPeriod:100000,
+                    name:"",
+                    image:"",
+                    command:"",
+                    env:"",
+                    cpuQuota:1,
+                    memory:64,
+                    network:"",
+                    hostPort:"",
+                    containerPort:"",
+                    protocol:"tcp",
+                    volume:"",
+                    linkContainer:"",
+                    linkName:""
+                }
             },
             methods: {
                 //查询方法
@@ -40,15 +60,13 @@
                     try {
                         var cmdContainerList = new CmdContainerList();
                         cmdContainerList.all(true)
-                        nameOrId = $("#nameOrId").val();
-                        status = $("#status").val();
 
                         if (nameOrId != "") {
-                            cmdContainerList.name(nameOrId);
+                            cmdContainerList.name(this.queryParams.nameOrId);
                         }
 
-                        if (status != "ALL") {
-                            cmdContainerList.status("[" + status + "]");
+                        if (status != "all") {
+                            cmdContainerList.status("[" + this.queryParams.status + "]");
                         }
 
                         //cmdContainerList.label("author","helyho");
@@ -166,53 +184,53 @@
                         var linkContainer = $("#createContainerDialog #linkContainer").val();
                         var linkName = $("#createContainerDialog #linkName").val();
 
-                        cmdContainerCreate = new CmdContainerCreate(name);
-                        cmdContainerCreate.cpuPeriod(cpuPeriod);
+                        cmdContainerCreate = new CmdContainerCreate(this.createParams.name);
+                        cmdContainerCreate.cpuPeriod(this.createParams.cpuPeriod);
 
-                        if (image != "") {
-                            cmdContainerCreate.image(image);
+                        if (this.createParams.image != "") {
+                            cmdContainerCreate.image(this.createParams.image);
                         }
 
-                        if (command != "") {
-                            cmdContainerCreate.cmd(command.split(" "));
+                        if (this.createParams.command != "") {
+                            cmdContainerCreate.cmd(this.createParams.command.split(" "));
                         }
 
-                        if (env != "") {
+                        if (this.createParams.env != "") {
                             //aaa=aaa,bbb=bbb
-                            cmdContainerCreate.env(env.split(","));
+                            cmdContainerCreate.env(this.createParams.env.split(","));
                         }
 
-                        if (cpuQuota != "") {
-                            cmdContainerCreate.cpuQuota(cpuQuota * cpuPeriod);
+                        if (this.createParams.cpuQuota != "") {
+                            cmdContainerCreate.cpuQuota(this.createParams.cpuQuota * this.createParams.cpuPeriod);
                         }
 
-                        if (memory != "") {
-                            cmdContainerCreate.memory(memory);
+                        if (this.createParams.memory != "") {
+                            cmdContainerCreate.memory(this.createParams.memory);
                         }
 
-                        if (network != "") {
-                            cmdContainerCreate.network(network);
+                        if (this.createParams.network != "") {
+                            cmdContainerCreate.network(this.createParams.network);
                         }
 
-                        if (containerPort != "" && hostPort != null) {
-                            cmdContainerCreate.exposePort(containerPort, protocol, [hostPort]);
+                        if (this.createParams.containerPort != "" && this.createParams.hostPort != null) {
+                            cmdContainerCreate.exposePort(this.createParams.containerPort, this.createParams.protocol, [this.createParams.hostPort]);
                         }
-                        if (volume != "") {
-                            cmdContainerCreate.volume([volume + ":/" + volume]);
+                        if (this.createParams.volume != "") {
+                            cmdContainerCreate.volume([this.createParams.volume + ":/" + this.createParams.volume]);
                         }
 
-                        if (linkContainer != "") {
-                            if (linkName != null) {
-                                linkContainer = linkContainer + ":" + linkName;
+                        if (this.createParams.linkContainer != "") {
+                            if (this.createParams.linkName != "") {
+                                this.createParams.linkContainer = this.createParams.linkContainer + ":" + this.createParams.linkName;
                             } else {
-                                linkContainer = linkContainer + ":" + linkName;
+                                this.createParams.linkContainer = this.createParams.linkContainer + ":" + this.createParams.linkName;
                             }
-                            cmdContainerCreate.link([linkContainer]);
+                            cmdContainerCreate.link([this.createParams.linkContainer]);
                         }
                         cmdContainerCreate.send();
                         cmdContainerCreate.close();
                         createContainerDialog.hide();
-                        UIkit.modal.alert("Create volume success.");
+                        UIkit.modal.alert("Create container success.");
                         containerListVue.query();
                     } catch (e) {
                         alertError(e);
@@ -231,11 +249,12 @@
         <div class="uk-panel uk-panel-box uk-text-bold">
             <div class="uk-grid">
                 <div class="uk-width-5-6 uk-form">
-                    <span class="mr5">Name:</span><input class="uk-form-width-medium" id="nameOrId"
-                                                         type="text" placeholder="name or id">
+                    <span class="mr5">Name:</span>
+                    <input class="uk-form-width-medium" id="nameOrId"
+                           type="text" placeholder="name or id" v-model="queryParams.nameOrId">
                     <span class="mr5">Status:</span>
-                    <select id="status">
-                        <option value="ALL">All</option>
+                    <select id="status" v-model="queryParams.status">
+                        <option value="all">all</option>
                         <option value="created">created</option>
                         <option value="restarting">restarting</option>
                         <option value="running">running</option>
@@ -311,12 +330,13 @@
                 <table id="volumeList" class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
                         <td>Name:</td>
-                        <td><input class="uk-form-width-medium" id="name" type="text" placeholder="contianer name"/></td>
+                        <td><input class="uk-form-width-medium" id="name" type="text"
+                                   placeholder="contianer name" v-model="createParams.name"/></td>
                     </tr>
                     <tr>
                         <td>Image:</td>
                         <td>
-                            <select id="image" class="uk-form-width-medium">
+                            <select id="image" class="uk-form-width-medium" v-model="createParams.image">
                                 <option v-for="image in imageList"
                                         :value="image.id|shortDockerId(12)">{{image.repoTags[0]}}
                                 </option>
@@ -325,24 +345,28 @@
                     </tr>
                     <tr>
                         <td>Command:</td>
-                        <td><input class="uk-form-width-large" id="command" type="text" placeholder="command to run"/></td>
+                        <td><input class="uk-form-width-large" id="command" type="text"
+                                   placeholder="command to run" v-model="createParams.command"/></td>
                     </tr>
                     <tr>
                         <td>Env:</td>
-                        <td><input class="uk-form-width-large" id="env" type="text" placeholder="like: author=dockerfly"/></td>
+                        <td><input class="uk-form-width-large" id="env" type="text"
+                                   placeholder="like: author=dockerfly" v-model="createParams.env"/></td>
                     </tr>
                     <tr>
                         <td>CPU Quota:</td>
-                        <td><input id="cpuQuota" type="text" class="uk-form-width-small" placeholder="cpu core count"/></td>
+                        <td><input id="cpuQuota" type="text" class="uk-form-width-small"
+                                   placeholder="cpu core count" v-model="createParams.cpuQuota"/></td>
                     </tr>
                     <tr>
                         <td>Memory:</td>
-                        <td><input id="memory" type="text" class="uk-form-width-small" placeholder="memory size (Mb)"/></td>
+                        <td><input id="memory" type="text" class="uk-form-width-small"
+                                   placeholder="memory size (Mb)" v-model="createParams.memory"/></td>
                     </tr>
                     <tr>
                         <td>Network:</td>
                         <td>
-                            <select id="network" class="uk-form-width-medium">
+                            <select id="network" class="uk-form-width-medium" v-model="createParams.network">
                                 <option value="" selected>Nothing</option>
                                 <option v-for="network in networkList"
                                         :value="network.id|shortDockerId(12)">{{network.name}}
@@ -354,10 +378,10 @@
                         <td>Port:</td>
                         <td>
                             <input class="uk-form-width-mini" style="width: 55px"
-                                   id="hostPort" type="text" value="host"/>
+                                   id="hostPort" type="text" placeholder="host" v-model="createParams.hostPort"/>
                             &nbsp;:&nbsp;
                             <input class="uk-form-width-mini" style="width: 55px"
-                                   id="containerPort" type="text" value="guest"/>
+                                   id="containerPort" type="text" placeholder="guest" v-model="createParams.containerPort"/>
                             &nbsp;/&nbsp;
                             <select id="protocol">
                                 <option value="tcp" selected>tcp</option>
@@ -368,7 +392,7 @@
                     <tr>
                         <td>Volume:</td>
                         <td>
-                            <select id="volume" class="uk-form-width-medium">
+                            <select id="volume" class="uk-form-width-medium" v-model="createParams.volume">
                                 <option value="" selected>Nothing</option>
                                 <option v-for="volume in volumeList"
                                         :value="volume.name">{{volume.name}}
@@ -379,15 +403,16 @@
                     <tr>
                         <td>Link:</td>
                         <td>
-                            <select id="linkContainer" class="uk-form-width-medium">
+                            <select id="linkContainer" class="uk-form-width-medium" v-model="createParams.linkContainer">
                                 <option value="" selected>Nothing</option>
                                 <option v-for="container in containerList"
-                                        value="{{container.id | shortDockerId(12)}}">
+                                        :value="container.id | shortDockerId(12)">
                                     {{container.names[0]|delFirestChar|shortDockerId(18)}}
                                 </option>
                             </select>
                             :
-                            <input id="linkName" type="text" placeholder="name in contianer"/>
+                            <input id="linkName" type="text" placeholder="name in contianer"
+                                    v-model="createParams.linkName"/>
                         </td>
                     </tr>
 

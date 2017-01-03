@@ -21,7 +21,14 @@
         volumeListVue = new Vue({
             el: '#volumeApp',
             data: {
-                volumeList: null
+                volumeList: null,
+                queryParams:{
+                    name:""
+                },
+                createParams:{
+                    name:"",
+                    driver:"local"
+                }
             },
             methods: {
                 //查询方法
@@ -29,10 +36,9 @@
                     try {
                         var cmdVolumeList = new CmdVolumeList();
 
-                        nameOrId = $("#nameOrId").val();
 
-                        if (nameOrId != "") {
-                            cmdVolumeList.name(nameOrId);
+                        if (this.queryParams.name != "") {
+                            cmdVolumeList.name(this.queryParams.name);
                         }
 
                         //cmdContainerList.label("author","helyho");
@@ -65,11 +71,9 @@
                 },
                 create: function () {
                     try {
-                        var name = $("#createVolumeDialog #name").val();
-                        var driver = $("#createVolumeDialog #driver").val();
                         cmdVolumeCreate = new CmdVolumeCreate();
-                        cmdVolumeCreate.name(name);
-                        cmdVolumeCreate.driver(driver);
+                        cmdVolumeCreate.name(this.createParams.name);
+                        cmdVolumeCreate.driver(this.createParams.driver);
                         cmdVolumeCreate.send();
                         cmdVolumeCreate.close();
                         createVolumeDialog.hide();
@@ -93,7 +97,7 @@
             <div class="uk-grid">
                 <div class="uk-width-5-6 uk-form">
                     <span class="mr5">Name:</span><input class="uk-form-width-medium" id="nameOrId"
-                                                         type="text" placeholder="name or id">
+                        type="text" placeholder="name or id" v-model="queryParams.name">
 
                     <input class="uk-button uk-button-small" type="button" value="Query" @click="query()"/>
                 </div>
@@ -118,7 +122,7 @@
 
             <tbody>
             <tr v-for="(volume,index) in volumeList">
-                <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
+                <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-primary">{{volume.name}}</td>
                 <td>{{volume.scope}}</td>
                 <td>{{volume.driver}}</td>
@@ -140,12 +144,13 @@
                 <table id="volumeList" class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
                         <td>Name:</td>
-                        <td><input id="name" class="uk-form-width-medium" type="text" placeholder="volume name"/></td>
+                        <td><input id="name" class="uk-form-width-medium" type="text"
+                                   placeholder="volume name" v-model="createParams.name"/></td>
                     </tr>
                     <tr>
                         <td>Driver:</td>
                         <td>
-                            <select id="driver" class="uk-form-width-medium">
+                            <select id="driver" class="uk-form-width-medium" v-model="createParams.driver">
                                 <option value="local">local</option>
                             </select>
                         </td>

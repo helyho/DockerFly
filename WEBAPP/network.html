@@ -21,7 +21,18 @@
         networkListVue = new Vue({
             el: '#networkApp',
             data: {
-                networkList: null
+                networkList: null,
+                queryParams: {
+                    nameOrId:"",
+                    driver:"ALL"
+                },
+                createParams:{
+                    name: "",
+                    driver:"bridge",
+                    gateway:"",
+                    subnet:"",
+                    ipRange:""
+                }
             },
             methods: {
                 //查询方法
@@ -30,15 +41,12 @@
                         var cmdNetworkList = new CmdNetworkList();
                         cmdNetworkList.type("custom");
 
-                        nameOrId = $("#nameOrId").val();
-                        driver = $("#driver").val();
-
-                        if (nameOrId != "") {
-                            cmdNetworkList.name(nameOrId);
+                        if (this.queryParams.nameOrId != "") {
+                            cmdNetworkList.name(this.queryParams.nameOrId);
                         }
 
-                        if (driver != "ALL") {
-                            cmdNetworkList.driver(driver);
+                        if (this.queryParams.driver != "ALL") {
+                            cmdNetworkList.driver(this.queryParams.driver);
                         }
 
                         //cmdContainerList.label("author","helyho");
@@ -73,25 +81,21 @@
                 },
                 create: function () {
                     try {
-                        var name = $("#createNetworkDialog #name").val();
-                        var driver = $("#createNetworkDialog #driver").val();
-                        var gateway = $("#createNetworkDialog #gateway").val();
-                        var subnet = $("#createNetworkDialog #subnet").val();
-                        var ipRange = $("#createNetworkDialog #ipRange").val();
-
                         cmdNetworkCreate = new CmdNetworkCreate();
                         cmdNetworkCreate.checkDuplicate(true);
-                        cmdNetworkCreate.name(name);
-                        cmdNetworkCreate.driver(driver);
+                        cmdNetworkCreate.name(this.createParams.name);
+                        cmdNetworkCreate.driver(this.createParams.driver);
 
-                        if (gateway != "" && subnet != "" && ipRange != "") {
-                            cmdNetworkCreate.IPAMConfig(subnet, ipRange, gateway)
+                        if (this.createParams.gateway != "" && this.createParams.subnet != ""
+                            && this.createParams.ipRange != "") {
+                            cmdNetworkCreate.IPAMConfig(this.createParams.subnet,
+                                this.createParams.ipRange, this.createParams.gateway)
                         }
 
                         cmdNetworkCreate.send();
                         cmdNetworkCreate.close();
                         createNetworkDialog.hide();
-                        UIkit.modal.alert("Create volume success.");
+                        UIkit.modal.alert("Create network success.");
                         networkListVue.query();
                     } catch (e) {
                         alertError(e);
@@ -111,14 +115,14 @@
             <div class="uk-grid">
                 <div class="uk-width-5-6 uk-form">
                     <span class="mr5">Name:</span><input class="uk-form-width-medium" id="nameOrId"
-                                                         type="text" placeholder="name or id">
+                        type="text" placeholder="name or id" v-model="queryParams.nameOrId">
                     <span class="mr5">Status:</span>
-                    <select id="driver">
+                    <select id="driver" v-model="queryParams.driver">
                         <option value="ALL">All</option>
-                        <option value="bridge">created</option>
-                        <option value="overlay">restarting</option>
-                        <option value="host">running</option>
-                        <option value="null">paused</option>
+                        <option value="bridge">bridge</option>
+                        <option value="overlay">overlay</option>
+                        <option value="host">host</option>
+                        <option value="null">null</option>
                     </select>
                     <input class="uk-button uk-button-small" type="button" value="Query" @click="query()"/>
                 </div>
@@ -142,7 +146,7 @@
 
             <tbody>
             <tr v-for="(network,index) in networkList">
-                <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
+                <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-primary">{{network.name}}</td>
                 <td>{{network.driver}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-success">{{network.ipam.config.length > 0 ?
@@ -165,12 +169,13 @@
                 <table id="volumeList" class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
                         <td>Name:</td>
-                        <td><input id="name" class="uk-form-width-medium" type="text" placeholder="network name"/></td>
+                        <td><input id="name" class="uk-form-width-medium" type="text"
+                                   placeholder="network name" v-model="createParams.name"/></td>
                     </tr>
                     <tr>
                         <td>Driver:</td>
                         <td>
-                            <select id="driver" class="uk-form-width-medium">
+                            <select id="driver" class="uk-form-width-medium" v-model="createParams.driver">
                                 <option value="bridge">bridge</option>
                                 <option value="overlay">overlay</option>
                             </select>
@@ -178,15 +183,18 @@
                     </tr>
                     <tr>
                         <td>IP Range:</td>
-                        <td><input id="ipRange" class="uk-form-width-medium" type="text" placeholder="dhcp ip range"/></td>
+                        <td><input id="ipRange" class="uk-form-width-medium" type="text"
+                                   placeholder="dhcp ip range" v-model="createParams.ipRange"/></td>
                     </tr>
                     <tr>
                         <td>Subnet:</td>
-                        <td><input id="subnet" class="uk-form-width-medium" type="text" placeholder="dhcp subnet"/></td>
+                        <td><input id="subnet" class="uk-form-width-medium" type="text"
+                                   placeholder="dhcp subnet" v-model="createParams.subnet"/></td>
                     </tr>
                     <tr>
                         <td>Gateway:</td>
-                        <td><input id="gateway" class="uk-form-width-medium" type="text" placeholder="gateway in this network"/></td>
+                        <td><input id="gateway" class="uk-form-width-medium" type="text"
+                                   placeholder="gateway in this network" v-model="createParams.gateway"/></td>
                     </tr>
                     <tr>
                         <td class="uk-text-right" colspan="2">
