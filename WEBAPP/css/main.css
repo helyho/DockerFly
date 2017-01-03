@@ -33,6 +33,11 @@ th{
     margin: 0px 35px 0px 35px;
 }
 
+.summeryField {
+    font-weight: bolder;
+    border: 1px solid #ddd;
+}
+
 .created, .running {
     background-color: #ebf7fd;
     color: #2d7091;
