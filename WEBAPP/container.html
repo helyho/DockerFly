@@ -35,7 +35,7 @@
                 imageList: null,
                 queryParams:{
                     nameOrId:"",
-                    status:null
+                    status:"All"
                 },
                 createParams:{
                     cpuPeriod:100000,
@@ -61,11 +61,11 @@
                         var cmdContainerList = new CmdContainerList();
                         cmdContainerList.all(true)
 
-                        if (nameOrId != "") {
+                        if (this.queryParams.nameOrId != "") {
                             cmdContainerList.name(this.queryParams.nameOrId);
                         }
 
-                        if (status != "all") {
+                        if (this.queryParams.status != "All") {
                             cmdContainerList.status("[" + this.queryParams.status + "]");
                         }
 
@@ -170,19 +170,6 @@
                     try {
 
                         var cpuPeriod = 100000;
-                        var name = $("#createContainerDialog #name").val();
-                        var image = $("#createContainerDialog #image").val();
-                        var command = $("#createContainerDialog #command").val();
-                        var env = $("#createContainerDialog #env").val();
-                        var cpuQuota = $("#createContainerDialog #cpuQuota").val();
-                        var memory = $("#createContainerDialog #memory").val();
-                        var network = $("#createContainerDialog #network").val();
-                        var hostPort = $("#createContainerDialog #hostPort").val();
-                        var containerPort = $("#createContainerDialog #containerPort").val();
-                        var protocol = $("#createContainerDialog #protocol").val();
-                        var volume = $("#createContainerDialog #volume").val();
-                        var linkContainer = $("#createContainerDialog #linkContainer").val();
-                        var linkName = $("#createContainerDialog #linkName").val();
 
                         cmdContainerCreate = new CmdContainerCreate(this.createParams.name);
                         cmdContainerCreate.cpuPeriod(this.createParams.cpuPeriod);
@@ -196,7 +183,6 @@
                         }
 
                         if (this.createParams.env != "") {
-                            //aaa=aaa,bbb=bbb
                             cmdContainerCreate.env(this.createParams.env.split(","));
                         }
 
@@ -254,7 +240,7 @@
                            type="text" placeholder="name or id" v-model="queryParams.nameOrId">
                     <span class="mr5">Status:</span>
                     <select id="status" v-model="queryParams.status">
-                        <option value="all">all</option>
+                        <option value="All">All</option>
                         <option value="created">created</option>
                         <option value="restarting">restarting</option>
                         <option value="running">running</option>
@@ -262,11 +248,11 @@
                         <option value="exited">exited</option>
                         <option value="dead">dead</option>
                     </select>
-                    <input class="uk-button uk-button-small" type="button" value="Query" @click="query()"/>
+                    <a class="uk-button uk-button-small" @click="query()"><i class="uk-icon-search"></i></a>
                 </div>
                 <div class="uk-width-1-6 uk-text-right">
-                    <input class="uk-button uk-button-small uk-button-primary" type="button"
-                           value="Create" @click="openCreateDialog"/>
+                    <a class="uk-button uk-button-small uk-button-primary"
+                       @click="openCreateDialog"><i class="uk-icon-plus-square"></i> </a>
                 </div>
             </div>
         </div>
@@ -329,12 +315,12 @@
             <div class="uk-form">
                 <table id="volumeList" class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
-                        <td>Name:</td>
+                        <td class="dialogField">Name:</td>
                         <td><input class="uk-form-width-medium" id="name" type="text"
                                    placeholder="contianer name" v-model="createParams.name"/></td>
                     </tr>
                     <tr>
-                        <td>Image:</td>
+                        <td class="dialogField">Image:</td>
                         <td>
                             <select id="image" class="uk-form-width-medium" v-model="createParams.image">
                                 <option v-for="image in imageList"
@@ -344,27 +330,27 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Command:</td>
+                        <td class="dialogField">Command:</td>
                         <td><input class="uk-form-width-large" id="command" type="text"
                                    placeholder="command to run" v-model="createParams.command"/></td>
                     </tr>
                     <tr>
-                        <td>Env:</td>
+                        <td class="dialogField">Env:</td>
                         <td><input class="uk-form-width-large" id="env" type="text"
                                    placeholder="like: author=dockerfly" v-model="createParams.env"/></td>
                     </tr>
                     <tr>
-                        <td>CPU Quota:</td>
+                        <td class="dialogField">CPU Quota:</td>
                         <td><input id="cpuQuota" type="text" class="uk-form-width-small"
                                    placeholder="cpu core count" v-model="createParams.cpuQuota"/></td>
                     </tr>
                     <tr>
-                        <td>Memory:</td>
+                        <td class="dialogField">Memory:</td>
                         <td><input id="memory" type="text" class="uk-form-width-small"
                                    placeholder="memory size (Mb)" v-model="createParams.memory"/></td>
                     </tr>
                     <tr>
-                        <td>Network:</td>
+                        <td class="dialogField">Network:</td>
                         <td>
                             <select id="network" class="uk-form-width-medium" v-model="createParams.network">
                                 <option value="" selected>Nothing</option>
@@ -375,7 +361,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Port:</td>
+                        <td class="dialogField">Port:</td>
                         <td>
                             <input class="uk-form-width-mini" style="width: 55px"
                                    id="hostPort" type="text" placeholder="host" v-model="createParams.hostPort"/>
@@ -390,7 +376,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Volume:</td>
+                        <td class="dialogField">Volume:</td>
                         <td>
                             <select id="volume" class="uk-form-width-medium" v-model="createParams.volume">
                                 <option value="" selected>Nothing</option>
@@ -401,7 +387,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Link:</td>
+                        <td class="dialogField">Link:</td>
                         <td>
                             <select id="linkContainer" class="uk-form-width-medium" v-model="createParams.linkContainer">
                                 <option value="" selected>Nothing</option>
@@ -417,7 +403,7 @@
                     </tr>
 
                     <tr>
-                        <td class="uk-text-right" colspan="2">
+                        <td class="dialogField" colspan="2">
                             <input id="create" class="uk-button uk-button-primary" style="color:white"
                                    type="button" value="Create" @click="create()">
                         </td>

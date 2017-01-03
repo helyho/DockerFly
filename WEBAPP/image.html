@@ -118,11 +118,10 @@
                         <option value="40">40</option>
                         <option value="50">50</option>
                     </select>
-                    <input class="uk-button uk-button-small" type="button" value="search" @click="search()"/>
-
+                    <a class="uk-button uk-button-small" @click="search()"><i class="uk-icon-search"></i></a>
                 </div>
                 <div class="uk-width-1-6 uk-text-right">
-                    <input class="uk-button uk-button-small" type="button" value="Query" @click="query()"/>
+                    <a class="uk-button uk-button-primary uk-button-small" @click="query()"><i class="uk-icon-refresh"></i></a>
                 </div>
             </div>
         </div>
@@ -192,7 +191,6 @@
                         <input class="uk-button uk-button-small uk-button-primary" type="button" value="pull"
                                @click="pull(hubImage)"/>
                     </td>
-
                 </tr>
                 </tbody>
             </table>

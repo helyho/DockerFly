@@ -124,11 +124,11 @@
                         <option value="host">host</option>
                         <option value="null">null</option>
                     </select>
-                    <input class="uk-button uk-button-small" type="button" value="Query" @click="query()"/>
+                    <a class="uk-button uk-button-small" @click="query()"><i class="uk-icon-search"></i></a>
                 </div>
                 <div class="uk-width-1-6 uk-text-right">
-                    <input class="uk-button uk-button-small uk-button-primary" type="button"
-                           value="Create" @click="openCreateDialog()"/>
+                    <a class="uk-button uk-button-small uk-button-primary"
+                       @click="openCreateDialog"><i class="uk-icon-plus-square"></i> </a>
                 </div>
             </div>
         </div>
@@ -168,12 +168,12 @@
             <div class="uk-form">
                 <table id="volumeList" class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
-                        <td>Name:</td>
+                        <td class="dialogField">Name:</td>
                         <td><input id="name" class="uk-form-width-medium" type="text"
                                    placeholder="network name" v-model="createParams.name"/></td>
                     </tr>
                     <tr>
-                        <td>Driver:</td>
+                        <td class="dialogField">Driver:</td>
                         <td>
                             <select id="driver" class="uk-form-width-medium" v-model="createParams.driver">
                                 <option value="bridge">bridge</option>
@@ -182,17 +182,17 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>IP Range:</td>
+                        <td class="dialogField">IP Range:</td>
                         <td><input id="ipRange" class="uk-form-width-medium" type="text"
                                    placeholder="dhcp ip range" v-model="createParams.ipRange"/></td>
                     </tr>
                     <tr>
-                        <td>Subnet:</td>
+                        <td class="dialogField">Subnet:</td>
                         <td><input id="subnet" class="uk-form-width-medium" type="text"
                                    placeholder="dhcp subnet" v-model="createParams.subnet"/></td>
                     </tr>
                     <tr>
-                        <td>Gateway:</td>
+                        <td class="dialogField">Gateway:</td>
                         <td><input id="gateway" class="uk-form-width-medium" type="text"
                                    placeholder="gateway in this network" v-model="createParams.gateway"/></td>
                     </tr>

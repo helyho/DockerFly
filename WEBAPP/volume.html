@@ -98,12 +98,11 @@
                 <div class="uk-width-5-6 uk-form">
                     <span class="mr5">Name:</span><input class="uk-form-width-medium" id="nameOrId"
                         type="text" placeholder="name or id" v-model="queryParams.name">
-
-                    <input class="uk-button uk-button-small" type="button" value="Query" @click="query()"/>
+                    <a class="uk-button uk-button-small" @click="query()"><i class="uk-icon-search"></i></a>
                 </div>
                 <div class="uk-width-1-6 uk-text-right">
-                    <input class="uk-button uk-button-small uk-button-primary" type="button" value="Create"
-                           @click="openCreateDialog"/>
+                    <a class="uk-button uk-button-small uk-button-primary"
+                       @click="openCreateDialog"><i class="uk-icon-plus-square"></i> </a>
                 </div>
             </div>
         </div>
@@ -143,12 +142,12 @@
             <div class="uk-form">
                 <table id="volumeList" class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
-                        <td>Name:</td>
+                        <td class="dialogField">Name:</td>
                         <td><input id="name" class="uk-form-width-medium" type="text"
                                    placeholder="volume name" v-model="createParams.name"/></td>
                     </tr>
                     <tr>
-                        <td>Driver:</td>
+                        <td class="dialogField">Driver:</td>
                         <td>
                             <select id="driver" class="uk-form-width-medium" v-model="createParams.driver">
                                 <option value="local">local</option>

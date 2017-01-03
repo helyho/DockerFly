@@ -38,6 +38,12 @@ th{
     border: 1px solid #ddd;
 }
 
+.dialogField{
+    text-align: right;
+    font-weight: bolder;
+    vertical-align: middle !important;
+}
+
 .created, .running {
     background-color: #ebf7fd;
     color: #2d7091;
