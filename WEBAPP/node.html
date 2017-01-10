@@ -116,16 +116,16 @@
 <div id="nodeApp" class="uk-grid" style="height:100%">
     <div class="uk-width-6-6" style="padding-right: 32px;">
         <div class="uk-panel"></div>
-        <h3 class="uk-text-middle">Network manager</h3>
+        <h3 class="uk-text-middle">Task manager</h3>
         <div class="uk-panel uk-panel-box uk-text-bold">
             <div class="uk-grid">
                 <div class="uk-width-5-6 uk-form">
                     <span class="mr5">Id:</span>
                     <input class="uk-form-width-medium" id="id"
-                           type="text" placeholder="network id" v-model="queryParams.id">
+                           type="text" placeholder="node id" v-model="queryParams.id">
                     <span class="mr5">Name:</span><input class="uk-form-width-medium"
-                        type="text" placeholder="network name" v-model="queryParams.name">
-                    <span class="mr5">Status:</span>
+                        type="text" placeholder="node name" v-model="queryParams.name">
+                    <span class="mr5">Role:</span>
                     <select id="role" v-model="queryParams.role">
                         <option value="ALL">All</option>
                         <option value="worker">worker</option>
@@ -136,14 +136,16 @@
             </div>
         </div>
         <table id="nodeList" class="uk-table uk-overflow-container uk-panel-box">
-            <caption>Network list</caption>
+            <caption>Node list</caption>
             <thead>
             <tr>
-                <th class="uk-text-center uk-width-1-10">NO.</th>
+                <th class="uk-text-center ">NO.</th>
                 <th class="uk-width-1-10">Id</th>
-                <th class="uk-width-2-10">Name</th>
+                <th class="uk-width-1-10">Name</th>
                 <th class="uk-width-1-10">Role</th>
+                <th class="uk-width-1-10">Status</th>
                 <th class="uk-width-1-10">Availability</th>
+                <th class="uk-width-1-10">isLeader</th>
                 <th class="uk-width-2-10">Platform</th>
                 <th class="uk-text-center">Opertaion</th>
             </tr>
@@ -151,14 +153,16 @@
 
             <tbody>
             <tr v-for="(node,index) in nodeList">
-                <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
-                <td class="uk-text-bold uk-text-middle uk-text-primary">{{node.id|shortDockerId(12)}}</td>
+                <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</kktd>
+                <td class="uk-text-middle">{{node.id|shortDockerId(12)}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-primary">{{node.spec.name}}</td>
-                <td>{{node.spec.role}}</td>
+                <td class="uk-text-middle">{{node.spec.role}}</td>
+                <td class="uk-text-middle">{{node.status.state}}</td>
                 <td class="uk-text-bold uk-text-middle">
                     {{node.spec.availability}}
                 </td>
-                <td>{{node.description.hostname}} ( {{node.description.platform.os}}-{{node.description.platform.architecture}} )</td>
+                <td class="uk-text-middle">{{node.managerStatus.leader}}</td>
+                <td class="uk-text-middle">{{node.description.hostname}} ( {{node.description.platform.os}}-{{node.description.platform.architecture}} )</td>
                 <td class="uk-text-center uk-text-middle">
                     <input class="uk-button uk-button-small uk-button-primary" type="button" value="Update"
                            @click="openUpdateDialog(node)"/>
@@ -179,7 +183,7 @@
                     <tr>
                         <td class="dialogField">Name:</td>
                         <td><input id="name" class="uk-form-width-medium" type="text"
-                                   placeholder="network name" v-model="updateParams.name"/></td>
+                                   placeholder="node name" v-model="updateParams.name"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Driver:</td>

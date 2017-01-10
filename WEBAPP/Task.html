@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DockerFly</title>
+</head>
+<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+<link rel="stylesheet" href="css/uikit/uikit.css"/>
+<script src="js/common/jquery.min.js"></script>
+<script src="js/common/vue.min.js"></script>
+<script src="js/common/uikit.js"></script>
+
+<link rel="stylesheet" href="css/main.css"/>
+<script lang="javascript" src="js/utils.js"></script>
+<script lang="javascript">
+    doImport("org.voovan.docker.command.Task.CmdTaskList")
+
+    function init() {
+        taskListVue = new Vue({
+            el: '#taskApp',
+            data: {
+                taskList: null,
+                queryParams: {
+                    id:"",
+                    name:"",
+                    service:"",
+                    node:"",
+                    desiredState:"ALL"
+                }
+            },
+            methods: {
+                //查询方法
+                query: function () {
+                    try {
+                        var cmdTaskList = new CmdTaskList();
+
+                        if (this.queryParams.id != "") {
+                            cmdTaskList.id(this.queryParams.id);
+                        }
+
+                        if (this.queryParams.name != "") {
+                            cmdTaskList.name(this.queryParams.name);
+                        }
+
+                        if (this.queryParams.service != "") {
+                            cmdTaskList.service(this.queryParams.service);
+                        }
+
+                        if (this.queryParams.node != "") {
+                            cmdTaskList.node(this.queryParams.node);
+                        }
+
+                        if (this.queryParams.desiredState != "ALL") {
+                            cmdTaskList.desiredState(this.queryParams.desiredState);
+                        }
+
+                        //cmdContainerList.label("author","helyho");
+
+                        this.taskList = cmdTaskList.send().sortBy("name");
+                        cmdTaskList.close();
+                        cmdTaskList.release();
+                    } catch (e) {
+                        alertError(e)
+                    }
+                }
+            }
+        });
+        taskListVue.query()
+    }
+</script>
+<body onload="init()" class="frameBody">
+<div id="taskApp" class="uk-grid" style="height:100%">
+    <div class="uk-width-6-6" style="padding-right: 32px;">
+        <div class="uk-panel"></div>
+        <h3 class="uk-text-middle">Network manager</h3>
+        <div class="uk-panel uk-panel-box uk-text-bold">
+            <div class="uk-grid">
+                <div class="uk-width-5-6 uk-form">
+                    <fieldset data-uk-margin>
+                    <span class="mr5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Id:</span><input class="uk-form-width-medium"
+                           type="text" placeholder="task id" v-model="queryParams.id">
+                    <span class="mr5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        Name:</span><input class="uk-form-width-medium"
+                        type="text" placeholder="task name" v-model="queryParams.name">
+                    <span class="mr5">Service:</span><input class="uk-form-width-medium"
+                        type="text" placeholder="service id" v-model="queryParams.service"><br/>
+                    <span class="mr5">Node:</span><input class="uk-form-width-medium"
+                        type="text" placeholder="node id" v-model="queryParams.node">
+                    <span class="mr5">Desired state:</span><select v-model="queryParams.desiredState" class="uk-form-width-medium">
+                        <option value="ALL">All</option>
+                        <option value="running">running</option>
+                        <option value="shutdown">shutdown</option>
+                        <option value="accepted">accepted</option>
+                    </select>
+                    <a class="uk-button uk-button-small" @click="query()"><i class="uk-icon-search"></i></a>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        <table id="taskList" class="uk-table uk-overflow-container uk-panel-box">
+            <caption>Task list</caption>
+            <thead>
+            <tr>
+                <th class="uk-text-center uk-width-1-10">NO.</th>
+                <th class="uk-width-1-10">Id</th>
+                <th class="uk-width-1-10">Node</th>
+                <th class="uk-width-1-10">Service</th>
+                <th class="uk-width-1-10">Container</th>
+                <th class="uk-width-1-10">Desired state</th>
+                <th class="uk-width-1-10">Create</th>
+                <th class="uk-width-1-10">Update</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr v-for="(task,index) in taskList">
+                <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
+                <td class=" uk-text-middle ">{{task.id | shortDockerId(12)}}</td>
+                <td class=" uk-text-middle ">{{task.nodeId | shortDockerId(12)}}</td>
+                <td class=" uk-text-middle ">{{task.serviceId | shortDockerId(12)}}</td>
+                <td class=" uk-text-middle">
+                    {{task.status.containerStatus.containerId | shortDockerId(12)}}
+                </td>
+                <td class=" uk-text-middle ">{{task.desiredState}}</td>
+                <td class=" uk-text-middle uk-text-small">{{task.createdAt|strToDate}}</td>
+                <td class=" uk-text-middle uk-text-small">{{task.updatedAt|strToDate}}</td>
+
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
