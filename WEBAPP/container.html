@@ -34,7 +34,8 @@
                 volumeList: null,
                 imageList: null,
                 queryParams:{
-                    nameOrId:"",
+                    name:"",
+                    id:"",
                     status:"All"
                 },
                 createParams:{
@@ -61,8 +62,12 @@
                         var cmdContainerList = new CmdContainerList();
                         cmdContainerList.all(true)
 
-                        if (this.queryParams.nameOrId != "") {
-                            cmdContainerList.name(this.queryParams.nameOrId);
+                        if (this.queryParams.name != "") {
+                            cmdContainerList.name(this.queryParams.name);
+                        }
+
+                        if (this.queryParams.id != "") {
+                            cmdContainerList.id(this.queryParams.id);
                         }
 
                         if (this.queryParams.status != "All") {
@@ -80,18 +85,22 @@
 
                 //启动方法
                 start: function (container) {
-                    if (container.state == "paused") {
-                        cmdContainerUnPause = new CmdContainerUnPause(container.id)
-                        cmdContainerUnPause.send();
-                        cmdContainerUnPause.close();
-                        cmdContainerUnPause.release();
-                    } else {
-                        cmdContainerStart = new CmdContainerStart(container.id);
-                        cmdContainerStart.send()
-                        cmdContainerStart.close();
-                        cmdContainerStart.release()
+                    try {
+                        if (container.state == "paused") {
+                            cmdContainerUnPause = new CmdContainerUnPause(container.id)
+                            cmdContainerUnPause.send();
+                            cmdContainerUnPause.close();
+                            cmdContainerUnPause.release();
+                        } else {
+                            cmdContainerStart = new CmdContainerStart(container.id);
+                            cmdContainerStart.send()
+                            cmdContainerStart.close();
+                            cmdContainerStart.release()
+                        }
+                        this.query()
+                    } catch (e) {
+                        alertError(e)
                     }
-                    this.query()
                 },
 
                 //停止方法
@@ -109,21 +118,24 @@
 
                 //移除方法
                 remove: function (container) {
-                    name = container.names[0]
-                    id = container.id
+                    try{
+                        name = container.names[0]
+                        id = container.id
 
-                    UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + delFirestChar(name) + "</span> ?", function () {
-                        try {
-                            cmdContainerRemove = new CmdContainerRemove(id);
-                            cmdContainerRemove.send();
-                            cmdContainerRemove.close();
-                            cmdContainerRemove.release();
-                            containerListVue.query();
-                        } catch (e) {
-                            alertError(e)
-                        }
-                    });
-
+                        UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + delFirestChar(name) + "</span> ?", function () {
+                            try {
+                                cmdContainerRemove = new CmdContainerRemove(id);
+                                cmdContainerRemove.send();
+                                cmdContainerRemove.close();
+                                cmdContainerRemove.release();
+                                containerListVue.query();
+                            } catch (e) {
+                                alertError(e)
+                            }
+                        });
+                    } catch (e) {
+                        alertError(e)
+                    }
                 },
 
                 //暂停和恢复方法
@@ -139,32 +151,47 @@
                     this.query()
                 },
                 openCreateDialog: function () {
-                    containerListVue.getImageList();
-                    containerListVue.getNetworkList();
-                    containerListVue.getVolumeList();
-
+                    try{
+                        containerListVue.getImageList();
+                        containerListVue.getNetworkList();
+                        containerListVue.getVolumeList();
+                    } catch (e) {
+                        alertError(e)
+                    }
                     createContainerDialog = UIkit.modal("#createContainerDialog");
                     createContainerDialog.show();
                 },
                 getImageList: function () {
-                    var cmdImageListInfo = new CmdImageListInfo();
+                    try{
+                        var cmdImageListInfo = new CmdImageListInfo();
 
-                    containerListVue.imageList = cmdImageListInfo.send().sortBy("Created");
-                    cmdImageListInfo.close();
-                    cmdImageListInfo.release();
+                        containerListVue.imageList = cmdImageListInfo.send().sortBy("Created");
+                        cmdImageListInfo.close();
+                        cmdImageListInfo.release();
+                    } catch (e) {
+                        alertError(e)
+                    }
                 },
                 getNetworkList: function () {
-                    var cmdNetworkList = new CmdNetworkList();
-                    //cmdNetworkList.type("custom");
-                    containerListVue.networkList = cmdNetworkList.send().sortBy("name");
-                    cmdNetworkList.close();
-                    cmdNetworkList.release();
+                    try{
+                        var cmdNetworkList = new CmdNetworkList();
+                        //cmdNetworkList.type("custom");
+                        containerListVue.networkList = cmdNetworkList.send().sortBy("name");
+                        cmdNetworkList.close();
+                        cmdNetworkList.release();
+                    } catch (e) {
+                        alertError(e)
+                    }
                 },
                 getVolumeList: function () {
-                    var cmdVolumeList = new CmdVolumeList();
-                    containerListVue.volumeList = cmdVolumeList.send().sortBy("name");
-                    cmdVolumeList.close();
-                    cmdVolumeList.release();
+                    try{
+                        var cmdVolumeList = new CmdVolumeList();
+                        containerListVue.volumeList = cmdVolumeList.send().sortBy("name");
+                        cmdVolumeList.close();
+                        cmdVolumeList.release();
+                    } catch (e) {
+                        alertError(e)
+                    }
                 },
                 create: function () {
                     try {
@@ -235,9 +262,12 @@
         <div class="uk-panel uk-panel-box uk-text-bold">
             <div class="uk-grid">
                 <div class="uk-width-5-6 uk-form">
+                    <span class="mr5">Id:</span>
+                    <input class="uk-form-width-medium" id="id"
+                           type="text" placeholder="container  id" v-model="queryParams.id">
                     <span class="mr5">Name:</span>
-                    <input class="uk-form-width-medium" id="nameOrId"
-                           type="text" placeholder="name or id" v-model="queryParams.nameOrId">
+                    <input class="uk-form-width-medium" id="name"
+                           type="text" placeholder="container name" v-model="queryParams.name">
                     <span class="mr5">Status:</span>
                     <select id="status" v-model="queryParams.status">
                         <option value="All">All</option>
@@ -313,7 +343,7 @@
             <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
             <div class="uk-modal-header"><h2 class="uk-text-success">Create a new container</h2></div>
             <div class="uk-form">
-                <table id="volumeList" class="uk-table uk-overflow-container uk-panel-box">
+                <table class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
                         <td class="dialogField">Name:</td>
                         <td><input class="uk-form-width-medium" id="name" type="text"

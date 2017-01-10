@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DockerFly</title>
+</head>
+<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+<link rel="stylesheet" href="css/uikit/uikit.css"/>
+<script src="js/common/jquery.min.js"></script>
+<script src="js/common/vue.min.js"></script>
+<script src="js/common/uikit.js"></script>
+
+<link rel="stylesheet" href="css/main.css"/>
+<script lang="javascript" src="js/utils.js"></script>
+<script lang="javascript">
+    doImport("org.voovan.docker.command.Swarm.CmdSwarmInfo")
+    doImport("org.voovan.docker.command.Swarm.CmdSwarmInit")
+    doImport("org.voovan.docker.command.Swarm.CmdSwarmJoin")
+    doImport("org.voovan.docker.command.Swarm.CmdSwarmLeave")
+    function init() {
+        swarmInfoVue = new Vue({
+            el: '#dockerApp',
+            data: {
+                initParams:{
+                    advertiseAddr:null,
+                    listenAddr:null,
+                    taskHistoryRetentionLimit:null
+                },
+                joinParams:{
+                    advertiseAddr:null,
+                    listenAddr:null,
+                    remoteAddrs:null,
+                    joinToken:null
+                }
+            },
+            computed:{
+                swarmInfo: function(){
+                    try {
+                        var cmdSwarmInfo = new CmdSwarmInfo();
+                        var swarmInfo= cmdSwarmInfo.send()
+                        cmdSwarmInfo.close();
+                        cmdSwarmInfo.release();
+                        return swarmInfo;
+                    } catch (e) {
+                        console.log(e)
+                        return null;
+                    }
+                }
+            },
+            methods : {
+                openInitDialog : function () {
+                    initSwarmDialog = UIkit.modal("#initSwarmDialog");
+                    initSwarmDialog.show();
+                },
+                openJoinDialog : function () {
+                    joinSwarmDialog = UIkit.modal("#joinSwarmDialog");
+                    joinSwarmDialog.show();
+                },
+                openUpdateDialog : function () {
+                    alert("update")
+                },
+                init: function(){
+                    try {
+                        var cmdSwarmInit = new CmdSwarmInit();
+
+                        if(this.initParams.advertiseAddr!=null){
+                            cmdSwarmInit.advertiseAddr(this.initParams.advertiseAddr)
+                        }
+
+                        if(this.initParams.listenAddr!=null){
+                            cmdSwarmInit.listenAddr(this.initParams.listenAddr)
+                        }
+
+                        if(this.initParams.taskHistoryRetentionLimit!=null){
+                            cmdSwarmInit.taskHistoryRetentionLimit(this.initParams.taskHistoryRetentionLimit)
+                        }
+                        cmdSwarmInit.send();
+                        cmdSwarmInit.close();
+                        cmdSwarmInit.release();
+                        UIkit.modal("#initSwarmDialog").hide();
+                        location.reload()
+                    } catch (e) {
+                        alertError(e)
+                        return null;
+                    }
+
+                },
+                join: function(){
+                    try {
+                        var cmdSwarmJoin = new CmdSwarmJoin();
+
+                        if(this.joinParams.advertiseAddr!=null){
+                            cmdSwarmJoin.advertiseAddr(this.joinParams.advertiseAddr)
+                        }
+
+                        if(this.joinParams.listenAddr!=null){
+                            cmdSwarmJoin.listenAddr(this.joinParams.listenAddr)
+                        }
+
+                        if(this.joinParams.remoteAddrs!=null){
+                            cmdSwarmJoin.remoteAddrs(this.joinParams.remoteAddrs.split(";"))
+                        }
+
+                        if(this.joinParams.joinToken!=null){
+                            cmdSwarmJoin.joinToken(this.joinParams.joinToken)
+                        }
+                        cmdSwarmJoin.send();
+                        cmdSwarmJoin.close();
+                        cmdSwarmJoin.release();
+                        UIkit.modal("#joinSwarmDialog").hide();
+                        location.reload()
+                    } catch (e) {
+                        UIkit.modal("#joinSwarmDialog").hide();
+                        alertError(e)
+                        return null;
+                    }
+
+                },
+                leave:function(){
+                    UIkit.modal.confirm("Are you sure to leava this swarm ? ", function(){
+                        try{
+                            var cmdSwarmLeave = new CmdSwarmLeave();
+                            cmdSwarmLeave.force(true);
+                            cmdSwarmLeave.send()
+                            cmdSwarmLeave.close();
+                            cmdSwarmLeave.release();
+                            UIkit.modal.alert("Swarm leave operation finished");
+                            location.reload()
+                        } catch (e) {
+                            UIkit.modal.alert("Swarm leave operation finished");
+                            alertError(e)
+                            return null;
+                        }
+                    })
+
+                }
+
+            }
+        });
+
+    }
+</script>
+<body onload="init()" class="frameBody">
+<div id="dockerApp" class="uk-grid" style="height:100%">
+    <div class="uk-width-6-6" style="padding-right: 32px;">
+        <div style="margin-top:25px" v-if="swarmInfo!=null">
+            <h3 class="uk-text-middle">Host info</h3>
+            <table id="networkList" class="uk-table uk-overflow-container uk-panel-box">
+                <tbody>
+                <tr>
+                    <td class="uk-width-1-10 uk-text-right summeryField">ID:</td>
+                    <td class="uk-width-1-4">{{swarmInfo.id}}</td>
+                    <td class="uk-width-1-10 uk-text-right summeryField">Name:</td>
+                    <td class="uk-width-1-4">{{swarmInfo.spec.name}}</td>
+
+                </tr>
+                <tr>
+                    <td class="uk-width-1-10 uk-text-right summeryField">version:</td>
+                    <td class="uk-width-1-4 ">
+                        {{swarmInfo.version.index}}
+                    </td>
+                    <td class="uk-width-1-10 uk-text-right summeryField">Task history:</td>
+                    <td class="uk-width-1-4 ">
+                        {{swarmInfo.spec.orchestration.taskHistoryRetentionLimit}}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="uk-width-1-10 uk-text-right summeryField">Created:</td>
+                    <td class="uk-width-1-4">{{swarmInfo.createdAt|strToDate}}</td>
+                    <td class="uk-width-1-10 uk-text-right summeryField">Updated:</td>
+                    <td class="uk-width-1-4 ">
+                        {{swarmInfo.updatedAt|strToDate}}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <h3 class="uk-text-middle">JoinTokens</h3>
+            <table id="networkList" class="uk-table uk-overflow-container uk-panel-box">
+                <tbody>
+                <tr>
+                    <td class="uk-width-1-10 uk-text-right summeryField" >Manager:</td>
+                    <td class="uk-width-9-10 uk-text-primary" colspan="3">{{swarmInfo.joinTokens.manager}}</td>
+                </tr>
+                <tr>
+                    <td class="uk-width-1-10 uk-text-right summeryField">Worker:</td>
+                    <td class="uk-width-9-10 uk-text-danger" colspan="3">{{swarmInfo.joinTokens.worker}}</td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <div class="uk-panel uk-panel-box uk-text-bold">
+            <div class="uk-form uk-text-right">
+                <a class="uk-button  uk-button-primary" @click="openInitDialog">Init</a>
+                <a class="uk-button  uk-button-success" @click="openJoinDialog">Join</a>
+                <a class="uk-button  uk-button-danger" @click="leave">Leave</a>
+            </div>
+        </div>
+    </div>
+    <div id="initSwarmDialog" class="uk-modal">
+        <div class="uk-modal-dialog uk-modal-dialog-large uk-overflow-container">
+            <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
+            <div class="uk-modal-header"><h2 class="uk-text-success">Init swarm</h2></div>
+            <div class="uk-form">
+                <table class="uk-table uk-overflow-container uk-panel-box">
+                    <tr>
+                        <td class="dialogField">Task history:</td>
+                        <td><input class="uk-form-width-medium" id="name" type="text"
+                                   placeholder="Task history limit" v-model="initParams.taskHistoryRetentionLimit"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Advertise Addr:</td>
+                        <td><input class="uk-form-width-medium" id="name" type="text"
+                                   placeholder="Advertise address" v-model="initParams.advertiseAddr"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Listen Addr:</td>
+                        <td><input class="uk-form-width-medium" id="name" type="text"
+                                   placeholder="Listen address" v-model="initParams.listenAddr"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField" colspan="2">
+                            <input id="create" class="uk-button uk-button-primary" style="color:white"
+                                   type="button" value="Init" @click="init()">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="joinSwarmDialog" class="uk-modal">
+        <div class="uk-modal-dialog uk-modal-dialog-large uk-overflow-container">
+            <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
+            <div class="uk-modal-header"><h2 class="uk-text-success">Join swarm</h2></div>
+            <div class="uk-form">
+                <table class="uk-table uk-overflow-container uk-panel-box">
+                    <tr>
+                        <td class="dialogField">JoinToken</td>
+                        <td><textarea class="uk-form-width-large" id="name" type="text"
+                                      placeholder="Join token" v-model="joinParams.joinToken"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Remote Addr:</td>
+                        <td><input class="uk-form-width-large" id="name" type="text"
+                                      placeholder="Remote address" v-model="joinParams.remoteAddrs"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Advertise Addr:</td>
+                        <td><input class="uk-form-width-medium" id="name" type="text"
+                                   placeholder="Advertise address" v-model="joinParams.advertiseAddr"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Listen Addr:</td>
+                        <td><input class="uk-form-width-medium" id="name" type="text"
+                                   placeholder="Listen address" v-model="joinParams.listenAddr"/></td>
+                    </tr>
+
+                    <tr>
+                        <td class="dialogField" colspan="2">
+                            <input id="create" class="uk-button uk-button-primary" style="color:white"
+                                   type="button" value="Join" @click="join()">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+</div>
+
+</body>
+</html>

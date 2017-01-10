@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DockerFly</title>
+</head>
+<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+<link rel="stylesheet" href="css/uikit/uikit.css"/>
+<script src="js/common/jquery.min.js"></script>
+<script src="js/common/vue.min.js"></script>
+<script src="js/common/uikit.js"></script>
+
+<link rel="stylesheet" href="css/main.css"/>
+<script lang="javascript" src="js/utils.js"></script>
+<script lang="javascript">
+    doImport("org.voovan.docker.command.Info.CmdDockerInfo ")
+
+    function init() {
+        dockerInfoVue = new Vue({
+            el: '#dockerApp',
+            data: {},
+            computed: {
+                dockerInfo: function () {
+                    try {
+                        var cmdDockerInfo = new CmdDockerInfo();
+                        var dockerInfo = cmdDockerInfo.send()
+                        cmdDockerInfo.close();
+                        cmdDockerInfo.release();
+                        return dockerInfo;
+                    } catch (e) {
+                        alertError(e)
+                    }
+                }
+            }
+        });
+    }
+</script>
+<body onload="init()" class="frameBody">
+<div id="dockerApp" class="uk-grid" style="height:100%">
+    <div class="uk-width-6-6" style="padding-right: 32px;">
+        <div class="uk-panel"></div>
+        <h3 class="uk-text-middle">Host info</h3>
+        <table id="networkList" class="uk-table uk-overflow-container uk-panel-box">
+            <tbody>
+            <tr>
+                <td class="uk-width-1-10 uk-text-right summeryField">ID:</td>
+                <td class="uk-width-1-4">{{dockerInfo.id}}</td>
+                <td class="uk-width-1-10 uk-text-right summeryField">System info:</td>
+                <td class="uk-width-1-4 ">
+                    {{dockerInfo.osType}}({{dockerInfo.architecture}})_{{dockerInfo.operatingSystem}}({{dockerInfo.kernelVersion}})
+                </td>
+            </tr>
+            <tr>
+                <td class="uk-width-1-10 uk-text-right summeryField">Cpu count:</td>
+                <td class="uk-width-1-4">{{dockerInfo.nCPU}}</td>
+                <td class="uk-width-1-10 uk-text-right summeryField">Memory:</td>
+                <td class="uk-width-1-4 ">{{(dockerInfo.memTotal/1024/1024).toFixed(2)}}Mb</td>
+            </tr>
+            </tbody>
+        </table>
+        <h3 class="uk-text-middle">Docker info</h3>
+        <table id="networkList" class="uk-table uk-overflow-container uk-panel-box">
+            <tbody>
+            <tr>
+                <td class="uk-width-1-10 uk-text-right summeryField">Container:</td>
+                <td class="uk-width-1-4"><span class="uk-text-bold">Total: {{dockerInfo.containers}}</span> /
+                    <span class="uk-text-primary uk-text-bold">Running: {{dockerInfo.containersRunning}}</span> /
+                    <span class="uk-text-success uk-text-bold">Paused: {{dockerInfo.containersPaused}} /
+                    <span class="uk-text-danger uk-text-bold"> Stoped: {{dockerInfo.containersStopped}}
+                </td>
+                <td class="uk-width-1-10 uk-text-right summeryField">Images:</td>
+                <td class="uk-width-1-4 ">{{dockerInfo.images}}</td>
+            </tr>
+            <tr>
+                <td class="uk-width-1-10 uk-text-right summeryField">Docker home:</td>
+                <td class="uk-width-1-4">{{dockerInfo.dockerRootDir}}</td>
+                <td class="uk-width-1-10 uk-text-right summeryField">Docker version:</td>
+                <td class="uk-width-1-4">{{dockerInfo.serverVersion}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <h3 class="uk-text-middle">Cluster info</h3>
+        <table id="networkList" class="uk-table uk-overflow-container uk-panel-box">
+            <tbody>
+            <tr>
+                <td class="uk-width-1-10 uk-text-right summeryField">Node id:</td>
+                <td class="uk-width-1-4">{{dockerInfo.swarm.nodeId}}</td>
+                <td class="uk-width-1-10 uk-text-right summeryField">Node addr:</td>
+                <td class="uk-width-1-4">{{dockerInfo.swarm.nodeAddr}}</td>
+            </tr>
+            <tr v-for="(remoteManager,index) in dockerInfo.swarm.remoteManagers">
+                <td class="uk-width-1-10 uk-text-right summeryField">Manager id:</td>
+                <td class="uk-width-1-4">{{remoteManager.NodeID}}</td>
+                <td class="uk-width-1-10 uk-text-right summeryField">Manager addr:</td>
+                <td class="uk-width-1-4">{{remoteManager.Addr}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

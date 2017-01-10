@@ -30,7 +30,6 @@ function alertError(e){
     }
 }
 
-
 //Vue 的自定义过滤器
 function delFirestChar(value){
     return value.substr(1,value.length)
@@ -49,9 +48,16 @@ function shortDockerId(value,length){
     return value;
 }
 
+function strToDate(value){
+    value = value.replace("T"," ");
+    value = value.substr(0,value.indexOf("."));
+    return value
+}
+
 Vue.filter('delFirestChar',delFirestChar);
 
 Vue.filter('shortDockerId',shortDockerId);
+Vue.filter('strToDate',strToDate);
 
 //扩展字符串的方法
 String.prototype.endWith=function(s){

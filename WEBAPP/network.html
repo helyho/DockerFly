@@ -23,7 +23,8 @@
             data: {
                 networkList: null,
                 queryParams: {
-                    nameOrId:"",
+                    name:"",
+                    id:"",
                     driver:"ALL"
                 },
                 createParams:{
@@ -41,8 +42,12 @@
                         var cmdNetworkList = new CmdNetworkList();
                         cmdNetworkList.type("custom");
 
-                        if (this.queryParams.nameOrId != "") {
-                            cmdNetworkList.name(this.queryParams.nameOrId);
+                        if (this.queryParams.name != "") {
+                            cmdNetworkList.name(this.queryParams.name);
+                        }
+
+                        if (this.queryParams.id != "") {
+                            cmdNetworkList.id(this.queryParams.id);
                         }
 
                         if (this.queryParams.driver != "ALL") {
@@ -114,8 +119,11 @@
         <div class="uk-panel uk-panel-box uk-text-bold">
             <div class="uk-grid">
                 <div class="uk-width-5-6 uk-form">
-                    <span class="mr5">Name:</span><input class="uk-form-width-medium" id="nameOrId"
-                        type="text" placeholder="name or id" v-model="queryParams.nameOrId">
+                    <span class="mr5">Id:</span>
+                    <input class="uk-form-width-medium" id="id"
+                           type="text" placeholder="network id" v-model="queryParams.id">
+                    <span class="mr5">Name:</span><input class="uk-form-width-medium"
+                        type="text" placeholder="network name" v-model="queryParams.name">
                     <span class="mr5">Status:</span>
                     <select id="driver" v-model="queryParams.driver">
                         <option value="ALL">All</option>
@@ -166,7 +174,7 @@
             <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
             <div class="uk-modal-header"><h2 class="uk-text-success">Create a new network</h2></div>
             <div class="uk-form">
-                <table id="volumeList" class="uk-table uk-overflow-container uk-panel-box">
+                <table class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
                         <td class="dialogField">Name:</td>
                         <td><input id="name" class="uk-form-width-medium" type="text"
