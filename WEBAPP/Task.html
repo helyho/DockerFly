@@ -115,13 +115,13 @@
             <tbody>
             <tr v-for="(task,index) in taskList">
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
-                <td class=" uk-text-middle ">{{task.id | shortDockerId(12)}}</td>
-                <td class=" uk-text-middle ">{{task.nodeId | shortDockerId(12)}}</td>
-                <td class=" uk-text-middle ">{{task.serviceId | shortDockerId(12)}}</td>
-                <td class=" uk-text-middle">
+                <td class=" uk-text-middle uk-text-bold uk-text-primary">{{task.id | shortDockerId(12)}}</td>
+                <td class=" uk-text-middle uk-text-bold uk-text-success">{{task.nodeId | shortDockerId(12)}}</td>
+                <td class=" uk-text-middle uk-text-bold uk-text-warning">{{task.serviceId | shortDockerId(12)}}</td>
+                <td class=" uk-text-middle uk-text-bold uk-text-danger">
                     {{task.status.containerStatus.containerId | shortDockerId(12)}}
                 </td>
-                <td class=" uk-text-middle ">{{task.desiredState}}</td>
+                <td class=" uk-text-middle uk-text-bold">{{task.desiredState}}</td>
                 <td class=" uk-text-middle uk-text-small">{{task.createdAt|strToDate}}</td>
                 <td class=" uk-text-middle uk-text-small">{{task.updatedAt|strToDate}}</td>
 

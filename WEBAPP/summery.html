@@ -44,7 +44,7 @@
             <tbody>
             <tr>
                 <td class="uk-width-1-10 uk-text-right summeryField">ID:</td>
-                <td class="uk-width-1-4">{{dockerInfo.id}}</td>
+                <td class="uk-width-1-4 uk-text-bold uk-text-primary">{{dockerInfo.id}}</td>
                 <td class="uk-width-1-10 uk-text-right summeryField">System info:</td>
                 <td class="uk-width-1-4 ">
                     {{dockerInfo.osType}}({{dockerInfo.architecture}})_{{dockerInfo.operatingSystem}}({{dockerInfo.kernelVersion}})
@@ -90,9 +90,9 @@
             </tr>
             <tr v-for="(remoteManager,index) in dockerInfo.swarm.remoteManagers">
                 <td class="uk-width-1-10 uk-text-right summeryField">Manager id:</td>
-                <td class="uk-width-1-4">{{remoteManager.NodeID}}</td>
+                <td class="uk-width-1-4">{{remoteManager.nodeID}}</td>
                 <td class="uk-width-1-10 uk-text-right summeryField">Manager addr:</td>
-                <td class="uk-width-1-4">{{remoteManager.Addr}}</td>
+                <td class="uk-width-1-4">{{remoteManager.addr}}</td>
             </tr>
             </tbody>
         </table>

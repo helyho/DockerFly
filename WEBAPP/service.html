@@ -13,89 +13,386 @@
 <link rel="stylesheet" href="css/main.css"/>
 <script lang="javascript" src="js/utils.js"></script>
 <script lang="javascript">
-    doImport("org.voovan.docker.command.Info.CmdDockerInfo ")
+    doImport("org.voovan.docker.command.Service.CmdServiceCreate")
+    doImport("org.voovan.docker.command.Service.CmdServiceList")
+    doImport("org.voovan.docker.command.Service.CmdServiceRemove")
+    doImport("org.voovan.docker.command.Service.CmdServiceUpdate")
+
+    doImport("org.voovan.docker.command.Image.CmdImageListInfo")
+    doImport("org.voovan.docker.command.Network.CmdNetworkList")
+    doImport("org.voovan.docker.command.Volume.CmdVolumeList")
 
     function init() {
-        dockerInfoVue = new Vue({
-            el: '#dockerApp',
-            data: {},
-            computed: {
-                dockerInfo: function () {
+        serviceListVue = new Vue({
+            el: '#ServiceApp',
+            data: {
+                serviceList: null,
+                networkList: null,
+                volumeList: null,
+                imageList: null,
+                queryParams:{
+                    name:"",
+                    id:"",
+                    status:"All"
+                },
+                createParams:{
+                    cpuPeriod:100000,
+                    name:"",
+                    image:"",
+                    command:"",
+                    env:"",
+                    cpuLimit:1,
+                    memoryLimit:64,
+                    cpuReservation:0,
+                    memoryReservation:0,
+                    network:"",
+                    targetPort:"",
+                    publishPort:"",
+                    protocol:"tcp",
+                    mount:"",
+                    replicate:1
+                }
+            },
+            methods: {
+                //查询方法
+                query: function () {
                     try {
-                        var cmdDockerInfo = new CmdDockerInfo();
-                        var dockerInfo = cmdDockerInfo.send()
-                        cmdDockerInfo.close();
-                        cmdDockerInfo.release();
-                        return dockerInfo;
+                        var cmdServiceList = new CmdServiceList();
+
+                        if (this.queryParams.id != "") {
+                            cmdServiceList.id(this.queryParams.id);
+                        }
+
+                        if (this.queryParams.name != "") {
+                            cmdServiceList.name(this.queryParams.name);
+                        }
+
+                        //cmdServiceList.label("author","helyho");
+                        this.serviceList = cmdServiceList.send().sortBy("id", true);
+                        cmdServiceList.close();
+                        cmdServiceList.release();
                     } catch (e) {
                         alertError(e)
+                    }
+                },
+
+                //移除方法
+                remove: function (service) {
+                    try{
+                        name = service.spec.name;
+                        id = service.id
+
+                        UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + name + "</span> ?", function () {
+                            try {
+                                cmdServiceRemove = new CmdServiceRemove(id);
+                                cmdServiceRemove.send();
+                                cmdServiceRemove.close();
+                                cmdServiceRemove.release();
+                                serviceListVue.query();
+                            } catch (e) {
+                                alertError(e)
+                            }
+                        });
+                    } catch (e) {
+                        alertError(e)
+                    }
+                },
+
+                scale: function(service){
+
+                    UIkit.modal.prompt("Replicas:", service.spec.mode.replicated.replicas, function(newvalue){
+                        try {
+                            cmdServiceUpdate = new CmdServiceUpdate(service);
+                            cmdServiceUpdate.replicate(newvalue)
+                            cmdServiceUpdate.send();
+                            cmdServiceUpdate.close();
+                            cmdServiceUpdate.release();
+                            serviceListVue.query();
+                        } catch (e) {
+                            alertError(e)
+                        }
+                    });
+                },
+
+                openCreateDialog: function () {
+                    try{
+                        serviceListVue.getImageList();
+                        serviceListVue.getNetworkList();
+                        serviceListVue.getVolumeList();
+                    } catch (e) {
+                        alertError(e)
+                    }
+                    createServiceDialog = UIkit.modal("#createServiceDialog");
+                    createServiceDialog.show();
+                },
+                getImageList: function () {
+                    try{
+                        var cmdImageListInfo = new CmdImageListInfo();
+
+                        serviceListVue.imageList = cmdImageListInfo.send().sortBy("Created");
+                        cmdImageListInfo.close();
+                        cmdImageListInfo.release();
+                    } catch (e) {
+                        alertError(e)
+                    }
+                },
+                getNetworkList: function () {
+                    try{
+                        var cmdNetworkList = new CmdNetworkList();
+                        cmdNetworkList.driver("overlay");
+                        //cmdNetworkList.type("custom");
+                        serviceListVue.networkList = cmdNetworkList.send().sortBy("name");
+                        cmdNetworkList.close();
+                        cmdNetworkList.release();
+                    } catch (e) {
+                        alertError(e)
+                    }
+                },
+                getVolumeList: function () {
+                    try{
+                        var cmdVolumeList = new CmdVolumeList();
+                        serviceListVue.volumeList = cmdVolumeList.send().sortBy("name");
+                        cmdVolumeList.close();
+                        cmdVolumeList.release();
+                    } catch (e) {
+                        alertError(e)
+                    }
+                },
+                create: function () {
+                    try {
+
+                        var cpuPeriod = 100000;
+
+                        cmdServiceCreate = new CmdServiceCreate();
+
+                        if(this.createParams.name!=""){
+                            cmdServiceCreate.name(this.createParams.name);
+                        }
+
+                        if (this.createParams.image != "") {
+                            cmdServiceCreate.image(this.createParams.image);
+                        }
+
+                        if (this.createParams.command != "") {
+                            cmdServiceCreate.cmd(this.createParams.command.split(" "));
+                        }
+
+                        if (this.createParams.env != "") {
+                            cmdServiceCreate.env(this.createParams.env.split(","));
+                        }
+
+                        if (this.createParams.cpuLimit != "") {
+                            cmdServiceCreate.cpuLimit(this.createParams.cpuLimit * 1000000000);
+                        }
+
+                        if (this.createParams.memoryLimit != "") {
+                            cmdServiceCreate.memoryLimit(this.createParams.memoryLimit*1024*1024);
+                        }
+
+                        if (this.createParams.cpuReservation != "") {
+                            cmdServiceCreate.cpuReservation(this.createParams.cpuReservation * 100000);
+                        }
+
+                        if (this.createParams.memoryReservation != "") {
+                            cmdServiceCreate.memoryReservation(this.createParams.memoryReservation*1024*1024);
+                        }
+
+                        if (this.createParams.network != "") {
+                            cmdServiceCreate.network(this.createParams.network);
+                        }
+
+                        if (this.createParams.publishPort != "" && this.createParams.targetPort != null) {
+                            cmdServiceCreate.port(this.createParams.protocol, this.createParams.targetPort, this.createParams.publishPort);
+                        }
+                        if (this.createParams.mount != "") {
+                            cmdServiceCreate.mount(this.createParams.mount, "/"+this.createParams.mount, false, "volume");
+                        }
+
+                        if (this.createParams.replicate != "") {
+                            cmdServiceCreate.replicate(this.createParams.replicate);
+                        }
+
+                        cmdServiceCreate.send();
+                        cmdServiceCreate.close();
+                        createServiceDialog.hide();
+                        UIkit.modal.alert("Create service success.");
+                        serviceListVue.query();
+                    } catch (e) {
+                        alertError(e);
                     }
                 }
             }
         });
+        serviceListVue.query()
     }
 </script>
 <body onload="init()" class="frameBody">
-<div id="dockerApp" class="uk-grid" style="height:100%">
+<div id="ServiceApp" class="uk-grid" style="height:100%">
     <div class="uk-width-6-6" style="padding-right: 32px;">
         <div class="uk-panel"></div>
-        <h3 class="uk-text-middle">Host info</h3>
-        <table id="networkList" class="uk-table uk-overflow-container uk-panel-box">
-            <tbody>
+        <h3 class="uk-text-middle">Service manager</h3>
+        <div class="uk-panel uk-panel-box uk-text-bold">
+            <div class="uk-grid">
+                <div class="uk-width-5-6 uk-form">
+                    <span class="mr5">Id:</span>
+                    <input class="uk-form-width-medium"
+                           type="text" placeholder="service  id" v-model="queryParams.id">
+                    <span class="mr5">Name:</span>
+                    <input class="uk-form-width-medium"
+                           type="text" placeholder="service name" v-model="queryParams.name">
+                    <a class="uk-button uk-button-small" @click="query()"><i class="uk-icon-search"></i></a>
+                </div>
+                <div class="uk-width-1-6 uk-text-right">
+                    <a class="uk-button uk-button-small uk-button-primary"
+                       @click="openCreateDialog"><i class="uk-icon-plus-square"></i> </a>
+                </div>
+            </div>
+        </div>
+        <table id="serviceList" class="uk-table uk-overflow-service uk-panel-box">
+            <caption>Service list</caption>
+            <thead>
             <tr>
-                <td class="uk-width-1-10 uk-text-right summeryField">ID:</td>
-                <td class="uk-width-1-4">{{dockerInfo.id}}</td>
-                <td class="uk-width-1-10 uk-text-right summeryField">System info:</td>
-                <td class="uk-width-1-4 ">
-                    {{dockerInfo.osType}}({{dockerInfo.architecture}})_{{dockerInfo.operatingSystem}}({{dockerInfo.kernelVersion}})
+                <th class="uk-text-center">NO.</th>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Image</th>
+                <th>IP</th>
+                <th>Replicas</th>
+                <th>created</th>
+                <th>updatedAt</th>
+                <th class="uk-text-center">Operation</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr v-for="(service,index) in serviceList">
+                <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
+                <td class="uk-text-bold uk-text-middle uk-text-primary">
+                    {{service.id|shortDockerId(12)}}
+                </td>
+                <td class="uk-text-bold uk-text-middle uk-text-danger">
+                    {{service.spec.name}}
+                </td>
+                <td class="uk-text-bold uk-text-middle uk-text-warning">
+                    {{service.spec.taskTemplate.containerSpec.image}}
+                </td>
+                <td class="uk-text-middle">
+                    <div v-for="virtualIP in service.endpoint.virtualIPs">
+                        <code>{{virtualIP.addr}}</code>
+                    </div>
+                </td>
+                <td class="uk-text-middle uk-text-success">{{service.spec.mode.replicated.replicas}}</td>
+                <td class="uk-text-middle">
+                   {{service.createdAt|strToDate}}
+                </td>
+                <td class="uk-text-middle">
+                    {{service.updatedAt|strToDate}}
+                </td>
+                <td class="uk-text-center uk-text-middle">
+                    <div class="uk-button-group">
+                        <input class="uk-button uk-button-small uk-button-primary" type="button" value="Scale"
+                               @click="scale(service)"/>
+                        <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
+                               @click="remove(service)"/>
+                    </div>
                 </td>
             </tr>
-            <tr>
-                <td class="uk-width-1-10 uk-text-right summeryField">Cpu count:</td>
-                <td class="uk-width-1-4">{{dockerInfo.nCPU}}</td>
-                <td class="uk-width-1-10 uk-text-right summeryField">Memory:</td>
-                <td class="uk-width-1-4 ">{{(dockerInfo.memTotal/1024/1024).toFixed(2)}}Mb</td>
-            </tr>
             </tbody>
         </table>
-        <h3 class="uk-text-middle">Docker info</h3>
-        <table id="networkList" class="uk-table uk-overflow-container uk-panel-box">
-            <tbody>
-            <tr>
-                <td class="uk-width-1-10 uk-text-right summeryField">Container:</td>
-                <td class="uk-width-1-4"><span class="uk-text-bold">Total: {{dockerInfo.containers}}</span> /
-                    <span class="uk-text-primary uk-text-bold">Running: {{dockerInfo.containersRunning}}</span> /
-                    <span class="uk-text-success uk-text-bold">Paused: {{dockerInfo.containersPaused}} /
-                    <span class="uk-text-danger uk-text-bold"> Stoped: {{dockerInfo.containersStopped}}
-                </td>
-                <td class="uk-width-1-10 uk-text-right summeryField">Images:</td>
-                <td class="uk-width-1-4 ">{{dockerInfo.images}}</td>
-            </tr>
-            <tr>
-                <td class="uk-width-1-10 uk-text-right summeryField">Docker home:</td>
-                <td class="uk-width-1-4">{{dockerInfo.dockerRootDir}}</td>
-                <td class="uk-width-1-10 uk-text-right summeryField">Docker version:</td>
-                <td class="uk-width-1-4">{{dockerInfo.serverVersion}}</td>
-            </tr>
-            </tbody>
-        </table>
-        <h3 class="uk-text-middle">Cluster info</h3>
-        <table id="networkList" class="uk-table uk-overflow-container uk-panel-box">
-            <tbody>
-            <tr>
-                <td class="uk-width-1-10 uk-text-right summeryField">Node id:</td>
-                <td class="uk-width-1-4">{{dockerInfo.swarm.nodeId}}</td>
-                <td class="uk-width-1-10 uk-text-right summeryField">Node addr:</td>
-                <td class="uk-width-1-4">{{dockerInfo.swarm.nodeAddr}}</td>
-            </tr>
-            <tr v-for="(remoteManager,index) in dockerInfo.swarm.remoteManagers">
-                <td class="uk-width-1-10 uk-text-right summeryField">Manager id:</td>
-                <td class="uk-width-1-4">{{remoteManager.NodeID}}</td>
-                <td class="uk-width-1-10 uk-text-right summeryField">Manager addr:</td>
-                <td class="uk-width-1-4">{{remoteManager.Addr}}</td>
-            </tr>
-            </tbody>
-        </table>
+    </div>
+    <div id="createServiceDialog" class="uk-modal">
+        <div class="uk-modal-dialog uk-modal-dialog-large uk-overflow-service">
+            <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
+            <div class="uk-modal-header"><h2 class="uk-text-success">Create a new service</h2></div>
+            <div class="uk-form">
+                <table class="uk-table uk-overflow-service uk-panel-box">
+                    <tr>
+                        <td class="dialogField">Name:</td>
+                        <td><input class="uk-form-width-medium" id="name" type="text"
+                                   placeholder="contianer name" v-model="createParams.name"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Image:</td>
+                        <td>
+                            <select id="image" class="uk-form-width-medium" v-model="createParams.image">
+                                <option v-for="image in imageList"
+                                        :value="image.repoTags[0]"
+                                v-if="image.repoTags.length!=0">{{image.repoTags[0]}}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Replicate:</td>
+                        <td><input class="uk-form-width-mini uk-text-center" id="command" type="text"
+                                   placeholder="replicate count" v-model="createParams.replicate"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Command:</td>
+                        <td><input class="uk-form-width-large" id="command" type="text"
+                                   placeholder="command to run" v-model="createParams.command"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Env:</td>
+                        <td><input class="uk-form-width-large" id="env" type="text"
+                                   placeholder="like: author=dockerfly" v-model="createParams.env"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">CPU:</td>
+                        <td><input id="cpuQuota" type="text" class="uk-form-width-small uk-text-center"
+                                   placeholder="cpu core count" v-model="createParams.cpuLimit"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Memory:</td>
+                        <td><input id="memory" type="text" class="uk-form-width-small uk-text-center"
+                                   placeholder="memory size (Mb)" v-model="createParams.memoryLimit"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Network:</td>
+                        <td>
+                            <select id="network" class="uk-form-width-medium" v-model="createParams.network">
+                                <option value="">Nothing</option>
+                                <option v-for="network in networkList"
+                                        :value="network.id">{{network.name}}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Port:</td>
+                        <td>
+                            <input class="uk-form-width-mini uk-text-center" style="width: 55px"
+                                   id="hostPort" type="text" placeholder="host" v-model="createParams.publishPort"/>
+                            &nbsp;:&nbsp;
+                            <input class="uk-form-width-mini uk-text-center" style="width: 55px"
+                                   id="servicePort" type="text" placeholder="guest" v-model="createParams.targetPort"/>
+                            &nbsp;/&nbsp;
+                            <select id="protocol" v-model="createParams.protocol">
+                                <option value="tcp">tcp</option>
+                                <option value="udp">udp</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Volume:</td>
+                        <td>
+                            <select id="volume" class="uk-form-width-medium" v-model="createParams.mount">
+                                <option value="">Nothing</option>
+                                <option v-for="volume in volumeList"
+                                        :value="volume.name">{{volume.name}}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField" colspan="2">
+                            <input id="create" class="uk-button uk-button-primary" style="color:white"
+                                   type="button" value="Create" @click="create()">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 

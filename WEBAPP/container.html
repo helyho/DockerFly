@@ -309,7 +309,7 @@
                 <td class="uk-text-middle">{{container.image | shortDockerId(12)}}</td>
                 <td class="uk-text-middle">
                     <div v-for="port in container.ports">
-                        <code>{{port.Type}}/{{port.PrivatePort}}:{{port.PublicPort}}</code>
+                        <code>{{port.type}}/{{port.privatePort}}:{{port.publicPort}}</code>
                     </div>
                 </td>
                 <td class="uk-text-middle">
@@ -371,20 +371,20 @@
                                    placeholder="like: author=dockerfly" v-model="createParams.env"/></td>
                     </tr>
                     <tr>
-                        <td class="dialogField">CPU Quota:</td>
-                        <td><input id="cpuQuota" type="text" class="uk-form-width-small"
+                        <td class="dialogField">CPU:</td>
+                        <td><input id="cpuQuota" type="text" class="uk-form-width-small uk-text-center"
                                    placeholder="cpu core count" v-model="createParams.cpuQuota"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Memory:</td>
-                        <td><input id="memory" type="text" class="uk-form-width-small"
+                        <td><input id="memory" type="text" class="uk-form-width-small uk-text-center"
                                    placeholder="memory size (Mb)" v-model="createParams.memory"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Network:</td>
                         <td>
                             <select id="network" class="uk-form-width-medium" v-model="createParams.network">
-                                <option value="" selected>Nothing</option>
+                                <option value="">Nothing</option>
                                 <option v-for="network in networkList"
                                         :value="network.id|shortDockerId(12)">{{network.name}}
                                 </option>
@@ -394,14 +394,14 @@
                     <tr>
                         <td class="dialogField">Port:</td>
                         <td>
-                            <input class="uk-form-width-mini" style="width: 55px"
+                            <input class="uk-form-width-mini uk-text-center" style="width: 55px"
                                    id="hostPort" type="text" placeholder="host" v-model="createParams.hostPort"/>
                             &nbsp;:&nbsp;
-                            <input class="uk-form-width-mini" style="width: 55px"
+                            <input class="uk-form-width-mini uk-text-center" style="width: 55px"
                                    id="containerPort" type="text" placeholder="guest" v-model="createParams.containerPort"/>
                             &nbsp;/&nbsp;
-                            <select id="protocol">
-                                <option value="tcp" selected>tcp</option>
+                            <select id="protocol" v-model="createParams.protocol">
+                                <option value="tcp">tcp</option>
                                 <option value="udp">udp</option>
                             </select>
                         </td>
@@ -410,7 +410,7 @@
                         <td class="dialogField">Volume:</td>
                         <td>
                             <select id="volume" class="uk-form-width-medium" v-model="createParams.volume">
-                                <option value="" selected>Nothing</option>
+                                <option value="">Nothing</option>
                                 <option v-for="volume in volumeList"
                                         :value="volume.name">{{volume.name}}
                                 </option>
@@ -421,7 +421,7 @@
                         <td class="dialogField">Link:</td>
                         <td>
                             <select id="linkContainer" class="uk-form-width-medium" v-model="createParams.linkContainer">
-                                <option value="" selected>Nothing</option>
+                                <option value="">Nothing</option>
                                 <option v-for="container in containerList"
                                         :value="container.id | shortDockerId(12)">
                                     {{container.names[0]|delFirestChar|shortDockerId(18)}}
