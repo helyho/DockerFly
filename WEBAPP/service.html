@@ -139,7 +139,6 @@
                 getNetworkList: function () {
                     try{
                         var cmdNetworkList = new CmdNetworkList();
-                        cmdNetworkList.driver("overlay");
                         //cmdNetworkList.type("custom");
                         this.networkList = cmdNetworkList.send().sortBy("name");
                         cmdNetworkList.close();
@@ -221,6 +220,11 @@
                 }
             }
         });
+        var urlId = getQueryString("id");
+        serviceListVue.queryParams.id = urlId==null?"" : urlId;
+        if(urlId != null){
+            $("#query").hide();
+        }
         serviceListVue.query()
     }
 </script>
@@ -229,7 +233,7 @@
     <div class="uk-width-6-6" style="padding-right: 32px;">
         <div class="uk-panel"></div>
         <h3 class="uk-text-middle">Service manager</h3>
-        <div class="uk-panel uk-panel-box uk-text-bold">
+        <div id="query" class="uk-panel uk-panel-box uk-text-bold">
             <div class="uk-grid">
                 <div class="uk-width-5-6 uk-form">
                     <span class="mr5">Id:</span>
@@ -279,7 +283,7 @@
                         <code>{{virtualIP.addr}}</code>
                     </div>
                 </td>
-                <td class="uk-text-middle uk-text-success">{{service.spec.mode.replicated.replicas}}</td>
+                <td class="uk-text-middle uk-text-bold uk-text-success uk-text-center">{{service.spec.mode.replicated.replicas}}</td>
                 <td class="uk-text-middle">
                    {{service.createdAt|strToDate}}
                 </td>
@@ -350,7 +354,7 @@
                         <td>
                             <select id="network" class="uk-form-width-medium" v-model="createParams.network">
                                 <option value="">Nothing</option>
-                                <option v-for="network in networkList"
+                                <option v-for="network in networkList" v-if="network.driver=='overlay'"
                                         :value="network.id">{{network.name}}
                                 </option>
                             </select>

@@ -109,6 +109,11 @@
                 }
             }
         });
+        var urlId = getQueryString("id");
+        nodeListVue.queryParams.id = urlId==null?"" : urlId;
+        if(urlId != null){
+            $("#query").hide();
+        }
         nodeListVue.query()
     }
 </script>
@@ -116,8 +121,8 @@
 <div id="nodeApp" class="uk-grid" style="height:100%">
     <div class="uk-width-6-6" style="padding-right: 32px;">
         <div class="uk-panel"></div>
-        <h3 class="uk-text-middle">Task manager</h3>
-        <div class="uk-panel uk-panel-box uk-text-bold">
+        <h3 class="uk-text-middle">Node manager</h3>
+        <div id="query" class="uk-panel uk-panel-box uk-text-bold">
             <div class="uk-grid">
                 <div class="uk-width-5-6 uk-form">
                     <span class="mr5">Id:</span>

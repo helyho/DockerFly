@@ -65,6 +65,11 @@
                 }
             }
         });
+        var urlId = getQueryString("id");
+        taskListVue.queryParams.id = urlId==null?"" : urlId;
+        if(urlId != null){
+            $("#query").hide();
+        }
         taskListVue.query()
     }
 </script>
@@ -72,8 +77,8 @@
 <div id="taskApp" class="uk-grid" style="height:100%">
     <div class="uk-width-6-6" style="padding-right: 32px;">
         <div class="uk-panel"></div>
-        <h3 class="uk-text-middle">Network manager</h3>
-        <div class="uk-panel uk-panel-box uk-text-bold">
+        <h3 class="uk-text-middle">Task manager</h3>
+        <div id="query" class="uk-panel uk-panel-box uk-text-bold">
             <div class="uk-grid">
                 <div class="uk-width-5-6 uk-form">
                     <fieldset data-uk-margin>
@@ -116,16 +121,18 @@
             <tr v-for="(task,index) in taskList">
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
                 <td class=" uk-text-middle uk-text-bold uk-text-primary">{{task.id | shortDockerId(12)}}</td>
-                <td class=" uk-text-middle uk-text-bold uk-text-success">{{task.nodeId | shortDockerId(12)}}</td>
-                <td class=" uk-text-middle uk-text-bold uk-text-warning">{{task.serviceId | shortDockerId(12)}}</td>
-                <td class=" uk-text-middle uk-text-bold uk-text-danger">
-                    {{task.status.containerStatus.containerId | shortDockerId(12)}}
+                <td class=" uk-text-middle uk-text-bold ">
+                    <a class="uk-text-success" :href="'node.html?id='+task.nodeId">{{task.nodeId | shortDockerId(12)}}</a>
+                </td>
+                <td class=" uk-text-middle uk-text-bold ">
+                    <a class="uk-text-warning" :href="'service.html?id='+task.serviceId">{{task.serviceId | shortDockerId(12)}}</ai>
+                </td>
+                <td class=" uk-text-middle uk-text-bold ">
+                    <a class="uk-text-danger" :href="'container.html?id='+task.status.containerStatus.containerId">{{task.status.containerStatus.containerId | shortDockerId(12)}}</a>
                 </td>
                 <td class=" uk-text-middle uk-text-bold">{{task.desiredState}}</td>
                 <td class=" uk-text-middle uk-text-small">{{task.createdAt|strToDate}}</td>
                 <td class=" uk-text-middle uk-text-small">{{task.updatedAt|strToDate}}</td>
-
-
             </tr>
             </tbody>
         </table>

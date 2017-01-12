@@ -10,7 +10,7 @@
     }
 
     //取 URL 中的参数
-    function GetQueryString(name) {
+    function getQueryString(name) {
         var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
         var r = window.location.search.substr(1).match(reg);
         if(r!=null)return  unescape(r[2]); return null;
@@ -37,7 +37,6 @@
             UIkit.modal.alert(e.message);
         }
     }
-
 
 /**
  * =======================vuejs 过滤器函数=======================
