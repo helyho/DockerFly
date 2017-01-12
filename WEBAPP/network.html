@@ -69,7 +69,7 @@
                     id = network.id
                     UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + name + "</span> ?", function () {
                         try {
-                            cmdNetworkRemove = new CmdNetworkRemove(id);
+                            var cmdNetworkRemove = new CmdNetworkRemove(id);
                             cmdNetworkRemove.send();
                             cmdNetworkRemove.close();
                             cmdNetworkRemove.release();
@@ -86,7 +86,7 @@
                 },
                 create: function () {
                     try {
-                        cmdNetworkCreate = new CmdNetworkCreate();
+                        var cmdNetworkCreate = new CmdNetworkCreate();
                         cmdNetworkCreate.checkDuplicate(true);
                         cmdNetworkCreate.name(this.createParams.name);
                         cmdNetworkCreate.driver(this.createParams.driver);

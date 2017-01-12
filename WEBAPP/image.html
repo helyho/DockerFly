@@ -48,7 +48,7 @@
                     id = image.id
                     UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + name + "</span> ?", function () {
                         try {
-                            cmdImageRemove = new CmdImageRemove(shortDockerId(id, 12));
+                            var cmdImageRemove = new CmdImageRemove(shortDockerId(id, 12));
                             cmdImageRemove.send();
                             cmdImageRemove.close();
                             cmdImageRemove.release();
@@ -65,7 +65,7 @@
                         if (this.searchParams.name == "") {
                             return
                         }
-                        cmdHubImageInfo = new CmdHubImageInfo();
+                        var cmdHubImageInfo = new CmdHubImageInfo();
                         cmdHubImageInfo.term(this.searchParams.name);
                         cmdHubImageInfo.limit(this.searchParams.limit);
                         this.hubImageList = cmdHubImageInfo.send().sortBy("star_count", true);
@@ -80,7 +80,7 @@
                 },
                 pull: function (hubImage) {
                     try {
-                        cmdImageCreate = new CmdImageCreate();
+                        var cmdImageCreate = new CmdImageCreate();
                         cmdImageCreate.fromImage(hubImage.name);
                         cmdImageCreate.send();
                         cmdImageCreate.close();

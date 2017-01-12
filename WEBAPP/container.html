@@ -86,12 +86,12 @@
                 start: function (container) {
                     try {
                         if (container.state == "paused") {
-                            cmdContainerUnPause = new CmdContainerUnPause(container.id)
+                            var cmdContainerUnPause = new CmdContainerUnPause(container.id)
                             cmdContainerUnPause.send();
                             cmdContainerUnPause.close();
                             cmdContainerUnPause.release();
                         } else {
-                            cmdContainerStart = new CmdContainerStart(container.id);
+                            var cmdContainerStart = new CmdContainerStart(container.id);
                             cmdContainerStart.send()
                             cmdContainerStart.close();
                             cmdContainerStart.release()
@@ -105,7 +105,7 @@
                 //停止方法
                 stop: function (container) {
                     try {
-                        cmdContainerStop = new CmdContainerStop(container.id);
+                        var cmdContainerStop = new CmdContainerStop(container.id);
                         cmdContainerStop.send();
                         cmdContainerStop.close();
                         cmdContainerStop.release();
@@ -123,7 +123,7 @@
 
                         UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + delFirestChar(name) + "</span> ?", function () {
                             try {
-                                cmdContainerRemove = new CmdContainerRemove(id);
+                                var cmdContainerRemove = new CmdContainerRemove(id);
                                 cmdContainerRemove.send();
                                 cmdContainerRemove.close();
                                 cmdContainerRemove.release();
@@ -140,7 +140,7 @@
                 //暂停和恢复方法
                 pause: function (container) {
                     try {
-                        cmdContainerPause = new CmdContainerPause(container.id)
+                        var cmdContainerPause = new CmdContainerPause(container.id)
                         cmdContainerPause.send();
                         cmdContainerPause.close();
                         cmdContainerPause.release();

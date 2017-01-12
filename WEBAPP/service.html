@@ -84,7 +84,7 @@
 
                         UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + name + "</span> ?", function () {
                             try {
-                                cmdServiceRemove = new CmdServiceRemove(id);
+                                var cmdServiceRemove = new CmdServiceRemove(id);
                                 cmdServiceRemove.send();
                                 cmdServiceRemove.close();
                                 cmdServiceRemove.release();
@@ -102,7 +102,7 @@
 
                     UIkit.modal.prompt("Replicas:", service.spec.mode.replicated.replicas, function(newvalue){
                         try {
-                            cmdServiceUpdate = new CmdServiceUpdate(service);
+                            var cmdServiceUpdate = new CmdServiceUpdate(service);
                             cmdServiceUpdate.replicate(newvalue)
                             cmdServiceUpdate.send();
                             cmdServiceUpdate.close();
@@ -161,7 +161,7 @@
                 create: function () {
                     try {
 
-                        cmdServiceCreate = new CmdServiceCreate();
+                        var cmdServiceCreate = new CmdServiceCreate();
 
                         if(this.createParams.name!=""){
                             cmdServiceCreate.name(this.createParams.name);
