@@ -316,7 +316,7 @@
                 </td>
                 <td class="uk-text-middle">
                     <code v-for="(network,networkName) in container.networkSettings.networks">
-                        {{networkName}}{{network.ipAddress==""?"":":"}}{{network.ipAddress}}
+                        <a :href="'network.html?id='+network.networkID">{{networkName}}{{network.ipAddress==""?"":":"}}{{network.ipAddress}}</a>
                     </code>
                 </td>
                 <td :class="container.state" class="uk-text-center uk-text-bold uk-text-middle">

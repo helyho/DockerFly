@@ -269,8 +269,8 @@
             <tbody>
             <tr v-for="(service,index) in serviceList">
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
-                <td class="uk-text-bold uk-text-middle uk-text-primary">
-                    {{service.id|shortDockerId(12)}}
+                <td class="uk-text-bold uk-text-middle ">
+                    <a class="uk-text-primary" :href="'task.html?service='+service.id">{{service.id|shortDockerId(12)}}</a>
                 </td>
                 <td class="uk-text-bold uk-text-middle uk-text-danger">
                     {{service.spec.name}}

@@ -67,7 +67,11 @@
         });
         var urlId = getQueryString("id");
         taskListVue.queryParams.id = urlId==null?"" : urlId;
-        if(urlId != null){
+
+        var urlService= getQueryString("service");
+        taskListVue.queryParams.service = urlService==null?"" : urlService;
+
+        if(urlId != null || urlService!=null){
             $("#query").hide();
         }
         taskListVue.query()
