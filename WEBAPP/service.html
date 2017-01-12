@@ -129,7 +129,7 @@
                     try{
                         var cmdImageListInfo = new CmdImageListInfo();
 
-                        serviceListVue.imageList = cmdImageListInfo.send().sortBy("Created");
+                        this.imageList = cmdImageListInfo.send().sortBy("Created");
                         cmdImageListInfo.close();
                         cmdImageListInfo.release();
                     } catch (e) {
@@ -141,7 +141,7 @@
                         var cmdNetworkList = new CmdNetworkList();
                         cmdNetworkList.driver("overlay");
                         //cmdNetworkList.type("custom");
-                        serviceListVue.networkList = cmdNetworkList.send().sortBy("name");
+                        this.networkList = cmdNetworkList.send().sortBy("name");
                         cmdNetworkList.close();
                         cmdNetworkList.release();
                     } catch (e) {
@@ -151,7 +151,7 @@
                 getVolumeList: function () {
                     try{
                         var cmdVolumeList = new CmdVolumeList();
-                        serviceListVue.volumeList = cmdVolumeList.send().sortBy("name");
+                        this.volumeList = cmdVolumeList.send().sortBy("name");
                         cmdVolumeList.close();
                         cmdVolumeList.release();
                     } catch (e) {
@@ -160,8 +160,6 @@
                 },
                 create: function () {
                     try {
-
-                        var cpuPeriod = 100000;
 
                         cmdServiceCreate = new CmdServiceCreate();
 
@@ -182,19 +180,19 @@
                         }
 
                         if (this.createParams.cpuLimit != "") {
-                            cmdServiceCreate.cpuLimit(this.createParams.cpuLimit * 1000000000);
+                            cmdServiceCreate.cpuLimit(this.createParams.cpuLimit);
                         }
 
                         if (this.createParams.memoryLimit != "") {
-                            cmdServiceCreate.memoryLimit(this.createParams.memoryLimit*1024*1024);
+                            cmdServiceCreate.memoryLimit(this.createParams.memoryLimit);
                         }
 
                         if (this.createParams.cpuReservation != "") {
-                            cmdServiceCreate.cpuReservation(this.createParams.cpuReservation * 100000);
+                            cmdServiceCreate.cpuReservation(this.createParams.cpuReservation);
                         }
 
                         if (this.createParams.memoryReservation != "") {
-                            cmdServiceCreate.memoryReservation(this.createParams.memoryReservation*1024*1024);
+                            cmdServiceCreate.memoryReservation(this.createParams.memoryReservation);
                         }
 
                         if (this.createParams.network != "") {

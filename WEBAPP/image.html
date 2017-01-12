@@ -35,7 +35,7 @@
                     try {
                         var cmdImageListInfo = new CmdImageListInfo();
 
-                        imageListVue.imageList = cmdImageListInfo.send().sortBy("Created");
+                        this.imageList = cmdImageListInfo.send().sortBy("Created");
                         cmdImageListInfo.close();
                         cmdImageListInfo.release();
                     } catch (e) {
@@ -68,7 +68,7 @@
                         cmdHubImageInfo = new CmdHubImageInfo();
                         cmdHubImageInfo.term(this.searchParams.name);
                         cmdHubImageInfo.limit(this.searchParams.limit);
-                        imageListVue.hubImageList = cmdHubImageInfo.send().sortBy("star_count", true);
+                        this.hubImageList = cmdHubImageInfo.send().sortBy("star_count", true);
                         cmdHubImageInfo.close();
                         cmdHubImageInfo.release();
 

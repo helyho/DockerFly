@@ -56,7 +56,7 @@
 
                         //cmdContainerList.label("author","helyho");
 
-                        networkListVue.networkList = cmdNetworkList.send().sortBy("name");
+                        this.networkList = cmdNetworkList.send().sortBy("name");
                         cmdNetworkList.close();
                         cmdNetworkList.release();
                     } catch (e) {

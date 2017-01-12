@@ -39,12 +39,11 @@
                     status:"All"
                 },
                 createParams:{
-                    cpuPeriod:100000,
                     name:"",
                     image:"",
                     command:"",
                     env:"",
-                    cpuQuota:1,
+                    cpu:1,
                     memory:64,
                     network:"",
                     hostPort:"",
@@ -75,7 +74,7 @@
                         }
 
                         //cmdContainerList.label("author","helyho");
-                        containerListVue.containerList = cmdContainerList.send().sortBy("id", true);
+                        this.containerList = cmdContainerList.send().sortBy("id", true);
                         cmdContainerList.close();
                         cmdContainerList.release();
                     } catch (e) {
@@ -165,7 +164,7 @@
                     try{
                         var cmdImageListInfo = new CmdImageListInfo();
 
-                        containerListVue.imageList = cmdImageListInfo.send().sortBy("Created");
+                        this.imageList = cmdImageListInfo.send().sortBy("Created");
                         cmdImageListInfo.close();
                         cmdImageListInfo.release();
                     } catch (e) {
@@ -176,7 +175,7 @@
                     try{
                         var cmdNetworkList = new CmdNetworkList();
                         //cmdNetworkList.type("custom");
-                        containerListVue.networkList = cmdNetworkList.send().sortBy("name");
+                        this.networkList = cmdNetworkList.send().sortBy("name");
                         cmdNetworkList.close();
                         cmdNetworkList.release();
                     } catch (e) {
@@ -186,7 +185,7 @@
                 getVolumeList: function () {
                     try{
                         var cmdVolumeList = new CmdVolumeList();
-                        containerListVue.volumeList = cmdVolumeList.send().sortBy("name");
+                        this.volumeList = cmdVolumeList.send().sortBy("name");
                         cmdVolumeList.close();
                         cmdVolumeList.release();
                     } catch (e) {
@@ -196,10 +195,8 @@
                 create: function () {
                     try {
 
-                        var cpuPeriod = 100000;
 
                         cmdContainerCreate = new CmdContainerCreate(this.createParams.name);
-                        cmdContainerCreate.cpuPeriod(this.createParams.cpuPeriod);
 
                         if (this.createParams.image != "") {
                             cmdContainerCreate.image(this.createParams.image);
@@ -213,8 +210,8 @@
                             cmdContainerCreate.env(this.createParams.env.split(","));
                         }
 
-                        if (this.createParams.cpuQuota != "") {
-                            cmdContainerCreate.cpuQuota(this.createParams.cpuQuota * this.createParams.cpuPeriod);
+                        if (this.createParams.cpu != "") {
+                            cmdContainerCreate.cpu(this.createParams.cpu);
                         }
 
                         if (this.createParams.memory != "") {
@@ -373,7 +370,7 @@
                     <tr>
                         <td class="dialogField">CPU:</td>
                         <td><input id="cpuQuota" type="text" class="uk-form-width-small uk-text-center"
-                                   placeholder="cpu core count" v-model="createParams.cpuQuota"/></td>
+                                   placeholder="cpu core count" v-model="createParams.cpu"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Memory:</td>

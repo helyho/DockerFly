@@ -43,7 +43,7 @@
 
                         //cmdContainerList.label("author","helyho");
 
-                        volumeListVue.volumeList = cmdVolumeList.send().sortBy("name");
+                        this.volumeList = cmdVolumeList.send().sortBy("name");
                         cmdVolumeList.close();
                         cmdVolumeList.release();
                     } catch (e) {
