@@ -263,13 +263,13 @@
                             cmdContainerCreate.network(this.createParams.network);
                         }
 
-                        if (this.createParams.port.ports.length != 0) {
+                        if (this.createParams.port.ports.length > 0) {
                             for(var i = 0; i<this.createParams.port.ports.length; i++) {
                                 var port = this.createParams.port.ports[i];
-                                cmdContainerCreate.exposePort(port.containerPort, port.protocol, [port.hostPort]);
+                                cmdContainerCreate.exposePort(port.protocol, port.containerPort, [port.hostPort]);
                             }
                         }
-                        if (this.createParams.volume.volumes.length != 0) {
+                        if (this.createParams.volume.volumes.length >= 0) {
                             var volumes = new Array();
                             for(var i = 0; i<this.createParams.volume.volumes.length; i++) {
                                 var volume = this.createParams.volume.volumes[i];
@@ -284,7 +284,7 @@
                             cmdContainerCreate.volume(volumes);
                         }
 
-                        if (this.createParams.link.links.length != 0) {
+                        if (this.createParams.link.links.length > 0) {
                             var links = new Array();
                             for(var i = 0; i<this.createParams.link.links.length; i++) {
                                 var link = this.createParams.link.links[i];
@@ -491,41 +491,43 @@
                                         </select>
                                         <a href="#" class="uk-button uk-button-primary" @click="createParams.port.add()">add</a>
                                     </li>
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="dialogField">Volume:</td>
                         <td>
                             <div class="uk-panel  uk-width-7-10">
-                            <ul class="uk-list uk-list-line ">
-                                <li v-for="(volume,index) in createParams.volume.volumes">
-                                    <div class="uk-grid">
-                                        <div class="uk-text-bold uk-text- uk-width-8-10">
-                                            <input class="uk-form-width-medium uk-text-center" type="text" disabled
-                                                   placeholder="path in container" :value="volume.volumeSource"/>
-                                            &nbsp;:&nbsp;
-                                            <input class="uk-form-width-medium uk-text-center" type="text" disabled
-                                                   placeholder="path in container" :value="volume.volumeTarget"/>
+                                <ul class="uk-list uk-list-line ">
+                                    <li v-for="(volume,index) in createParams.volume.volumes">
+                                        <div class="uk-grid">
+                                            <div class="uk-text-bold uk-text- uk-width-8-10">
+                                                <input class="uk-form-width-medium uk-text-center" type="text" disabled
+                                                       placeholder="path in container" :value="volume.volumeSource"/>
+                                                &nbsp;:&nbsp;
+                                                <input class="uk-form-width-medium uk-text-center" type="text" disabled
+                                                       placeholder="path in container" :value="volume.volumeTarget"/>
+                                            </div>
+                                            <div class="uk-width-2-10">
+                                                <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.volume.remove(index)">
+                                                    <span class="uk-icon-remove"></span>
+                                                </a>
+                                            </div>
                                         </div>
-                                        <div class="uk-width-2-10">
-                                            <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.volume.remove(index)">
-                                                <span class="uk-icon-remove"></span>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <select id="volume" class="uk-form-width-medium" v-model="createParams.volume.volumeSource">
-                                        <option value="">Nothing</option>
-                                        <option v-for="volume in volumeList"
-                                                :value="volume.name">{{volume.name}}
-                                        </option>
-                                    </select>&nbsp;:&nbsp;
-                                    <input class="uk-form-width-medium uk-text-center" type="text"
-                                           placeholder="path in container" v-model="createParams.volume.volumeTarget"/>
-                                    <a href="#" class="uk-button uk-button-primary" @click="createParams.volume.add()">add</a>
-                                </li>
-                            </ul>
+                                    </li>
+                                    <li>
+                                        <select id="volume" class="uk-form-width-medium" v-model="createParams.volume.volumeSource">
+                                            <option value="">Nothing</option>
+                                            <option v-for="volume in volumeList"
+                                                    :value="volume.name">{{volume.name}}
+                                            </option>
+                                        </select>&nbsp;:&nbsp;
+                                        <input class="uk-form-width-medium uk-text-center" type="text"
+                                               placeholder="path in container" v-model="createParams.volume.volumeTarget"/>
+                                        <a href="#" class="uk-button uk-button-primary" @click="createParams.volume.add()">add</a>
+                                    </li>
+                                </ul>
                             </div>
                         </td>
                     </tr>
@@ -563,6 +565,8 @@
                                                 v-model="createParams.link.linkName"/>
                                         <a href="#" class="uk-button uk-button-primary" @click="createParams.link.add()">add</a>
                                     </li>
+                                </ul>
+                            </div>
                         </td>
                     </tr>
 

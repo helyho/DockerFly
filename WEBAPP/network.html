@@ -29,10 +29,11 @@
                 },
                 createParams:{
                     name: "",
-                    driver:"bridge",
+                    driver:"null",
                     gateway:"",
                     subnet:"",
-                    ipRange:""
+                    ipRange:"",
+                    bridge:""
                 }
             },
             methods: {
@@ -89,6 +90,9 @@
                         cmdNetworkCreate.checkDuplicate(true);
                         cmdNetworkCreate.name(this.createParams.name);
                         cmdNetworkCreate.driver(this.createParams.driver);
+                        if(this.createParams.bridge!=""){
+                            cmdNetworkCreate.options("com.docker.network.bridge.name",this.createParams.bridge);
+                        }
 
                         if (this.createParams.gateway != "" && this.createParams.subnet != ""
                             && this.createParams.ipRange != "") {
@@ -190,10 +194,17 @@
                         <td class="dialogField">Driver:</td>
                         <td>
                             <select id="driver" class="uk-form-width-medium" v-model="createParams.driver">
+                                <option value="null">null</option>
+                                <option value="host">host</option>
                                 <option value="bridge">bridge</option>
                                 <option value="overlay">overlay</option>
                             </select>
                         </td>
+                    </tr>
+                    <tr v-if="createParams.driver=='bridge'">
+                        <td class="dialogField">Bridge:</td>
+                        <td><input id="bridge" class="uk-form-width-medium" type="text"
+                                   placeholder="bridge name" v-model="createParams.bridge"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">IP Range:</td>
