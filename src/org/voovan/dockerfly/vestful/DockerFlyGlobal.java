@@ -12,10 +12,12 @@ import org.voovan.docker.DockerGlobal;
  *         Licence: Apache v2 License
  */
 public class DockerFlyGlobal {
+    private static boolean init = initJDocker();
 
-    public static void initJDocker(){
-        DockerGlobal.DOCKER_REST_HOST = "127.0.0.1";
+    public static boolean initJDocker(){
+        DockerGlobal.DOCKER_REST_HOST = "home.helyho.com";
         DockerGlobal.DOCKER_REST_PORT = 2735;
         DockerGlobal.DEBUG = true;
+        return true;
     }
 }
