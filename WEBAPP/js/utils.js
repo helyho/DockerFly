@@ -132,3 +132,11 @@
         if(desc) ret.reverse();
         return ret;
     };
+
+    Array.prototype.remove=function(index) {
+        if(isNaN(index)||index>this.length){
+            return false;
+        }
+        this.splice(index,1);
+
+    }
