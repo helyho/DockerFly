@@ -381,9 +381,11 @@
                     </div>
                 </td>
                 <td class="uk-text-middle">
-                    <code v-for="(network,networkName) in container.networkSettings.networks">
-                        <a :href="'network.html?id='+network.networkID">{{networkName}}{{network.ipAddress==""?"":":"}}{{network.ipAddress}}</a>
-                    </code>
+                    <div v-for="(network,networkName) in container.networkSettings.networks">
+                        <code>
+                            <a :href="'network.html?id='+network.networkID">{{networkName}}{{network.ipAddress==""?"":":"}}{{network.ipAddress}}</a>
+                        </code>
+                    </div>
                 </td>
                 <td :class="container.state" class="uk-text-center uk-text-bold uk-text-middle">
                     {{container.state.toUpperCase()}}

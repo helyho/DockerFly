@@ -24,6 +24,7 @@
             data: {
                 imageList: null,
                 hubImageList: null,
+                pullTag:"latest",
                 searchParams:{
                     name:"",
                     limit:5
@@ -80,14 +81,20 @@
                 },
                 pull: function (hubImage) {
                     try {
-                        var cmdImageCreate = new CmdImageCreate();
-                        cmdImageCreate.fromImage(hubImage.name);
-                        cmdImageCreate.send();
-                        cmdImageCreate.close();
+                        this.pullTag = "latest";
+                        UIkit.modal.prompt("Pull image's tag:", this.pullTag, function(newvalue) {
+                            this.pullTag = newvalue;
+                            var cmdImageCreate = new CmdImageCreate();
+                            cmdImageCreate.fromImage(hubImage.name);
+                            cmdImageCreate.tag(this.pullTag);
 
-                        hubImageList.hide();
-                        UIkit.modal.alert("Image " + hubImage.name + " already pulled.");
-                        imageListVue.query();
+                            cmdImageCreate.send();
+                            cmdImageCreate.close();
+
+                            hubImageList.hide();
+                            UIkit.modal.alert("Image " + hubImage.name + " already pulled.");
+                            imageListVue.query();
+                        })
 
                     } catch (e) {
                         alertError(e)
@@ -105,27 +112,6 @@
     <div class="uk-width-6-6" style="padding-right: 32px;">
         <div class="uk-panel"></div>
         <h3 class="uk-text-middle">Image manager</h3>
-        <div class="uk-panel uk-panel-box uk-text-bold">
-            <div class="uk-grid">
-                <div class="uk-width-5-6 uk-form">
-                    <span class="mr5">Name:</span>
-                    <input class="uk-form-width-medium" id="name"
-                           type="text" placeholder="image's name" v-model="searchParams.name"/>
-                    <select v-model="searchParams.limit">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="30">30</option>
-                        <option value="40">40</option>
-                        <option value="50">50</option>
-                    </select>
-                    <a class="uk-button uk-button-small" @click="search()"><i class="uk-icon-search"></i></a>
-                </div>
-                <div class="uk-width-1-6 uk-text-right">
-                    <a class="uk-button uk-button-primary uk-button-small" @click="query()"><i class="uk-icon-refresh"></i></a>
-                </div>
-            </div>
-        </div>
         <table id="imageList" class="uk-table uk-overflow-container uk-panel-box">
             <caption>Image list</caption>
             <thead>
@@ -161,6 +147,28 @@
             </tr>
             </tbody>
         </table>
+        <h3 class="uk-text-middle">Pull image</h3>
+        <div class="uk-panel uk-panel-box uk-text-bold">
+            <div class="uk-grid">
+                <div class="uk-width-5-6 uk-form">
+                    <span class="mr5">Name:</span>
+                    <input class="uk-form-width-medium" id="name"
+                           type="text" placeholder="image's name" v-model="searchParams.name"/>
+                    <select v-model="searchParams.limit">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                        <option value="40">40</option>
+                        <option value="50">50</option>
+                    </select>
+                    <a class="uk-button uk-button-small" @click="search()"><i class="uk-icon-search"></i></a>
+                </div>
+                <div class="uk-width-1-6 uk-text-right">
+                    <a class="uk-button uk-button-primary uk-button-small" @click="query()"><i class="uk-icon-refresh"></i></a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="hubImageListDialog" class="uk-modal">
