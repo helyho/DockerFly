@@ -91,7 +91,12 @@
                         cmdNetworkCreate.name(this.createParams.name);
                         cmdNetworkCreate.driver(this.createParams.driver);
                         if(this.createParams.bridge!=""){
-                            cmdNetworkCreate.options("com.docker.network.bridge.name",this.createParams.bridge);
+                           cmdNetworkCreate.options("com.docker.network.bridge.name",this.createParams.bridge);
+                           cmdNetworkCreate.options("com.docker.network.bridge.default_bridge", "true");
+                           cmdNetworkCreate.options("com.docker.network.bridge.enable_icc", "true");
+                           cmdNetworkCreate.options("com.docker.network.bridge.enable_ip_masquerade", "true");
+                           cmdNetworkCreate.options("com.docker.network.bridge.host_binding_ipv4", "0.0.0.0");
+                           cmdNetworkCreate.options("com.docker.network.driver.mtu", "1500");
                         }
 
                         if (this.createParams.gateway != "" && this.createParams.subnet != ""

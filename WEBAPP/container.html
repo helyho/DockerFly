@@ -43,6 +43,7 @@
                     image:"",
                     command:"",
                     env:"",
+                    privileged:false,
                     cpu:1,
                     memory:64,
                     network:"",
@@ -251,6 +252,10 @@
                             cmdContainerCreate.env(this.createParams.env.split(","));
                         }
 
+                        if (this.createParams.privileged != "") {
+                            cmdContainerCreate.privileged(this.createParams.privileged);
+                        }
+
                         if (this.createParams.cpu != "") {
                             cmdContainerCreate.cpu(this.createParams.cpu);
                         }
@@ -432,6 +437,11 @@
                         <td class="dialogField">Env:</td>
                         <td><input class="uk-form-width-large" id="env" type="text"
                                    placeholder="like: author=dockerfly" v-model="createParams.env"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Privileged:</td>
+                        <td><input class="uk-form-width-large" id="env" type="checkbox"
+                                   placeholder="privileged" v-model="createParams.privileged"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">CPU:</td>
