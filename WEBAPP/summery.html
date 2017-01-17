@@ -56,7 +56,7 @@
                 <tbody>
                 <tr>
                     <td class="uk-width-1-10 uk-text-right summeryField">ID:</td>
-                    <td class="uk-width-1-4 uk-text-bold uk-text-primary">{{dockerInfo.id}}</td>
+                    <td class="uk-width-1-4 uk-text-bold uk-text-primary uk-text-small">{{dockerInfo.id}}</td>
                     <td class="uk-width-1-10 uk-text-right summeryField">System info:</td>
                     <td class="uk-width-1-4 ">
                         {{dockerInfo.osType}}({{dockerInfo.architecture}})_{{dockerInfo.operatingSystem}}({{dockerInfo.kernelVersion}})
@@ -89,6 +89,12 @@
                     <td class="uk-width-1-10 uk-text-right summeryField">Docker version:</td>
                     <td class="uk-width-1-4">{{dockerInfo.serverVersion}}</td>
                 </tr>
+                <tr>
+                    <td class="uk-width-1-10 uk-text-right summeryField">DockerHub mirror:</td>
+                    <td class="uk-width-1-4" colspan="3">
+                        <code v-for="mirror in dockerInfo.registryConfig.mirrors">{{mirror}}
+                    </td>
+                </tr>
                 </tbody>
             </table>
             <h3 class="uk-text-middle">Cluster info</h3>
@@ -110,7 +116,7 @@
             </table>
         </div>
 
-        <h3 class="uk-text-middle">Connect dockerfly</h3>
+        <h3 class="uk-text-middle">Connect docker</h3>
         <table id="config" class="uk-form uk-table uk-overflow-container uk-panel-box">
             <tbody>
             <tr>
