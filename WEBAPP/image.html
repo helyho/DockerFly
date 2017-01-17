@@ -82,7 +82,7 @@
                 pull: function (hubImage) {
                     try {
                         this.pullTag = "latest";
-                        UIkit.modal.prompt("Pull image's tag:", this.pullTag, function(newvalue) {
+                        UIkit.modal.prompt("Pull an image with tag:", this.pullTag, function(newvalue) {
                             this.pullTag = newvalue;
                             var cmdImageCreate = new CmdImageCreate();
                             cmdImageCreate.fromImage(hubImage.name);
