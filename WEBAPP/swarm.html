@@ -140,8 +140,8 @@
     }
 </script>
 <body onload="init()" class="frameBody">
-<div id="dockerApp" class="uk-grid" style="height:100%;">
-    <div class="uk-width-6-6" style="padding-right: 32px;">
+<div id="dockerApp" class="uk-grid">
+    <div class="uk-width-6-6">
         <div style="margin-top:25px" v-if="swarmInfo!=null">
             <h3 class="uk-text-middle">Swarm info</h3>
             <table class="uk-table uk-overflow-container uk-panel-box">
@@ -189,7 +189,7 @@
         </div>
         <div class="uk-grid uk-panel uk-panel-box uk-text-bold" style="margin-top: 35px;">
             <div class="uk-form uk-text-left uk-width-3-5">
-                <h3 class="uk-text-bolder uk-text-primary">Swarm operation</h3>
+                <h3 class="uk-text-bolder uk-text-primary" style="padding-top:3px">Swarm operation</h3>
             </div>
             <div class="uk-form uk-text-right uk-width-2-5 uk-text-middle">
                 <a class="uk-button  uk-button-primary" @click="openInitDialog">Init</a>
@@ -222,7 +222,7 @@
                     </tr>
                     <tr>
                         <td class="dialogField" colspan="2">
-                            <input id="create" class="uk-button uk-button-primary" style="color:white"
+                            <input id="create" class="uk-button uk-button-primary"
                                    type="button" value="Init" @click="init()">
                         </td>
                     </tr>
@@ -259,7 +259,7 @@
 
                     <tr>
                         <td class="dialogField" colspan="2">
-                            <input id="create" class="uk-button uk-button-primary" style="color:white"
+                            <input id="create" class="uk-button uk-button-primary"
                                    type="button" value="Join" @click="join()">
                         </td>
                     </tr>

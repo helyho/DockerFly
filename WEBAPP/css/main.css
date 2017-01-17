@@ -20,6 +20,22 @@ html, body {
     width: 15px;
 }
 
+body > .uk-grid {
+    height: 100%;
+}
+
+body > .uk-grid > div {
+    padding-right: 32px;
+}
+
+.uk-button #create {
+    color:white;
+}
+
+.port_input_button {
+    width: 55px;
+}
+
 .mr5 {
     margin-right: 5px;
     margin-left: 5px;

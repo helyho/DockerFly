@@ -323,8 +323,8 @@
     }
 </script>
 <body onload="init()" class="frameBody">
-<div id="ContainerApp" class="uk-grid" style="height:100%">
-    <div class="uk-width-6-6" style="padding-right: 32px;">
+<div id="ContainerApp" class="uk-grid">
+    <div class="uk-width-6-6">
         <div class="uk-panel"></div>
         <h3 class="uk-text-middle">Container manager</h3>
         <div id="query" class="uk-panel uk-panel-box uk-text-bold">
@@ -474,13 +474,13 @@
                                     <li v-for="(port,index) in createParams.port.ports">
                                         <div class="uk-grid">
                                             <div class="uk-text-bold uk-text- uk-width-8-10">
-                                                <input class="uk-form-width-mini uk-text-center" style="width: 55px" type="text" disabled
+                                                <input class="port_input_button uk-text-center" type="text" disabled
                                                        placeholder="path in container" :value="port.hostPort"/>
                                                 &nbsp;:&nbsp;
-                                                <input class="uk-form-width-mini uk-text-center" style="width: 55px" type="text" disabled
+                                                <input class="port_input_button uk-text-center" type="text" disabled
                                                        placeholder="path in container" :value="port.containerPort"/>
                                                 &nbsp;/&nbsp;
-                                                <input class="uk-form-width-mini uk-text-center" style="width: 55px" type="text" disabled
+                                                <input class="port_input_button uk-text-center" type="text" disabled
                                                        placeholder="path in container" :value="port.protocol"/>
                                             </div>
                                             <div class="uk-width-2-10">
@@ -491,10 +491,10 @@
                                         </div>
                                     </li>
                                     <li>
-                                        <input class="uk-form-width-mini uk-text-center" style="width: 55px"
+                                        <input class="port_input_button uk-text-center"
                                                id="hostPort" type="text" placeholder="host" v-model="createParams.port.hostPort"/>
                                         &nbsp;:&nbsp;
-                                        <input class="uk-form-width-mini uk-text-center" style="width: 55px"
+                                        <input class="port_input_button uk-text-center"
                                                id="containerPort" type="text" placeholder="guest" v-model="createParams.port.containerPort"/>
                                         &nbsp;/&nbsp;
                                         <select id="protocol" v-model="createParams.port.protocol">
@@ -584,7 +584,7 @@
 
                     <tr>
                         <td class="dialogField" colspan="2">
-                            <input id="create" class="uk-button uk-button-primary" style="color:white"
+                            <input id="create" class="uk-button uk-button-primary"
                                    type="button" value="Create" @click="create()">
                         </td>
                     </tr>
