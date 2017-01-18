@@ -28,10 +28,6 @@ body > .uk-grid > div {
     padding-right: 32px;
 }
 
-input[type=button] {
-    color:white;
-}
-
 .port_input_button {
     width: 55px;
 }
@@ -47,7 +43,11 @@ th{
 }
 
 .frameBody{
-    margin: 0px 35px 0px 35px;
+    padding: 0px 35px 0px 35px;
+}
+
+body > .uk-grid > div{
+    padding-right: 0px;
 }
 
 .summeryField {
@@ -88,8 +88,5 @@ th{
     border-color: rgba(226, 131, 39, 0.3);
     border: 1px solid #ddd;
 }
-
-
-
 
 

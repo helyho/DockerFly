@@ -397,7 +397,7 @@
                                :disabled="container.state=='running'" @click="start(container)"/>
                         <input class="uk-button uk-button-small uk-button-success" type="button" value="Stop"
                                :disabled="container.state!='running'" @click="stop(container)"/>
-                        <input class="uk-button uk-button-small uk-button-warning" type="button" value="Pause"
+                        <input class="uk-button uk-button-small" type="button" value="Pause"
                                :disabled="container.state=='paused' || container.state!='running' "
                                @click="pause(container)"/>
                         <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
@@ -492,10 +492,10 @@
                                     </li>
                                     <li>
                                         <input class="port_input_button uk-text-center"
-                                               type="text" placeholder="host" v-model="createParams.port.hostPort"/>
+                                               id="hostPort" type="text" placeholder="host" v-model="createParams.port.hostPort"/>
                                         &nbsp;:&nbsp;
                                         <input class="port_input_button uk-text-center"
-                                               type="text" placeholder="guest" v-model="createParams.port.containerPort"/>
+                                               id="containerPort" type="text" placeholder="guest" v-model="createParams.port.containerPort"/>
                                         &nbsp;/&nbsp;
                                         <select v-model="createParams.port.protocol">
                                             <option value="tcp">tcp</option>
@@ -584,8 +584,7 @@
 
                     <tr>
                         <td class="dialogField" colspan="2">
-                            <input class="uk-button uk-button-primary"
-                                   type="button" value="Create" @click="create()">
+                            <a href="#"  class="uk-button uk-button-primary" @click="create()">Create</a>
                         </td>
                     </tr>
                 </table>

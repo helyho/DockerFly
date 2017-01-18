@@ -169,10 +169,12 @@
                 <td class="uk-text-middle">{{node.managerStatus.leader}}</td>
                 <td class="uk-text-middle">{{node.description.hostname}} ( {{node.description.platform.os}}-{{node.description.platform.architecture}} )</td>
                 <td class="uk-text-center uk-text-middle">
-                    <input class="uk-button uk-button-small uk-button-primary" type="button" value="Update"
-                           @click="openUpdateDialog(node)"/>
-                    <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
-                           @click="remove(node)"/>
+                    <div class="uk-button-group">
+                        <input class="uk-button uk-button-small uk-button-primary" type="button" value="Update"
+                               @click="openUpdateDialog(node)"/>
+                        <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
+                               @click="remove(node)"/>
+                    </div>
                 </td>
 
             </tr>

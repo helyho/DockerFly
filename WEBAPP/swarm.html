@@ -192,10 +192,13 @@
                 <h3 class="uk-text-bolder uk-text-primary" style="padding-top:3px">Swarm operation</h3>
             </div>
             <div class="uk-form uk-text-right uk-width-2-5 uk-text-middle">
-                <a class="uk-button  uk-button-primary" @click="openInitDialog">Init</a>
-                <a class="uk-button  uk-button-success" @click="openJoinDialog">Join</a>
-                <a class="uk-button  uk-button-danger" @click="leave">Leave</a>
+                <div class="uk-button-group">
+                    <a class="uk-button  uk-button-primary" @click="openInitDialog">Init</a>
+                    <a class="uk-button  uk-button-success" @click="openJoinDialog">Join</a>
+                    <a class="uk-button  uk-button-danger" @click="leave">Leave</a>
+                </div>
                 <a class="uk-button  uk-button-link" data-uk-modal="{target:'#helpDialog'}"><span class="uk-icon-question-circle"></span></a>
+
             </div>
         </div>
     </div>
