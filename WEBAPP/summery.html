@@ -52,7 +52,7 @@
     <div class="uk-width-6-6">
         <div style="margin-top:25px" v-if="dockerInfo!=null">
             <h3 class="uk-text-middle">Host info</h3>
-            <table id="networkList" class="uk-table uk-overflow-container uk-panel-box">
+            <table class="uk-table uk-overflow-container uk-panel-box">
                 <tbody>
                 <tr>
                     <td class="uk-width-1-10 uk-text-right summeryField">ID:</td>
@@ -71,14 +71,14 @@
                 </tbody>
             </table>
             <h3 class="uk-text-middle">Docker info</h3>
-            <table id="networkList" class="uk-table uk-overflow-container uk-panel-box">
+            <table class="uk-table uk-overflow-container uk-panel-box">
                 <tbody>
                 <tr>
                     <td class="uk-width-1-10 uk-text-right summeryField">Container:</td>
                     <td class="uk-width-1-4"><span class="uk-text-bold">Total: {{dockerInfo.containers}}</span> /
                         <span class="uk-text-primary uk-text-bold">Running: {{dockerInfo.containersRunning}}</span> /
-                        <span class="uk-text-success uk-text-bold">Paused: {{dockerInfo.containersPaused}} /
-                        <span class="uk-text-danger uk-text-bold"> Stoped: {{dockerInfo.containersStopped}}
+                        <span class="uk-text-success uk-text-bold">Paused: {{dockerInfo.containersPaused}} </span> /
+                        <span class="uk-text-danger uk-text-bold"> Stoped: {{dockerInfo.containersStopped}} </span>
                     </td>
                     <td class="uk-width-1-10 uk-text-right summeryField">Images:</td>
                     <td class="uk-width-1-4 ">{{dockerInfo.images}}</td>
@@ -92,13 +92,13 @@
                 <tr>
                     <td class="uk-width-1-10 uk-text-right summeryField">DockerHub mirror:</td>
                     <td class="uk-width-1-4" colspan="3">
-                        <code v-for="mirror in dockerInfo.registryConfig.mirrors">{{mirror}}
+                        <code v-for="mirror in dockerInfo.registryConfig.mirrors">{{mirror}}</code>
                     </td>
                 </tr>
                 </tbody>
             </table>
             <h3 class="uk-text-middle">Cluster info</h3>
-            <table id="networkList" class="uk-table uk-overflow-container uk-panel-box">
+            <table class="uk-table uk-overflow-container uk-panel-box">
                 <tbody>
                 <tr>
                     <td class="uk-width-1-10 uk-text-right summeryField">Node id:</td>

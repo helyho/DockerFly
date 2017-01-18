@@ -28,7 +28,7 @@ body > .uk-grid > div {
     padding-right: 32px;
 }
 
-.uk-button #create {
+input[type=button] {
     color:white;
 }
 

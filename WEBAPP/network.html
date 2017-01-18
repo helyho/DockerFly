@@ -138,7 +138,7 @@
                     <span class="mr5">Name:</span><input class="uk-form-width-medium"
                         type="text" placeholder="network name" v-model="queryParams.name">
                     <span class="mr5">Status:</span>
-                    <select id="driver" v-model="queryParams.driver">
+                    <select v-model="queryParams.driver">
                         <option value="ALL">All</option>
                         <option value="bridge">bridge</option>
                         <option value="overlay">overlay</option>
@@ -192,13 +192,13 @@
                 <table class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
                         <td class="dialogField">Name:</td>
-                        <td><input id="name" class="uk-form-width-medium" type="text"
+                        <td><input class="uk-form-width-medium" type="text"
                                    placeholder="network name" v-model="createParams.name"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Driver:</td>
                         <td>
-                            <select id="driver" class="uk-form-width-medium" v-model="createParams.driver">
+                            <select class="uk-form-width-medium" v-model="createParams.driver">
                                 <option value="null">null</option>
                                 <option value="host">host</option>
                                 <option value="bridge">bridge</option>
@@ -208,27 +208,27 @@
                     </tr>
                     <tr v-if="createParams.driver=='bridge'">
                         <td class="dialogField">Bridge:</td>
-                        <td><input id="bridge" class="uk-form-width-medium" type="text"
+                        <td><input class="uk-form-width-medium" type="text"
                                    placeholder="bridge name" v-model="createParams.bridge"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">IP Range:</td>
-                        <td><input id="ipRange" class="uk-form-width-medium" type="text"
+                        <td><input class="uk-form-width-medium" type="text"
                                    placeholder="dhcp ip range" v-model="createParams.ipRange"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Subnet:</td>
-                        <td><input id="subnet" class="uk-form-width-medium" type="text"
+                        <td><input class="uk-form-width-medium" type="text"
                                    placeholder="dhcp subnet" v-model="createParams.subnet"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Gateway:</td>
-                        <td><input id="gateway" class="uk-form-width-medium" type="text"
+                        <td><input class="uk-form-width-medium" type="text"
                                    placeholder="gateway in this network" v-model="createParams.gateway"/></td>
                     </tr>
                     <tr>
                         <td class="uk-text-right" colspan="2">
-                            <input id="create" class="uk-button uk-button-primary"
+                            <input class="uk-button uk-button-primary"
                                    type="button" value="Create" @click="create()">
                         </td>
                     </tr>

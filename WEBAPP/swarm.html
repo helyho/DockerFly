@@ -207,22 +207,22 @@
                 <table class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
                         <td class="dialogField">Task history:</td>
-                        <td><input class="uk-form-width-medium" id="name" type="text"
+                        <td><input class="uk-form-width-medium" type="text"
                                    placeholder="Task history limit" v-model="initParams.taskHistoryRetentionLimit"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Advertise Addr:</td>
-                        <td><input class="uk-form-width-medium" id="name" type="text"
+                        <td><input class="uk-form-width-medium" type="text"
                                    placeholder="Advertise address" v-model="initParams.advertiseAddr"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Listen Addr:</td>
-                        <td><input class="uk-form-width-medium" id="name" type="text"
+                        <td><input class="uk-form-width-medium" type="text"
                                    placeholder="Listen address" v-model="initParams.listenAddr"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField" colspan="2">
-                            <input id="create" class="uk-button uk-button-primary"
+                            <input class="uk-button uk-button-primary"
                                    type="button" value="Init" @click="init()">
                         </td>
                     </tr>
@@ -238,28 +238,28 @@
                 <table class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
                         <td class="dialogField">JoinToken</td>
-                        <td><textarea class="uk-form-width-large" id="name" type="text"
+                        <td><textarea class="uk-form-width-large" type="text"
                                       placeholder="Join token" v-model="joinParams.joinToken"></textarea></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Remote Addr:</td>
-                        <td><input class="uk-form-width-large" id="name" type="text"
+                        <td><input class="uk-form-width-large" type="text"
                                       placeholder="Remote address" v-model="joinParams.remoteAddrs"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Advertise Addr:</td>
-                        <td><input class="uk-form-width-medium" id="name" type="text"
+                        <td><input class="uk-form-width-medium" type="text"
                                    placeholder="Advertise address" v-model="joinParams.advertiseAddr"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Listen Addr:</td>
-                        <td><input class="uk-form-width-medium" id="name" type="text"
+                        <td><input class="uk-form-width-medium" type="text"
                                    placeholder="Listen address" v-model="joinParams.listenAddr"/></td>
                     </tr>
 
                     <tr>
                         <td class="dialogField" colspan="2">
-                            <input id="create" class="uk-button uk-button-primary"
+                            <input class="uk-button uk-button-primary"
                                    type="button" value="Join" @click="join()">
                         </td>
                     </tr>

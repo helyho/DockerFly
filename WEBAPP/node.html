@@ -131,7 +131,7 @@
                     <span class="mr5">Name:</span><input class="uk-form-width-medium"
                         type="text" placeholder="node name" v-model="queryParams.name">
                     <span class="mr5">Role:</span>
-                    <select id="role" v-model="queryParams.role">
+                    <select v-model="queryParams.role">
                         <option value="ALL">All</option>
                         <option value="worker">worker</option>
                         <option value="manager">manager</option>
@@ -158,7 +158,7 @@
 
             <tbody>
             <tr v-for="(node,index) in nodeList">
-                <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</kktd>
+                <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
                 <td class="uk-text-middle uk-text-bold uk-text-primary">{{node.id|shortDockerId(12)}}</td>
                 <td class="uk-text-middle uk-text-success">{{node.spec.name}}</td>
                 <td class="uk-text-middle uk-text-warning">{{node.spec.role}}</td>
@@ -187,13 +187,13 @@
                 <table class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
                         <td class="dialogField">Name:</td>
-                        <td><input id="name" class="uk-form-width-medium" type="text"
+                        <td><input class="uk-form-width-medium" type="text"
                                    placeholder="node name" v-model="updateParams.name"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Driver:</td>
                         <td>
-                            <select id="role" class="uk-form-width-medium" v-model="updateParams.role">
+                            <select class="uk-form-width-medium" v-model="updateParams.role">
                                 <option value="manager">manager</option>
                                 <option value="worker">worker</option>
                             </select>
@@ -202,7 +202,7 @@
                     <tr>
                         <td class="dialogField">Availability:</td>
                         <td>
-                            <select id="availability" class="uk-form-width-medium" v-model="updateParams.availability">
+                            <select class="uk-form-width-medium" v-model="updateParams.availability">
                                 <option value="active">active</option>
                                 <option value="pause">pause</option>
                                 <option value="drain">drain</option>
@@ -211,7 +211,7 @@
                     </tr>
                     <tr>
                         <td class="uk-text-right" colspan="2">
-                            <input id="create" class="uk-button uk-button-primary"
+                            <input class="uk-button uk-button-primary"
                                    type="button" value="Update" @click="update()">
                         </td>
                     </tr>

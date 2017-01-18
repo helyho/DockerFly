@@ -347,13 +347,13 @@
                 <table class="uk-table uk-overflow-service uk-panel-box">
                     <tr>
                         <td class="dialogField">Name:</td>
-                        <td><input class="uk-form-width-medium" id="name" type="text"
+                        <td><input class="uk-form-width-medium" type="text"
                                    placeholder="contianer name" v-model="createParams.name"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Image:</td>
                         <td>
-                            <select id="image" class="uk-form-width-medium" v-model="createParams.image">
+                            <select class="uk-form-width-medium" v-model="createParams.image">
                                 <option v-for="image in imageList"
                                         :value="image.repoTags[0]"
                                 v-if="image.repoTags.length!=0">{{image.repoTags[0]}}
@@ -363,33 +363,33 @@
                     </tr>
                     <tr>
                         <td class="dialogField">Replicate:</td>
-                        <td><input class="uk-form-width-mini uk-text-center" id="command" type="text"
+                        <td><input class="uk-form-width-mini uk-text-center" type="text"
                                    placeholder="replicate count" v-model="createParams.replicate"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Command:</td>
-                        <td><input class="uk-form-width-large" id="command" type="text"
+                        <td><input class="uk-form-width-large" type="text"
                                    placeholder="command to run" v-model="createParams.command"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Env:</td>
-                        <td><input class="uk-form-width-large" id="env" type="text"
+                        <td><input class="uk-form-width-large" type="text"
                                    placeholder="like: author=dockerfly" v-model="createParams.env"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">CPU:</td>
-                        <td><input id="cpuQuota" type="text" class="uk-form-width-small uk-text-center"
+                        <td><input type="text" class="uk-form-width-small uk-text-center"
                                    placeholder="cpu core count" v-model="createParams.cpuLimit"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Memory:</td>
-                        <td><input id="memory" type="text" class="uk-form-width-small uk-text-center"
+                        <td><input type="text" class="uk-form-width-small uk-text-center"
                                    placeholder="memory size (Mb)" v-model="createParams.memoryLimit"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Network:</td>
                         <td>
-                            <select id="network" class="uk-form-width-medium" v-model="createParams.network">
+                            <select class="uk-form-width-medium" v-model="createParams.network">
                                 <option value="">Nothing</option>
                                 <option v-for="network in networkList" v-if="network.driver=='overlay'"
                                         :value="network.id">{{network.name}}
@@ -423,12 +423,12 @@
                                     </li>
                                     <li>
                                         <input class="port_input_button uk-text-center"
-                                               id="hostPort" type="text" placeholder="host" v-model="createParams.port.hostPort"/>
+                                               type="text" placeholder="host" v-model="createParams.port.hostPort"/>
                                         &nbsp;:&nbsp;
                                         <input class="port_input_button uk-text-center"
-                                               id="containerPort" type="text" placeholder="guest" v-model="createParams.port.containerPort"/>
+                                               type="text" placeholder="guest" v-model="createParams.port.containerPort"/>
                                         &nbsp;/&nbsp;
-                                        <select id="protocol" v-model="createParams.port.protocol">
+                                        <select v-model="createParams.port.protocol">
                                             <option value="tcp">tcp</option>
                                             <option value="udp">udp</option>
                                         </select>
@@ -460,7 +460,7 @@
                                         </div>
                                     </li>
                                     <li>
-                                        <select id="volume" class="uk-form-width-medium" v-model="createParams.volume.volumeSource">
+                                        <select class="uk-form-width-medium" v-model="createParams.volume.volumeSource">
                                             <option value="">Nothing</option>
                                             <option v-for="volume in volumeList"
                                                     :value="volume.name">{{volume.name}}
@@ -476,7 +476,7 @@
                     </tr>
                     <tr>
                         <td class="dialogField" colspan="2">
-                            <input id="create" class="uk-button uk-button-primary"
+                            <input class="uk-button uk-button-primary"
                                    type="button" value="Create" @click="create()">
                         </td>
                     </tr>

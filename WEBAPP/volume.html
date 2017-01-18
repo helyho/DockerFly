@@ -143,20 +143,20 @@
                 <table class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
                         <td class="dialogField">Name:</td>
-                        <td><input id="name" class="uk-form-width-medium" type="text"
+                        <td><input type="text"
                                    placeholder="volume name" v-model="createParams.name"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Driver:</td>
                         <td>
-                            <select id="driver" class="uk-form-width-medium" v-model="createParams.driver">
+                            <select class="uk-form-width-medium" v-model="createParams.driver">
                                 <option value="local">local</option>
                             </select>
                         </td>
                     </tr>
                     <tr>
                         <td class="uk-text-right" colspan="2">
-                            <input id="create" class="uk-button uk-button-primary"
+                            <input class="uk-button uk-button-primary"
                                    type="button" value="Create" @click="create()">
                         </td>
                     </tr>

@@ -152,7 +152,7 @@
             <div class="uk-grid">
                 <div class="uk-width-5-6 uk-form">
                     <span class="mr5">Name:</span>
-                    <input class="uk-form-width-medium" id="name"
+                    <input class="uk-form-width-medium"
                            type="text" placeholder="image's name" v-model="searchParams.name"/>
                     <select v-model="searchParams.limit">
                         <option value="5">5</option>
@@ -186,7 +186,6 @@
                     <th class="uk-text-center">Operation</th>
                 </tr>
                 </thead>
-
                 <tbody>
                 <tr v-for="(hubImage,index) in hubImageList " :key='hubImage.star_count'>
                     <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
