@@ -42,7 +42,7 @@
                         cmdSwarmInfo.release();
                         return swarmInfo;
                     } catch (e) {
-                        alertError(e)
+                        console.log(e)
                         return null;
                     }
                 }
@@ -204,7 +204,7 @@
         </div>
     </div>
     <div id="initSwarmDialog" class="uk-modal">
-        <div class="uk-modal-dialog uk-modal-dialog-large uk-overflow-container">
+        <div class="uk-modal-dialog uk-overflow-container">
             <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
             <div class="uk-modal-header"><h2 class="uk-text-success">Init swarm</h2></div>
             <div class="uk-form">
@@ -226,8 +226,7 @@
                     </tr>
                     <tr>
                         <td class="dialogField" colspan="2">
-                            <input class="uk-button uk-button-primary"
-                                   type="button" value="Init" @click="init()">
+                            <a class="uk-button uk-button-primary" @click="init()">Init</a>
                         </td>
                     </tr>
                 </table>
@@ -235,19 +234,19 @@
         </div>
     </div>
     <div id="joinSwarmDialog" class="uk-modal">
-        <div class="uk-modal-dialog uk-modal-dialog-large uk-overflow-container">
+        <div class="uk-modal-dialog uk-overflow-container">
             <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
             <div class="uk-modal-header"><h2 class="uk-text-success">Join swarm</h2></div>
             <div class="uk-form">
                 <table class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
                         <td class="dialogField">JoinToken</td>
-                        <td><textarea class="uk-form-width-large" type="text"
+                        <td><textarea class="uk-form-width-medium" type="text"
                                       placeholder="Join token" v-model="joinParams.joinToken"></textarea></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Remote Addr:</td>
-                        <td><input class="uk-form-width-large" type="text"
+                        <td><input class="uk-form-width-medium" type="text"
                                       placeholder="Remote address" v-model="joinParams.remoteAddrs"/></td>
                     </tr>
                     <tr>
@@ -263,8 +262,7 @@
 
                     <tr>
                         <td class="dialogField" colspan="2">
-                            <input class="uk-button uk-button-primary"
-                                   type="button" value="Join" @click="join()">
+                            <a class="uk-button uk-button-primary" @click="join()">Join</a>
                         </td>
                     </tr>
                 </table>

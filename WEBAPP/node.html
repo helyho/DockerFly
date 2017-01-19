@@ -106,6 +106,21 @@
                     } catch (e) {
                         alertError(e);
                     }
+                },
+                updateName: function (node) {
+                    UIkit.modal.prompt("Node name:", node.spec.name, function(newvalue){
+                        try {
+                            var cmdNodeUpdate = new CmdNodeUpdate(node.id, parseInt(node.version.index));
+                            if(newvalue!=""){
+                                cmdNodeUpdate.name(newvalue)
+                            }
+                            node.spec.name = newvalue;
+                            cmdNodeUpdate.send();
+                            cmdNodeUpdate.close();
+                        } catch (e) {
+                            alertError(e)
+                        }
+                    });
                 }
             }
         });
@@ -160,7 +175,14 @@
             <tr v-for="(node,index) in nodeList">
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
                 <td class="uk-text-middle uk-text-bold uk-text-primary">{{node.id|shortDockerId(12)}}</td>
-                <td class="uk-text-middle uk-text-success">{{node.spec.name}}</td>
+                <td class="uk-text-middle uk-text-success">
+                    <span v-if="node.spec.name==undefined">
+                        <a href='#' class="uk-button uk-button-success uk-button-mini" @click='updateName(node)'>Set name</a>
+                    </span>
+                    <span v-else>
+                        {{node.spec.name}}
+                    </span>
+                </td>
                 <td class="uk-text-middle uk-text-warning">{{node.spec.role}}</td>
                 <td class="uk-text-middle">{{node.status.state}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-danger">
