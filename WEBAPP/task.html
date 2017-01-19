@@ -142,7 +142,7 @@
                         type="text" placeholder="service id" v-model="queryParams.service">
                     <span class="mr5">Node:</span><input class="uk-form-width-medium"
                         type="text" placeholder="node id" v-model="queryParams.node">
-                    <span class="mr5">Desired:</span>
+                    <span class="mr5">State:</span>
                         <select v-model="queryParams.desiredState" class="uk-form-width-mini">
                         <option value="ALL">All</option>
                         <option value="running">running</option>
@@ -158,12 +158,12 @@
             <caption>Task list</caption>
             <thead>
             <tr>
-                <th class="uk-text-center uk-width-1-10">NO.</th>
+                <th class="uk-text-center uk-width-1-10"> NO.</th>
                 <th class="uk-width-1-10">ID</th>
                 <th class="uk-width-1-10">Node</th>
                 <th class="uk-width-1-10">Service</th>
                 <th class="uk-width-1-10">Container</th>
-                <th class="uk-width-1-10">Desired state</th>
+                <th class="uk-width-1-10">State</th>
                 <th class="uk-width-1-10">Create</th>
                 <th class="uk-width-1-10">Update</th>
             </tr>
@@ -177,7 +177,7 @@
                     <a class="uk-text-success" :href="'node.html?id='+task.nodeId">{{nodes[task.nodeId]}}</a>
                 </td>
                 <td class=" uk-text-middle uk-text-bold ">
-                    <a class="uk-text-warning" :href="'service.html?id='+task.serviceId">{{services[task.serviceId]}}</ai>
+                    <a class="uk-text-warning" :href="'service.html?id='+task.serviceId">{{services[task.serviceId]}}</a>
                 </td>
                 <td class=" uk-text-middle uk-text-bold ">
                     <a class="uk-text-danger" :href="'container.html?id='+task.status.containerStatus.containerId">
