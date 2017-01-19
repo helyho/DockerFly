@@ -249,7 +249,7 @@
                         cmdServiceCreate.send();
                         cmdServiceCreate.close();
                         createServiceDialog.hide();
-                        UIkit.modal.alert("Create service success.");
+                        alert("Create service success.");
                         serviceListVue.query();
                     } catch (e) {
                         alertError(e);
@@ -341,7 +341,7 @@
     </div>
     <div id="createServiceDialog" class="uk-modal">
         <div class="uk-modal-dialog uk-modal-dialog-large uk-overflow-service">
-            <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
+            <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
             <div class="uk-modal-header"><h2 class="uk-text-success">Create a new service</h2></div>
             <div class="uk-form">
                 <table class="uk-table uk-overflow-service uk-panel-box">

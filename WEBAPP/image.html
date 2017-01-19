@@ -101,7 +101,7 @@
                             cmdImageCreate.close();
 
                             hubImageList.hide();
-                            UIkit.modal.alert("Image " + hubImage.name + " already pulled.");
+                            alert("Image " + hubImage.name + " already pulled.");
                             imageListVue.query();
                         })
 
@@ -175,7 +175,7 @@
 
     <div id="pullImageDialog" class="uk-modal">
         <div class="uk-modal-dialog uk-modal-dialog-large   uk-overflow-container">
-            <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
+            <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
             <h3 class="uk-text-middle">Pull image</h3>
             <div class="uk-panel uk-panel-box uk-text-bold">
                 <div class="uk-grid">

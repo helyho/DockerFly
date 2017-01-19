@@ -306,7 +306,7 @@
                         cmdContainerCreate.send();
                         cmdContainerCreate.close();
                         createContainerDialog.hide();
-                        UIkit.modal.alert("Create container success.");
+                        alert("Create container success.");
                         containerListVue.query();
                     } catch (e) {
                         alertError(e);
@@ -410,7 +410,7 @@
     </div>
     <div id="createContainerDialog" class="uk-modal">
         <div class="uk-modal-dialog uk-modal-dialog-large uk-overflow-container">
-            <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
+            <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
             <div class="uk-modal-header"><h2 class="uk-text-success">Create a new container</h2></div>
             <div class="uk-form">
                 <table class="uk-table uk-overflow-container uk-panel-box">

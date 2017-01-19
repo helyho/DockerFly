@@ -101,7 +101,7 @@
                         cmdNodeUpdate.send();
                         cmdNodeUpdate.close();
                         updateNodeDialog.hide();
-                        UIkit.modal.alert("Update node success.");
+                        alert("Update node success.");
                         nodeListVue.query();
                     } catch (e) {
                         alertError(e);
@@ -183,7 +183,7 @@
     </div>
     <div id="updateNodeDialog" class="uk-modal">
         <div class="uk-modal-dialog uk-overflow-container">
-            <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
+            <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
             <div class="uk-modal-header"><h2 class="uk-text-success">Update node</h2></div>
             <div class="uk-form">
                 <table class="uk-table uk-overflow-container uk-panel-box">

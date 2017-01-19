@@ -28,14 +28,22 @@
         return new Date().getTime();
     }
 
+
+    function alert(msg){
+        UIkit.modal.alert(msg);
+    }
+
     //展示错误信息
     function alertError(e){
-        try {
+        var errMsg = "<h3 class='uk-text-danger uk-text-bold'>Ops , We hava an error!</h3><div style='margin: 0px 15px 0px 15px;'>";
+        if(e instanceof Error) {
             var errObj = eval("err_" + currentTimeMills() + " = " + e.message);
-            UIkit.modal.alert(errObj.errMsg.replaceAll("\\\"","\""));
-        }catch(e){
-            UIkit.modal.alert(e.message);
+            errMsg = errMsg + errObj.errMsg.replaceAll("\\\"", "\"");
+        }else{
+            errMsg = errMsg + e;
         }
+        errMsg = errMsg+"</div>"
+        alert(errMsg);
     }
 
 /**
@@ -110,12 +118,15 @@
         var props=[],
             ret=[],
             i=0,
-            len=this.length;
+            len=this.length,
+            isNumber=false;
+
         if(typeof prop=='string') {
             for(; i<len; i++){
                 var oI = this[i];
                 if(typeof oI[prop] == "number"){
                     (props[i] = new Number(oI && oI[prop] || ''))._obj = oI;
+                    isNumber = true;
                 }else {
                     (props[i] = new String(oI && oI[prop] || ''))._obj = oI;
                 }
@@ -126,6 +137,7 @@
                 var oI = this[i];
                 if(typeof prop(oI) == "number"){
                     (props[i] = new Number(oI && prop(oI) || ''))._obj = oI;
+                    isNumber=true;
                 }else {
                     (props[i] = new String(oI && prop(oI) || ''))._obj = oI;
                 }
@@ -134,7 +146,18 @@
         else {
             throw '参数类型错误';
         }
-        props.sort();
+
+        if(isNumber){
+            props.sort(function(a,b){
+                if(a>b){
+                    return true;
+                }else{
+                    return false;
+                }
+            });
+        }else {
+            props.sort();
+        }
         for(i=0; i<len; i++) {
             ret[i] = props[i]._obj;
         }

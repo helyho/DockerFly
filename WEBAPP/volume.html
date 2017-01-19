@@ -77,7 +77,7 @@
                         cmdVolumeCreate.send();
                         cmdVolumeCreate.close();
                         createVolumeDialog.hide();
-                        UIkit.modal.alert("Create volume success.");
+                        alert("Create volume success.");
                         volumeListVue.query();
                     } catch (e) {
                         alertError(e);
@@ -137,7 +137,7 @@
     </div>
     <div id="createVolumeDialog" class="uk-modal">
         <div class="uk-modal-dialog uk-overflow-container">
-            <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
+            <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
             <div class="uk-modal-header"><h2 class="uk-text-success">Create a new volume</h2></div>
             <div class="uk-form">
                 <table class="uk-table uk-overflow-container uk-panel-box">

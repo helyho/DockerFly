@@ -124,10 +124,10 @@
                             cmdSwarmLeave.send()
                             cmdSwarmLeave.close();
                             cmdSwarmLeave.release();
-                            UIkit.modal.alert("Swarm leave operation finished");
+                            alert("Swarm leave operation finished");
                             location.reload()
                         } catch (e) {
-                            UIkit.modal.alert("Swarm leave operation finished");
+                            alert("Swarm leave operation finished");
                             alertError(e)
                             return null;
                         }
@@ -205,7 +205,7 @@
     </div>
     <div id="initSwarmDialog" class="uk-modal">
         <div class="uk-modal-dialog uk-modal-dialog-large uk-overflow-container">
-            <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
+            <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
             <div class="uk-modal-header"><h2 class="uk-text-success">Init swarm</h2></div>
             <div class="uk-form">
                 <table class="uk-table uk-overflow-container uk-panel-box">
@@ -236,7 +236,7 @@
     </div>
     <div id="joinSwarmDialog" class="uk-modal">
         <div class="uk-modal-dialog uk-modal-dialog-large uk-overflow-container">
-            <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
+            <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
             <div class="uk-modal-header"><h2 class="uk-text-success">Join swarm</h2></div>
             <div class="uk-form">
                 <table class="uk-table uk-overflow-container uk-panel-box">
@@ -273,7 +273,7 @@
     </div>
     <div id="helpDialog" class="uk-modal">
         <div class="uk-modal-dialog uk-modal-dialog-large uk-overflow-container">
-            <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
+            <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
             <h3>Try to run this command to let swarm port cross the firewall:</h3>
             <div class="uk-panel-box">
                 <code>firewall-cmd --zone=public --add-port=2377/tcp --permanent</code><br/>

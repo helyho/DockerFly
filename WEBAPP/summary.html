@@ -28,6 +28,7 @@
             computed: {
                 dockerInfo: function () {
                     try {
+
                         var cmdDockerInfo = new CmdDockerInfo();
                         var dockerInfo = cmdDockerInfo.send()
                         cmdDockerInfo.close();
@@ -40,8 +41,18 @@
             },
             methods:{
                 connect: function(){
-                    var cmdDockerFlyConfig = new CmdDockerFlyConfig();
-                    cmdDockerFlyConfig.config(this.config.host, this.config.port)
+                    try{
+                        var cmdDockerFlyConfig = new CmdDockerFlyConfig();
+                        if(this.config.host!="" && this.config.port!="") {
+                            cmdDockerFlyConfig.config(this.config.host, this.config.port)
+                        }else{
+                            alertError("We need correct data of host and port !")
+                        }
+
+                        cmdDockerFlyConfig.release();
+                    }catch(e){
+                        alertError("Need correct host and port data!")
+                    }
                 }
             }
         });
@@ -130,7 +141,7 @@
                 </tr>
                 <tr>
                     <td colspan="4" class="uk-text-right">
-                        <a href="" class="uk-button uk-button-primary" @click="connect()">Connect</a>
+                        <a href="#" class="uk-button uk-button-primary" @click="connect()">Connect</a>
                     </td>
                 </tr>
                 </tbody>
