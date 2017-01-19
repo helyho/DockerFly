@@ -89,7 +89,7 @@
     }
 </script>
 <body onload="init()" class="frameBody">
-<div id="volumeApp" class="uk-grid">
+<div id="volumeApp" class="uk-grid" style="display: none" v-show="this.volumeList!=null">
     <div class="uk-width-6-6">
         <div class="uk-panel"></div>
         <h3 class="uk-text-middle">Volume manager</h3>
@@ -164,7 +164,7 @@
         </div>
     </div>
     <div class="uk-width-6-6">
-        <div style="min-height: 40; margin-bottom:10px" class="uk-text-center">
+        <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
             <div><img height="27" width="120" src="img/logo.jpg"/></div>
             <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
             <div>Powered by Voovan open source framework.</div>
