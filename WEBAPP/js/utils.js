@@ -51,10 +51,16 @@
  */
     //Vue 的自定义过滤器
     function delFirestChar(value){
+        if(value==undefined){
+            return null;
+        }
         return value.substr(1,value.length)
     }
 
     function shortDockerId(value,length){
+        if(value==undefined){
+            return null;
+        }
         if(value.startsWith("sha256:")){
             value = value.replace("sha256:","")
             value = value.substr(0, length);
