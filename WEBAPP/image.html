@@ -25,6 +25,9 @@
                 imageList: null,
                 hubImageList: null,
                 pullTag:"latest",
+                queryParams:{
+                    name:""
+                },
                 searchParams:{
                     name:"",
                     limit:5
@@ -35,6 +38,11 @@
                 query: function () {
                     try {
                         var cmdImageListInfo = new CmdImageListInfo();
+                        cmdImageListInfo.all(true);
+
+                        if(this.queryParams.name!=""){
+                            cmdImageListInfo.filter(this.queryParams.name);
+                        }
 
                         this.imageList = cmdImageListInfo.send().sortBy("Created");
                         cmdImageListInfo.close();
@@ -72,12 +80,13 @@
                         this.hubImageList = cmdHubImageInfo.send().sortBy("star_count", true);
                         cmdHubImageInfo.close();
                         cmdHubImageInfo.release();
-
-                        hubImageList = UIkit.modal("#hubImageListDialog");
-                        hubImageList.show();
                     } catch (e) {
                         alertError(e)
                     }
+                },
+                openPullDialog: function(){
+                    pullImageDialog = UIkit.modal("#pullImageDialog");
+                    pullImageDialog.show();
                 },
                 pull: function (hubImage) {
                     try {
@@ -112,6 +121,20 @@
     <div class="uk-width-6-6">
         <div class="uk-panel"></div>
         <h3 class="uk-text-middle">Image manager</h3>
+        <div class="uk-panel uk-panel-box uk-text-bold">
+            <div class="uk-grid">
+                <div class="uk-width-5-6 uk-form">
+                    <span class="mr5">Name:</span>
+                    <input class="uk-form-width-medium"
+                           type="text" placeholder="image's name" v-model="queryParams.name"/>
+                    <a class="uk-button uk-button-small" @click="query()"><i class="uk-icon-search"></i></a>
+                </div>
+                <div class="uk-width-1-6 uk-text-right">
+                    <a class="uk-button uk-button-small uk-button-primary"
+                       @click="openPullDialog"><i class="uk-icon-plus-square"></i> </a>
+                </div>
+            </div>
+        </div>
         <table id="imageList" class="uk-table uk-overflow-container uk-panel-box">
             <caption>Image list</caption>
             <thead>
@@ -147,35 +170,34 @@
             </tr>
             </tbody>
         </table>
-        <h3 class="uk-text-middle">Pull image</h3>
-        <div class="uk-panel uk-panel-box uk-text-bold">
-            <div class="uk-grid">
-                <div class="uk-width-5-6 uk-form">
-                    <span class="mr5">Name:</span>
-                    <input class="uk-form-width-medium"
-                           type="text" placeholder="image's name" v-model="searchParams.name"/>
-                    <select v-model="searchParams.limit">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="30">30</option>
-                        <option value="40">40</option>
-                        <option value="50">50</option>
-                    </select>
-                    <a class="uk-button uk-button-small" @click="search()"><i class="uk-icon-search"></i></a>
-                </div>
-                <div class="uk-width-1-6 uk-text-right">
-                    <a class="uk-button uk-button-primary uk-button-small" @click="query()"><i class="uk-icon-refresh"></i></a>
-                </div>
-            </div>
-        </div>
+
     </div>
 
-    <div id="hubImageListDialog" class="uk-modal">
+    <div id="pullImageDialog" class="uk-modal">
         <div class="uk-modal-dialog uk-modal-dialog-large   uk-overflow-container">
             <a href="" class="uk-modal-close uk-close uk-close-alt"></a>
-            <div class="uk-modal-header"><h2 class="uk-text-success">Search image list from docker hub</h2></div>
+            <h3 class="uk-text-middle">Pull image</h3>
+            <div class="uk-panel uk-panel-box uk-text-bold">
+                <div class="uk-grid">
+                    <div class="uk-width-5-6 uk-form">
+                        <span class="mr5">Name:</span>
+                        <input class="uk-form-width-medium"
+                               type="text" placeholder="image's name" v-model="searchParams.name"/>
+                        <select v-model="searchParams.limit">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                            <option value="50">50</option>
+                        </select>
+                        <a class="uk-button uk-button-small" @click="search()"><i class="uk-icon-search"></i></a>
+                    </div>
+                </div>
+            </div>
+
             <table id="hubImageList" class="uk-table uk-overflow-container uk-panel-box">
+                <caption>Image list</caption>
                 <thead>
                 <tr>
                     <th class="uk-text-center uk-width-1-10">NO.</th>
@@ -202,6 +224,14 @@
                 </tr>
                 </tbody>
             </table>
+        </div>
+    </div>
+    <div class="uk-width-6-6">
+        <div style="min-height: 40; margin-bottom:10px" class="uk-text-center">
+            <div><img height="27" width="120" src="img/logo.jpg"/></div>
+            <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
+            <div>Powered by Voovan open source framework.</div>
+            <div></div>
         </div>
     </div>
 </div>

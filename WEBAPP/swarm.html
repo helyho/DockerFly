@@ -187,18 +187,19 @@
                 </tbody>
             </table>
         </div>
-        <div class="uk-grid uk-panel uk-panel-box uk-text-bold" style="margin-top: 35px;">
-            <div class="uk-form uk-text-left uk-width-3-5">
-                <h3 class="uk-text-bolder uk-text-primary" style="padding-top:3px">Swarm operation</h3>
-            </div>
-            <div class="uk-form uk-text-right uk-width-2-5 uk-text-middle">
-                <div class="uk-button-group">
-                    <a class="uk-button  uk-button-primary" @click="openInitDialog">Init</a>
-                    <a class="uk-button  uk-button-success" @click="openJoinDialog">Join</a>
-                    <a class="uk-button  uk-button-danger" @click="leave">Leave</a>
+        <div class="uk-panel uk-panel-box uk-text-bold" style="margin-top: 35px;">
+            <div class="uk-grid">
+                <div class="uk-text-left uk-width-3-5">
+                    <h3 class="uk-text-bolder uk-text-primary" style="padding-top:3px">Swarm operation</h3>
                 </div>
-                <a class="uk-button  uk-button-link" data-uk-modal="{target:'#helpDialog'}"><span class="uk-icon-question-circle"></span></a>
-
+                <div class="uk-form uk-text-right uk-width-2-5 uk-text-middle">
+                    <div class="uk-button-group">
+                        <a class="uk-button  uk-button-primary" @click="openInitDialog">Init</a>
+                        <a class="uk-button  uk-button-success" @click="openJoinDialog">Join</a>
+                        <a class="uk-button  uk-button-danger" @click="leave">Leave</a>
+                    </div>
+                    <a class="uk-button  uk-button-link" data-uk-modal="{target:'#helpDialog'}"><span class="uk-icon-question-circle"></span></a>
+                </div>
             </div>
         </div>
     </div>
@@ -282,6 +283,14 @@
                 <code>firewall-cmd --zone=public --add-port=4789/udp --permanent</code><br/>
                 <code>firewall-cmd --reload</code><br/>
             </div>
+        </div>
+    </div>
+    <div class="uk-width-6-6">
+        <div style="min-height: 40; margin-bottom:10px" class="uk-text-center">
+            <div><img height="27" width="120" src="img/logo.jpg"/></div>
+            <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
+            <div>Powered by Voovan open source framework.</div>
+            <div></div>
         </div>
     </div>
 </div>

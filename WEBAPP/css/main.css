@@ -24,10 +24,24 @@ body > .uk-grid {
     height: 100%;
 }
 
+th{
+    background-color: #70889e;
+    color: #fff;
+}
+
+.frameBody{
+    padding: 0px 0px 0px 35px;
+}
+
+.frameBody > .uk-grid > div:first-child {
+    min-height: 80%;
+    padding-right: 35px;
+}
 
 
-body > .uk-grid > div {
-    padding-right: 32px;
+.frameBody > .uk-grid > div:last-child {
+    min-height: 40px;
+    margin-top: 35px;
 }
 
 .port_input_button {
@@ -37,19 +51,6 @@ body > .uk-grid > div {
 .mr5 {
     margin-right: 5px;
     margin-left: 5px;
-}
-
-th{
-    background-color: #70889e;
-    color: #fff;
-}
-
-.frameBody{
-    padding: 0px 35px 0px 35px;
-}
-
-body > .uk-grid > div{
-    padding-right: 0px;
 }
 
 .summeryField {
