@@ -313,7 +313,7 @@
                     {{service.spec.name}}
                 </td>
                 <td class="uk-text-bold uk-text-middle uk-text-warning">
-                    {{service.spec.taskTemplate.containerSpec.image}}
+                    {{service.spec.taskTemplate.containerSpec.image.split("@")[0]}}
                 </td>
                 <td class="uk-text-middle">
                     <div v-for="virtualIP in service.endpoint.virtualIPs">
