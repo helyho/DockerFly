@@ -106,11 +106,11 @@
                         cmdContainerList.all(true)
 
                         if (this.queryParams.name != "") {
-                            cmdContainerList.name(this.queryParams.name);
+                            cmdContainerList.name([this.queryParams.name]);
                         }
 
                         if (this.queryParams.id != "") {
-                            cmdContainerList.id(this.queryParams.id);
+                            cmdContainerList.id([this.queryParams.id]);
                         }
 
                         if (this.queryParams.status != "All") {

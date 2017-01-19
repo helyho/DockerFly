@@ -43,11 +43,11 @@
                         var cmdNetworkList = new CmdNetworkList();
 
                         if (this.queryParams.name != "") {
-                            cmdNetworkList.name(this.queryParams.name);
+                            cmdNetworkList.name([this.queryParams.name]);
                         }
 
                         if (this.queryParams.id != "") {
-                            cmdNetworkList.id(this.queryParams.id);
+                            cmdNetworkList.id([this.queryParams.id]);
                         }
 
                         if (this.queryParams.driver != "ALL") {

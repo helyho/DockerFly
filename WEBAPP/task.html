@@ -28,7 +28,6 @@
                 nodes:[],
                 queryParams: {
                     id:"",
-                    name:"",
                     service:"",
                     node:"",
                     desiredState:"ALL"
@@ -41,11 +40,7 @@
                         var cmdTaskList = new CmdTaskList();
 
                         if (this.queryParams.id != "") {
-                            cmdTaskList.id(this.queryParams.id);
-                        }
-
-                        if (this.queryParams.name != "") {
-                            cmdTaskList.name(this.queryParams.name);
+                            cmdTaskList.id([this.queryParams.id]);
                         }
 
                         if (this.queryParams.service != "") {
@@ -141,16 +136,14 @@
             <div class="uk-grid">
                 <div class="uk-width-5-6 uk-form">
                     <fieldset data-uk-margin>
-                    <span class="mr5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Id:</span><input class="uk-form-width-medium"
+                    <span class="mr5">Id:</span><input class="uk-form-width-medium"
                            type="text" placeholder="task id" v-model="queryParams.id">
-                    <span class="mr5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        Name:</span><input class="uk-form-width-medium"
-                        type="text" placeholder="task name" v-model="queryParams.name">
                     <span class="mr5">Service:</span><input class="uk-form-width-medium"
-                        type="text" placeholder="service id" v-model="queryParams.service"><br/>
+                        type="text" placeholder="service id" v-model="queryParams.service">
                     <span class="mr5">Node:</span><input class="uk-form-width-medium"
                         type="text" placeholder="node id" v-model="queryParams.node">
-                    <span class="mr5">Desired state:</span><select v-model="queryParams.desiredState" class="uk-form-width-medium">
+                    <span class="mr5">Desired:</span>
+                        <select v-model="queryParams.desiredState" class="uk-form-width-mini">
                         <option value="ALL">All</option>
                         <option value="running">running</option>
                         <option value="shutdown">shutdown</option>

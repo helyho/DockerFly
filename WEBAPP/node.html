@@ -23,7 +23,6 @@
             data: {
                 nodeList: null,
                 queryParams: {
-                    name:"",
                     id:"",
                     role:"ALL"
                 },
@@ -40,12 +39,8 @@
                     try {
                         var cmdNodeList = new CmdNodeList();
 
-                        if (this.queryParams.name != "") {
-                            cmdNodeList.name(this.queryParams.name);
-                        }
-
                         if (this.queryParams.id != "") {
-                            cmdNodeList.id(this.queryParams.id);
+                            cmdNodeList.id([this.queryParams.id]);
                         }
 
                         if (this.queryParams.role != "ALL") {
@@ -143,8 +138,6 @@
                     <span class="mr5">Id:</span>
                     <input class="uk-form-width-medium" id="id"
                            type="text" placeholder="node id" v-model="queryParams.id">
-                    <span class="mr5">Name:</span><input class="uk-form-width-medium"
-                        type="text" placeholder="node name" v-model="queryParams.name">
                     <span class="mr5">Role:</span>
                     <select v-model="queryParams.role">
                         <option value="ALL">All</option>
