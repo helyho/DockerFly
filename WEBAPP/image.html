@@ -14,7 +14,7 @@
 <script lang="javascript" src="js/utils.js"></script>
 <script lang="javascript">
     doImport("org.voovan.docker.command.Image.CmdHubImageInfo")
-    doImport("org.voovan.docker.command.Image.CmdImageListInfo")
+    doImport("org.voovan.docker.command.Image.CmdImageList")
     doImport("org.voovan.docker.command.Image.CmdImageRemove")
     doImport("org.voovan.docker.command.Image.CmdImageCreate")
 
@@ -37,16 +37,16 @@
                 //查询方法
                 query: function () {
                     try {
-                        var cmdImageListInfo = new CmdImageListInfo();
-                        cmdImageListInfo.all(true);
+                        var cmdImageList = new CmdImageList();
+                        cmdImageList.all(true);
 
                         if(this.queryParams.name!=""){
-                            cmdImageListInfo.filter(this.queryParams.name);
+                            cmdImageList.filter(this.queryParams.name);
                         }
 
-                        this.imageList = cmdImageListInfo.send().sortBy("Created");
-                        cmdImageListInfo.close();
-                        cmdImageListInfo.release();
+                        this.imageList = cmdImageList.send().sortBy("Created");
+                        cmdImageList.close();
+                        cmdImageList.release();
                     } catch (e) {
                         alertError(e)
                     }

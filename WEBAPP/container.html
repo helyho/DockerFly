@@ -21,7 +21,7 @@
     doImport("org.voovan.docker.command.Container.CmdContainerPause")
     doImport("org.voovan.docker.command.Container.CmdContainerUnPause")
 
-    doImport("org.voovan.docker.command.Image.CmdImageListInfo")
+    doImport("org.voovan.docker.command.Image.CmdImageList")
     doImport("org.voovan.docker.command.Network.CmdNetworkList")
     doImport("org.voovan.docker.command.Volume.CmdVolumeList")
 
@@ -206,11 +206,11 @@
                 },
                 getImageList: function () {
                     try{
-                        var cmdImageListInfo = new CmdImageListInfo();
+                        var cmdImageList = new CmdImageList();
 
-                        this.imageList = cmdImageListInfo.send().sortBy("Created");
-                        cmdImageListInfo.close();
-                        cmdImageListInfo.release();
+                        this.imageList = cmdImageList.send().sortBy("Created");
+                        cmdImageList.close();
+                        cmdImageList.release();
                     } catch (e) {
                         alertError(e)
                     }
@@ -286,7 +286,7 @@
                                 }
                                 volumes.push(volumeStr)
                             }
-                            cmdContainerCreate.volume(volumes);
+                            cmdContainerCreate.bind(volumes);
                         }
 
                         if (this.createParams.link.links.length > 0) {
