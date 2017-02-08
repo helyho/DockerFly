@@ -20,6 +20,8 @@
     doImport("org.voovan.docker.command.Container.CmdContainerRemove")
     doImport("org.voovan.docker.command.Container.CmdContainerPause")
     doImport("org.voovan.docker.command.Container.CmdContainerUnPause")
+    doImport("org.voovan.docker.command.Container.CmdContainerUnPause")
+
 
     doImport("org.voovan.docker.command.Image.CmdImageList")
     doImport("org.voovan.docker.command.Network.CmdNetworkList")
@@ -33,6 +35,7 @@
                 networkList: null,
                 volumeList: null,
                 imageList: null,
+                viewContainerId : null,
                 queryParams:{
                     name:"",
                     id:"",
@@ -93,11 +96,6 @@
                     }
                 }
             },
-            watch: {
-                createParams:function(newValue){
-                    alert(JSON.stringify(this.createParams))
-                }
-            },
             methods: {
                 //查询方法
                 query: function () {
@@ -150,6 +148,7 @@
                 stop: function (container) {
                     try {
                         var cmdContainerStop = new CmdContainerStop(container.id);
+                        cmdContainerStop.waitForKill(3);
                         cmdContainerStop.send();
                         cmdContainerStop.close();
                         cmdContainerStop.release();
@@ -193,17 +192,8 @@
                     }
                     this.query()
                 },
-                openCreateDialog: function () {
-                    try{
-                        containerListVue.getImageList();
-                        containerListVue.getNetworkList();
-                        containerListVue.getVolumeList();
-                    } catch (e) {
-                        alertError(e)
-                    }
-                    createContainerDialog = UIkit.modal("#createContainerDialog");
-                    createContainerDialog.show();
-                },
+
+                //为创建容器准备参数
                 getImageList: function () {
                     try{
                         var cmdImageList = new CmdImageList();
@@ -236,6 +226,21 @@
                         alertError(e)
                     }
                 },
+
+                //打开创建容器对话框
+                openCreateDialog: function () {
+                    try{
+                        containerListVue.getImageList();
+                        containerListVue.getNetworkList();
+                        containerListVue.getVolumeList();
+                    } catch (e) {
+                        alertError(e)
+                    }
+                    createContainerDialog = UIkit.modal("#createContainerDialog");
+                    createContainerDialog.show();
+                },
+
+                //创建容器
                 create: function () {
                     try {
                         cmdContainerCreate = new CmdContainerCreate(this.createParams.name);
@@ -305,12 +310,18 @@
                         }
                         cmdContainerCreate.send();
                         cmdContainerCreate.close();
+                        cmdContainerCreate.release();
                         createContainerDialog.hide();
                         alert("Create container success.");
                         containerListVue.query();
                     } catch (e) {
                         alertError(e);
                     }
+                },
+                //查看容器
+                view: function (container) {
+                    this.viewContainerId = container.id;
+                    window.open("viewer.html?id="+container.id);
                 }
             }
         });
@@ -396,7 +407,7 @@
                 </td>
                 <td class="uk-text-center uk-text-middle">
                     <div class="uk-button-group">
-                        <input class="uk-button uk-button-small " type="button" value="View"/>
+                        <input class="uk-button uk-button-small " type="button" value="View" @click="view(container)"/>
                         <input class="uk-button uk-button-small uk-button-primary" type="button" value="Start"
                                :disabled="container.state=='running'" @click="start(container)"/>
                         <input class="uk-button uk-button-small uk-button-success" type="button" value="Stop"
@@ -600,7 +611,7 @@
             <div><img height="27" width="120" src="img/logo.jpg"/></div>
             <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
             <div>Powered by Voovan open source framework.</div>
-            <div></div>
+
         </div>
     </div>
 </div>

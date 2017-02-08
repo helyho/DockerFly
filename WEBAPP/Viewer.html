@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DockerFly</title>
+</head>
+<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+<link rel="stylesheet" href="css/uikit/uikit.css"/>
+<script src="js/common/jquery.min.js"></script>
+<script src="js/common/vue.min.js"></script>
+<script src="js/common/uikit.js"></script>
+
+<link rel="stylesheet" href="css/main.css"/>
+<script lang="javascript" src="js/utils.js"></script>
+<script lang="javascript">
+    doImport("org.voovan.docker.command.Container.CmdContainerList")
+    doImport("org.voovan.docker.command.Container.CmdContainerLogs")
+
+    function init() {
+        viewerVue = new Vue({
+            el: '#viewerApp',
+            data: {
+                logInfo :{
+                    logData: "",
+                    logTimeStamp: null,
+                    logInterval: 1
+                }
+            },
+            updated: function(){
+                logPanel.scrollTop = logPanel.scrollHeight;
+            },
+            computed: {
+                viewContainer: function () {
+                    try {
+
+                        var containerId = getQueryString("id");
+                        var cmdContainerList = new CmdContainerList()
+                        cmdContainerList.all(true);
+                        cmdContainerList.id([containerId])
+                        var viewContainer = cmdContainerList.send();
+                        cmdContainerList.close();
+                        cmdContainerList.release();
+                        if(viewContainer.length == 1){
+                            document.title = delFirestChar(viewContainer[0].names[0]) +
+                                " [" +viewContainer[0].state+"] DockerFly";
+                            return viewContainer[0];
+                        }else {
+                            return null;
+                        }
+                    } catch (e) {
+                        alertError(e)
+                    }
+                }
+            },
+            methods:{
+                logView: function(){
+                    var cmdContainerLogs = new CmdContainerLogs(this.viewContainer.id);
+
+                    if(this.logInfo.logTimeStamp==null) {
+                        cmdContainerLogs.tail("5");
+                    }else{
+                        cmdContainerLogs.tail("all");
+                        cmdContainerLogs.since(this.logInfo.logTimeStamp);
+                    }
+
+                    this.logInfo.logTimeStamp = parseInt(currentTimeMills() / 1000);
+
+                    var logData = cmdContainerLogs.send();
+                    var logPanel = document.getElementById('logPanel');
+                    this.logInfo.logData += logData.replaceAll("\n","<br/>");
+
+                    cmdContainerLogs.close();
+                    cmdContainerLogs.release();
+                },
+
+                logClean: function(){
+                    this.logInfo.logData = "";
+                }
+            }
+        });
+    }
+</script>
+<body onload="init()" class="frameBody" style="padding-right: 35px">
+<div id="viewerApp" style="display: none" v-show="this.viewContainer!=null">
+    <div class="uk-width-6-6">
+        <div class="uk-panel"></div>
+        <h3 class="uk-text-middle"><span class="uk-text-danger uk-text-bold uk-text-large">
+            {{viewContainer.names[0]|delFirestChar}}</span> [ {{viewContainer.state}} ]
+        </h3>
+        <ul class="uk-tab" data-uk-switcher="{connect:'#Viewers'}">
+            <li><a href="#">Performance</a></li>
+            <li><a href="#">Log</a></li>
+        </ul>
+        <div id="Viewers" class="uk-switcher">
+            <div>asdfadf</div>
+            <div style="margin-top:15px">
+                <div class="uk-grid">
+                    <div class="uk-width-5-6">
+                        Command: <code>{{viewContainer==null?"":viewContainer.command}}</code>
+                    </div>
+                    <div class="uk-width-1-6 uk-text-center">
+                        <a class="uk-button uk-button-mini uk-button-primary" @click="logView">Load</a>
+                        <a class="uk-button uk-button-mini uk-button-success" @click="logClean">Clean</a>
+                    </div>
+                </div>
+                <hr>
+                <div id="logPanel" v-html="logInfo.logData" class="logPanel" style="height:400px; overflow-y: scroll;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -91,5 +91,10 @@ th{
     border-color: rgba(226, 131, 39, 0.3);
     border: 1px solid #ddd;
 }
+.logPanel{
+    color: #19f900;
+    background-color: #333333;
+    padding: 5px 15px 5px 15px ;
+}
 
 
