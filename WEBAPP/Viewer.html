@@ -57,10 +57,10 @@
                     var cmdContainerLogs = new CmdContainerLogs(this.viewContainer.id);
 
                     if(this.logInfo.logTimeStamp==null) {
-                        cmdContainerLogs.tail("5");
+                        cmdContainerLogs.tail("15");
                     }else{
                         cmdContainerLogs.tail("all");
-                        cmdContainerLogs.since(this.logInfo.logTimeStamp);
+                        cmdContainerLogs.since(this.logInfo.logTimeStamp+1);
                     }
 
                     this.logInfo.logTimeStamp = parseInt(currentTimeMills() / 1000);
