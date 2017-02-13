@@ -15,6 +15,9 @@
 <script lang="javascript">
     doImport("org.voovan.docker.command.Container.CmdContainerList")
     doImport("org.voovan.docker.command.Container.CmdContainerLogs")
+    doImport("org.voovan.docker.command.Container.CmdContainerTop")
+    doImport("org.voovan.docker.command.Container.CmdContainerTop")
+    doImport("org.voovan.docker.command.Container.CmdContainerStats")
 
     function init() {
         viewerVue = new Vue({
@@ -24,7 +27,9 @@
                     logData: "",
                     logTimeStamp: null,
                     logInterval: 1
-                }
+                },
+                stats : null,
+                processes: null
             },
             updated: function(){
                 logPanel.scrollTop = logPanel.scrollHeight;
@@ -75,9 +80,35 @@
 
                 logClean: function(){
                     this.logInfo.logData = "";
+                },
+
+                processView: function(){
+                    var cmdContainerTop = new CmdContainerTop(this.viewContainer.id)
+                    this.processes = cmdContainerTop.send();
+                    cmdContainerTop.close();
+                    cmdContainerTop.release();
+                },
+                statsView: function(){
+                    var cmdContainerStats = new CmdContainerStats(this.viewContainer.id)
+                    var data = cmdContainerStats.send();
+                    cmdContainerStats.close();
+                    cmdContainerStats.release();
+
+                    this.stats = {};
+                    this.stats.cpu = (data.cpuUsage/data.cpuTotal*100).toFixed(2);
+                    this.stats.memUsage  = (data.memoryUsage/1024/1024).toFixed(2);
+                    this.stats.memeLimit = (data.memoryMaxLimit/1024/1024).toFixed(2);
+                    this.stats.ioRead  = (data.ioRead/1000).toFixed(0);
+                    this.stats.ioSend  = (data.ioWrite/1000).toFixed(0);
+                    this.stats.ioTotal = (data.ioTotal/1000).toFixed(0);
+                    this.stats.netRx = (data.netRxBytes/1000).toFixed(0);
+                    this.stats.netTx = (data.netTxBytes/1000).toFixed(0);
                 }
             }
         });
+
+        viewerVue.processView();
+        viewerVue.statsView();
     }
 </script>
 <body onload="init()" class="frameBody" style="padding-right: 35px">
@@ -91,9 +122,67 @@
             <li><a href="#">Performance</a></li>
             <li><a href="#">Log</a></li>
         </ul>
-        <div id="Viewers" class="uk-switcher">
-            <div>asdfadf</div>
-            <div style="margin-top:15px">
+        <div id="Viewers" class="uk-switcher" style="padding-top:15px">
+            <!-- 性能信息 -->
+            <div>
+
+                <div>
+                    <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box">
+                        <caption>
+                            <div class="uk-grid" style="margin-bottom: 3px">
+                                <div class="uk-width-5-6">Status</div>
+                                <div class="uk-width-1-6 uk-text-center">
+                                    <a class="uk-button uk-button-mini uk-button-primary" @click="statsView">Refresh</a>
+                                </div>
+                            </div>
+                        </caption>
+                        <thead>
+                        <th class="uk-width-1-4 uk-text-center">CPU</th>
+                        <th class="uk-width-1-4 uk-text-center">Memory(Usage/Limit)</th>
+                        <th class="uk-width-1-4 uk-text-center">IO(Read/Send/Total)</th>
+                        <th class="uk-width-1-4 uk-text-center">Net(Rx/Tx)</th>
+                        </thead>
+                        <tbody>
+                        <tr v-if="stats!=null">
+                            <td class="uk-text-center">{{stats.cpu}}%</td>
+                            <td class="uk-text-center">{{stats.memUsage}} MB / {{stats.memeLimit}} MB</td>
+                            <td class="uk-text-center">{{stats.ioRead}} KB / {{stats.ioSend}} KB / {{stats.ioTotal}} KB</td>
+                            <td class="uk-text-center">{{stats.netRx}} KB / {{stats.netTx}} KB</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <hr/>
+                    <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box">
+                        <caption>
+                            <div class="uk-grid"  style="margin-bottom: 3px">
+                                <div class="uk-width-5-6">Container process</div>
+                                <div class="uk-width-1-6 uk-text-center">
+                                    <a class="uk-button uk-button-mini uk-button-primary" @click="processView">Refresh</a>
+                                </div>
+                            </div>
+                        </caption>
+                        <thead>
+                        <th class="uk-width-1-10 uk-text-center">NO.</th>
+                        <th class="uk-width-1-10">PID</th>
+                        <th class="uk-width-1-10">User</th>
+                        <th class="uk-width-1-10">Time</th>
+                        <th class="uk-width-6-10">Command</th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(proecess,index) in processes">
+                                <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
+                                <td>{{proecess.pid}}</td>
+                                <td>{{proecess.user}}</td>
+                                <td>{{proecess.time}}</td>
+                                <td>{{proecess.command}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 日志 -->
+            <div >
                 <div class="uk-grid">
                     <div class="uk-width-5-6">
                         Command: <code>{{viewContainer==null?"":viewContainer.command}}</code>
