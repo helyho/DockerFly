@@ -206,8 +206,10 @@
             }
         });
 
-        viewerVue.processView();
-        viewerVue.statsView();
+        if(viewerVue.viewContainer.state=="running") {
+            viewerVue.processView();
+            viewerVue.statsView();
+        }
     }
 </script>
 <body onload="init()" class="frameBody" style="padding-right: 35px">
@@ -238,16 +240,28 @@
                         </caption>
                         <thead>
                         <th class="uk-width-1-4 uk-text-center">CPU</th>
-                        <th class="uk-width-1-4 uk-text-center">Memory(Usage/Limit)</th>
-                        <th class="uk-width-1-4 uk-text-center">IO(Read/Send/Total)</th>
-                        <th class="uk-width-1-4 uk-text-center">Net(Rx/Tx)</th>
+                        <th class="uk-width-1-4 uk-text-center">Memory (Usage/Limit)</th>
+                        <th class="uk-width-1-4 uk-text-center">IO (Read/Send/Total)</th>
+                        <th class="uk-width-1-4 uk-text-center">Net (Rx/Tx)</th>
                         </thead>
                         <tbody>
                         <tr v-if="stats!=null">
-                            <td class="uk-text-center">{{stats.cpu}}%</td>
-                            <td class="uk-text-center">{{stats.memUsage}} MB / {{stats.memeLimit}} MB</td>
-                            <td class="uk-text-center">{{stats.ioRead}} KB / {{stats.ioSend}} KB / {{stats.ioTotal}} KB</td>
-                            <td class="uk-text-center">{{stats.netRx}} KB / {{stats.netTx}} KB</td>
+                            <td class="uk-text-center">
+                                <span class="uk-text-danger">{{stats.cpu}}%</span>
+                            </td>
+                            <td class="uk-text-center">
+                                <span class="uk-text-primary">{{stats.memUsage}} MB </span> /
+                                <span class="uk-text-success">{{stats.memeLimit}} MB</span>
+                            </td>
+                            <td class="uk-text-center">
+                                <span class="uk-text-primary">{{stats.ioRead}} KB </span>/
+                                <span class="uk-text-warning">{{stats.ioSend}} KB </span>/
+                                <span class="uk-text-success">{{stats.ioTotal}} KB</span>
+                            </td>
+                            <td class="uk-text-center">
+                                <span class="uk-text-primary">{{stats.netRx}} KB </span>/
+                                <span class="uk-text-success">{{stats.netTx}} KB </span>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -271,10 +285,10 @@
                         <tbody>
                             <tr v-for="(proecess,index) in processes">
                                 <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
-                                <td>{{proecess.pid}}</td>
-                                <td>{{proecess.user}}</td>
-                                <td>{{proecess.time}}</td>
-                                <td>{{proecess.command}}</td>
+                                <td class="uk-text-primary">{{proecess.pid}}</td>
+                                <td class="uk-text-warning">{{proecess.user}}</td>
+                                <td class="uk-text-success">{{proecess.time}}</td>
+                                <td><code>{{proecess.command}}</code></td>
                             </tr>
                         </tbody>
                     </table>
