@@ -18,21 +18,33 @@
     doImport("org.voovan.docker.command.Container.CmdContainerTop")
     doImport("org.voovan.docker.command.Container.CmdContainerTop")
     doImport("org.voovan.docker.command.Container.CmdContainerStats")
+    doImport("org.voovan.docker.command.Exec.CmdExecCreate")
+    doImport("org.voovan.docker.command.Exec.CmdExecStart")
 
     function init() {
         viewerVue = new Vue({
             el: '#viewerApp',
             data: {
                 logInfo :{
-                    logData: "",
-                    logTimeStamp: null,
-                    logInterval: 1
+                    data: "",
+                    timeStamp: null,
+                    interval: 1,
+                    loop: null,
+                    cmdObject: null
                 },
                 stats : null,
-                processes: null
+                processes: null,
+                execInfo: {
+                    cmd: "ifconfig",
+                    data: "",
+                    interval : 1,
+                    loop : null,
+                    cmdObject: null
+                }
             },
             updated: function(){
                 logPanel.scrollTop = logPanel.scrollHeight;
+                execPanel.scrollTop = execPanel.scrollHeight;
             },
             computed: {
                 viewContainer: function () {
@@ -59,51 +71,138 @@
             },
             methods:{
                 logView: function(){
-                    var cmdContainerLogs = new CmdContainerLogs(this.viewContainer.id);
+                    try{
+                        if(this.logInfo.loop !=null){
+                            alert("Log view is running.")
+                            return;
+                        }
 
-                    if(this.logInfo.logTimeStamp==null) {
-                        cmdContainerLogs.tail("15");
-                    }else{
-                        cmdContainerLogs.tail("all");
-                        cmdContainerLogs.since(this.logInfo.logTimeStamp+1);
+                        var cmdContainerLogs = new CmdContainerLogs(this.viewContainer.id);
+                        this.logInfo.cmdObject = cmdContainerLogs;
+                        this.logInfo.loop = setInterval(
+                            function() {
+                                if(viewerVue.logInfo.timeStamp==null) {
+                                    cmdContainerLogs.tail("15");
+                                }else{
+                                    cmdContainerLogs.tail("all");
+                                    cmdContainerLogs.since(viewerVue.logInfo.timeStamp+1);
+                                }
+
+                                viewerVue.logInfo.timeStamp = parseInt(currentTimeMills() / 1000);
+
+                                var logData = cmdContainerLogs.send();
+                                viewerVue.logInfo.data += logData.replaceAll("\n", "<br/>");
+                            }, this.logInfo.interval*1000
+                        );
+                    } catch (e) {
+                        alertError(e);
                     }
-
-                    this.logInfo.logTimeStamp = parseInt(currentTimeMills() / 1000);
-
-                    var logData = cmdContainerLogs.send();
-                    var logPanel = document.getElementById('logPanel');
-                    this.logInfo.logData += logData.replaceAll("\n","<br/>");
-
-                    cmdContainerLogs.close();
-                    cmdContainerLogs.release();
                 },
 
-                logClean: function(){
-                    this.logInfo.logData = "";
+                logStop: function(){
+                    clearInterval(this.logInfo.loop)
+                    this.logInfo.loop = null;
+                    if(this.execInfo.cmdObject!=null) {
+                        this.logInfo.cmdObject.close();
+                        this.logInfo.cmdObject.release();
+                    }
+                    this.logInfo.cmdObject = null;
+                },
+
+                logClear: function(){
+                    this.logInfo.data = "";
                 },
 
                 processView: function(){
-                    var cmdContainerTop = new CmdContainerTop(this.viewContainer.id)
-                    this.processes = cmdContainerTop.send();
-                    cmdContainerTop.close();
-                    cmdContainerTop.release();
+                    try{
+                        var cmdContainerTop = new CmdContainerTop(this.viewContainer.id)
+                        this.processes = cmdContainerTop.send();
+                        cmdContainerTop.close();
+                        cmdContainerTop.release();
+                    } catch (e) {
+                        alertError(e);
+                    }
                 },
                 statsView: function(){
-                    var cmdContainerStats = new CmdContainerStats(this.viewContainer.id)
-                    var data = cmdContainerStats.send();
-                    cmdContainerStats.close();
-                    cmdContainerStats.release();
+                    try{
+                        var cmdContainerStats = new CmdContainerStats(this.viewContainer.id)
+                        var data = cmdContainerStats.send();
+                        cmdContainerStats.close();
+                        cmdContainerStats.release();
 
-                    this.stats = {};
-                    this.stats.cpu = (data.cpuUsage/data.cpuTotal*100).toFixed(2);
-                    this.stats.memUsage  = (data.memoryUsage/1024/1024).toFixed(2);
-                    this.stats.memeLimit = (data.memoryMaxLimit/1024/1024).toFixed(2);
-                    this.stats.ioRead  = (data.ioRead/1000).toFixed(0);
-                    this.stats.ioSend  = (data.ioWrite/1000).toFixed(0);
-                    this.stats.ioTotal = (data.ioTotal/1000).toFixed(0);
-                    this.stats.netRx = (data.netRxBytes/1000).toFixed(0);
-                    this.stats.netTx = (data.netTxBytes/1000).toFixed(0);
-                }
+                        this.stats = {};
+                        this.stats.cpu = (data.cpuUsage/data.cpuTotal*100).toFixed(2);
+                        this.stats.memUsage  = (data.memoryUsage/1024/1024).toFixed(2);
+                        this.stats.memeLimit = (data.memoryMaxLimit/1024/1024).toFixed(2);
+                        this.stats.ioRead  = (data.ioRead/1000).toFixed(0);
+                        this.stats.ioSend  = (data.ioWrite/1000).toFixed(0);
+                        this.stats.ioTotal = (data.ioTotal/1000).toFixed(0);
+                        this.stats.netRx = (data.netRxBytes/1000).toFixed(0);
+                        this.stats.netTx = (data.netTxBytes/1000).toFixed(0);
+                    } catch (e) {
+                        alertError(e);
+                    }
+                },
+
+                execute: function(){
+                    try {
+                        if(this.execInfo.loop !=null){
+                            alert("Executor is running.")
+                            return;
+                        }
+
+                        var cmdExecCreate = new CmdExecCreate(this.viewContainer.id);
+                        cmdExecCreate.cmd(this.execInfo.cmd.split(" "));
+                        var execId = cmdExecCreate.send();
+                        cmdExecCreate.close();
+                        cmdExecCreate.release();
+
+                        this.execInfo.data += "root@"+shortDockerId(this.viewContainer.id,12)+"# "+this.execInfo.cmd+"<br/>";
+
+                        var cmdExecStart = new CmdExecStart(execId);
+                        cmdExecStart.send();
+                        cmdExecStart.beginLoadStream();
+
+                        this.execInfo.cmdObject = cmdExecStart;
+
+                        this.execInfo.loop = setInterval(
+                            function () {
+                                var tmp = null;
+                                try {
+                                    var tmp = cmdExecStart.loadStream();
+                                }catch (e){
+                                    tmp = null;
+                                }
+
+                                if (tmp != null) {
+                                    viewerVue.execInfo.data += tmp.replaceAll("\n", "<br/>");
+                                } else {
+                                    clearInterval(viewerVue.execInfo.loop);
+                                    viewerVue.execInfo.loop = null;
+                                    cmdExecStart.endLoadStream();
+                                    cmdExecStart.close();
+                                    cmdExecStart.release();
+                                }
+                            }, this.execInfo.interval*1000);
+                    } catch (e) {
+                        clearInterval(this.execInfo.loop );
+                        alertError(e);
+                    }
+                },
+
+                execStop: function(){
+                    clearInterval(this.execInfo.loop)
+                    this.execInfo.loop = null;
+                    if(this.execInfo.cmdObject!=null) {
+                        this.execInfo.cmdObject.close();
+                        this.execInfo.cmdObject.release();
+                    }
+                    this.execInfo.cmdObject=null;
+                },
+
+                execClear: function(){
+                    this.execInfo.data = "";
+                },
             }
         });
 
@@ -120,6 +219,7 @@
         </h3>
         <ul class="uk-tab" data-uk-switcher="{connect:'#Viewers'}">
             <li><a href="#">Performance</a></li>
+            <li><a href="#">Execute</a></li>
             <li><a href="#">Log</a></li>
         </ul>
         <div id="Viewers" class="uk-switcher" style="padding-top:15px">
@@ -132,7 +232,7 @@
                             <div class="uk-grid" style="margin-bottom: 3px">
                                 <div class="uk-width-5-6">Status</div>
                                 <div class="uk-width-1-6 uk-text-center">
-                                    <a class="uk-button uk-button-mini uk-button-primary" @click="statsView">Refresh</a>
+                                    <a class="uk-button uk-button-small uk-button-primary" @click="statsView">Refresh</a>
                                 </div>
                             </div>
                         </caption>
@@ -151,14 +251,13 @@
                         </tr>
                         </tbody>
                     </table>
-
                     <hr/>
                     <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box">
                         <caption>
                             <div class="uk-grid"  style="margin-bottom: 3px">
                                 <div class="uk-width-5-6">Container process</div>
                                 <div class="uk-width-1-6 uk-text-center">
-                                    <a class="uk-button uk-button-mini uk-button-primary" @click="processView">Refresh</a>
+                                    <a class="uk-button uk-button-small uk-button-primary" @click="processView">Refresh</a>
                                 </div>
                             </div>
                         </caption>
@@ -181,19 +280,40 @@
                     </table>
                 </div>
             </div>
-            <!-- 日志 -->
-            <div >
-                <div class="uk-grid">
-                    <div class="uk-width-5-6">
-                        Command: <code>{{viewContainer==null?"":viewContainer.command}}</code>
+            <!-- 执行命令 -->
+            <div>
+                <div class="uk-grid uk-form">
+                    <div class="uk-width-4-6">
+                        <input class="uk-form-width-large" type="text"
+                               placeholder="Command will be execute in contianer" v-model="execInfo.cmd"/>
                     </div>
-                    <div class="uk-width-1-6 uk-text-center">
-                        <a class="uk-button uk-button-mini uk-button-primary" @click="logView">Load</a>
-                        <a class="uk-button uk-button-mini uk-button-success" @click="logClean">Clean</a>
+                    <div class="uk-width-2-6 uk-text-right">
+                        <a class="uk-button uk-button-small uk-button-primary"
+                           @click="execute" v-show="execInfo.loop==null">Run</a>
+                        <a class="uk-button uk-button-small uk-button-danger"
+                           @click="execStop" v-show="execInfo.loop!=null">Stop</a>
+                        <a class="uk-button uk-button-small uk-button-success" @click="execClear">Clear</a>
                     </div>
                 </div>
                 <hr>
-                <div id="logPanel" v-html="logInfo.logData" class="logPanel" style="height:400px; overflow-y: scroll;"></div>
+                <div id="execPanel" v-html="execInfo.data" class="terminal" style="height:400px; overflow-y: scroll;"></div>
+            </div>
+            <!-- 日志 -->
+            <div>
+                <div class="uk-grid uk-form">
+                    <div class="uk-width-4-6" style="line-height: 30px">
+                        <code>{{viewContainer==null?"":viewContainer.command}}</code>
+                    </div>
+                    <div class="uk-width-2-6 uk-text-right">
+                        <a class="uk-button uk-button-small uk-button-primary"
+                           @click="logView" v-show="logInfo.loop==null">Fetch</a>
+                        <a class="uk-button uk-button-small uk-button-danger"
+                           @click="logStop" v-show="logInfo.loop!=null">Stop</a>
+                        <a class="uk-button uk-button-small uk-button-success" @click="logClear">Clear</a>
+                    </div>
+                </div>
+                <hr>
+                <div id="logPanel" v-html="logInfo.data" class="terminal" style="height:400px; overflow-y: scroll;"></div>
             </div>
         </div>
     </div>
