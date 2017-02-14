@@ -46,6 +46,18 @@
         alert(errMsg);
     }
 
+    //创建终端
+    function terminal(elementFlag) {
+        var term = new Terminal({
+            cursorBlink: false,
+            cols: 120,
+            rows: 20
+        });
+        term.open(document.getElementById(elementFlag));
+        return term;
+        //term.write('Hello from \033[1;3;31mxterm.js\033[0m $ ')
+    }
+
 /**
  * =======================vuejs 过滤器函数=======================
  */

@@ -9,8 +9,10 @@
 <script src="js/common/jquery.min.js"></script>
 <script src="js/common/vue.min.js"></script>
 <script src="js/common/uikit.js"></script>
-
+<script src="js/common/xterm.js"></script>
 <link rel="stylesheet" href="css/main.css"/>
+<link rel="stylesheet" href="css/xterm.css"/>
+
 <script lang="javascript" src="js/utils.js"></script>
 <script lang="javascript">
     doImport("org.voovan.docker.command.Container.CmdContainerList")
@@ -26,7 +28,7 @@
             el: '#viewerApp',
             data: {
                 logInfo :{
-                    data: "",
+                    terminal: null,
                     timeStamp: null,
                     interval: 1,
                     loop: null,
@@ -36,7 +38,7 @@
                 processes: null,
                 execInfo: {
                     cmd: "ifconfig",
-                    data: "",
+                    terminal: null,
                     interval : 1,
                     loop : null,
                     cmdObject: null
@@ -72,6 +74,10 @@
             methods:{
                 logView: function(){
                     try{
+                        if(viewerVue.logInfo.terminal==null){
+                            viewerVue.logInfo.terminal = terminal("logPanel")
+                        }
+
                         if(this.logInfo.loop !=null){
                             alert("Log view is running.")
                             return;
@@ -81,17 +87,24 @@
                         this.logInfo.cmdObject = cmdContainerLogs;
                         this.logInfo.loop = setInterval(
                             function() {
-                                if(viewerVue.logInfo.timeStamp==null) {
-                                    cmdContainerLogs.tail("15");
-                                }else{
-                                    cmdContainerLogs.tail("all");
-                                    cmdContainerLogs.since(viewerVue.logInfo.timeStamp+1);
+                                try {
+                                    if(viewerVue.logInfo.timeStamp==null) {
+                                        cmdContainerLogs.tail("15");
+                                    }else{
+                                        cmdContainerLogs.tail("all");
+                                        cmdContainerLogs.since(viewerVue.logInfo.timeStamp);
+                                    }
+                                    viewerVue.logInfo.timeStamp = parseInt(currentTimeMills() / 1000);
+                                    var logData = cmdContainerLogs.send();
+                                    //viewerVue.logInfo.data += logData.replaceAll("\n", "<br/>");
+                                    logData = logData.replaceAll("\r", "")
+                                    logData = logData.replaceAll("\n", "\u0000")
+                                    logData = logData.replaceAll("\u0000", "\r\n");
+                                    viewerVue.logInfo.terminal.write(logData);
+                                }catch(e){
+                                    this.logStop();
+                                    alert(e)
                                 }
-
-                                viewerVue.logInfo.timeStamp = parseInt(currentTimeMills() / 1000);
-
-                                var logData = cmdContainerLogs.send();
-                                viewerVue.logInfo.data += logData.replaceAll("\n", "<br/>");
                             }, this.logInfo.interval*1000
                         );
                     } catch (e) {
@@ -102,7 +115,7 @@
                 logStop: function(){
                     clearInterval(this.logInfo.loop)
                     this.logInfo.loop = null;
-                    if(this.execInfo.cmdObject!=null) {
+                    if(this.logInfo.cmdObject!=null) {
                         this.logInfo.cmdObject.close();
                         this.logInfo.cmdObject.release();
                     }
@@ -110,7 +123,7 @@
                 },
 
                 logClear: function(){
-                    this.logInfo.data = "";
+                    viewerVue.logInfo.terminal.clear();
                 },
 
                 processView: function(){
@@ -126,19 +139,19 @@
                 statsView: function(){
                     try{
                         var cmdContainerStats = new CmdContainerStats(this.viewContainer.id)
-                        var data = cmdContainerStats.send();
+                        var statsData = cmdContainerStats.send();
                         cmdContainerStats.close();
                         cmdContainerStats.release();
 
                         this.stats = {};
-                        this.stats.cpu = (data.cpuUsage/data.cpuTotal*100).toFixed(2);
-                        this.stats.memUsage  = (data.memoryUsage/1024/1024).toFixed(2);
-                        this.stats.memeLimit = (data.memoryMaxLimit/1024/1024).toFixed(2);
-                        this.stats.ioRead  = (data.ioRead/1000).toFixed(0);
-                        this.stats.ioSend  = (data.ioWrite/1000).toFixed(0);
-                        this.stats.ioTotal = (data.ioTotal/1000).toFixed(0);
-                        this.stats.netRx = (data.netRxBytes/1000).toFixed(0);
-                        this.stats.netTx = (data.netTxBytes/1000).toFixed(0);
+                        this.stats.cpu = (statsData.cpuUsage/statsData.cpuTotal*100).toFixed(2);
+                        this.stats.memUsage  = (statsData.memoryUsage/1024/1024).toFixed(2);
+                        this.stats.memeLimit = (statsData.memoryMaxLimit/1024/1024).toFixed(2);
+                        this.stats.ioRead  = (statsData.ioRead/1000).toFixed(0);
+                        this.stats.ioSend  = (statsData.ioWrite/1000).toFixed(0);
+                        this.stats.ioTotal = (statsData.ioTotal/1000).toFixed(0);
+                        this.stats.netRx = (statsData.netRxBytes/1000).toFixed(0);
+                        this.stats.netTx = (statsData.netTxBytes/1000).toFixed(0);
                     } catch (e) {
                         alertError(e);
                     }
@@ -146,6 +159,11 @@
 
                 execute: function(){
                     try {
+
+                        if(viewerVue.execInfo.terminal==null){
+                            viewerVue.execInfo.terminal = terminal("execPanel")
+                        }
+
                         if(this.execInfo.loop !=null){
                             alert("Executor is running.")
                             return;
@@ -153,13 +171,16 @@
 
                         var cmdExecCreate = new CmdExecCreate(this.viewContainer.id);
                         cmdExecCreate.cmd(this.execInfo.cmd.split(" "));
+                        cmdExecCreate.tty(true);
+                        cmdExecCreate.attachStdin(true);
                         var execId = cmdExecCreate.send();
                         cmdExecCreate.close();
                         cmdExecCreate.release();
 
-                        this.execInfo.data += "root@"+shortDockerId(this.viewContainer.id,12)+"# "+this.execInfo.cmd+"<br/>";
+                        viewerVue.execInfo.terminal.write("root@"+shortDockerId(this.viewContainer.id,12)+"# "+this.execInfo.cmd+"\r\n");
 
                         var cmdExecStart = new CmdExecStart(execId);
+                        cmdExecStart.tty(true);
                         cmdExecStart.send();
                         cmdExecStart.beginLoadStream();
 
@@ -167,21 +188,25 @@
 
                         this.execInfo.loop = setInterval(
                             function () {
-                                var tmp = null;
+                                var execData = null;
                                 try {
-                                    var tmp = cmdExecStart.loadStream();
+                                    var execData = cmdExecStart.loadStream();
+                                    if (execData != null) {
+                                        //viewerVue.execInfo.data += tmp.replaceAll("\n", "<br/>");
+                                        execData = execData.replaceAll("\r","")
+                                        execData = execData.replaceAll("\n","\u0000")
+                                        execData = execData.replaceAll("\u0000","\r\n");
+                                        viewerVue.execInfo.terminal.write(execData);
+                                    } else {
+                                        clearInterval(viewerVue.execInfo.loop);
+                                        viewerVue.execInfo.loop = null;
+                                        cmdExecStart.endLoadStream();
+                                        cmdExecStart.close();
+                                        cmdExecStart.release();
+                                    }
                                 }catch (e){
-                                    tmp = null;
-                                }
-
-                                if (tmp != null) {
-                                    viewerVue.execInfo.data += tmp.replaceAll("\n", "<br/>");
-                                } else {
-                                    clearInterval(viewerVue.execInfo.loop);
-                                    viewerVue.execInfo.loop = null;
-                                    cmdExecStart.endLoadStream();
-                                    cmdExecStart.close();
-                                    cmdExecStart.release();
+                                    this.execStop();
+                                    alert(e)
                                 }
                             }, this.execInfo.interval*1000);
                     } catch (e) {
@@ -201,7 +226,7 @@
                 },
 
                 execClear: function(){
-                    this.execInfo.data = "";
+                    viewerVue.execInfo.terminal.clear();
                 },
             }
         });
@@ -294,7 +319,7 @@
                     </table>
                 </div>
             </div>
-            <!-- 执行命令 -->
+            <!-- 执行命令  v-html="execInfo.data" class="terminal" style="height:400px; overflow-y: scroll;"-->
             <div>
                 <div class="uk-grid uk-form">
                     <div class="uk-width-4-6">
@@ -310,9 +335,9 @@
                     </div>
                 </div>
                 <hr>
-                <div id="execPanel" v-html="execInfo.data" class="terminal" style="height:400px; overflow-y: scroll;"></div>
+                <div id="execPanel" class="terminal"></div>
             </div>
-            <!-- 日志 -->
+            <!-- 日志 v-html="logInfo.data" class="terminal"  style="height:400px; overflow-y: scroll;"-->
             <div>
                 <div class="uk-grid uk-form">
                     <div class="uk-width-4-6" style="line-height: 30px">
@@ -327,7 +352,7 @@
                     </div>
                 </div>
                 <hr>
-                <div id="logPanel" v-html="logInfo.data" class="terminal" style="height:400px; overflow-y: scroll;"></div>
+                <div id="logPanel" class="terminal"></div>
             </div>
         </div>
     </div>
