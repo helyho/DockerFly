@@ -102,8 +102,8 @@
                                     logData = logData.replaceAll("\u0000", "\r\n");
                                     viewerVue.logInfo.terminal.write(logData);
                                 }catch(e){
-                                    this.logStop();
                                     alert(e)
+                                    viewerVue.logStop();
                                 }
                             }, this.logInfo.interval*1000
                         );
@@ -205,8 +205,8 @@
                                         cmdExecStart.release();
                                     }
                                 }catch (e){
-                                    this.execStop();
                                     alert(e)
+                                    viewerVue.execStop();
                                 }
                             }, this.execInfo.interval*1000);
                     } catch (e) {
