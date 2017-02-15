@@ -30,7 +30,7 @@
                 logInfo :{
                     terminal: null,
                     timeStamp: null,
-                    interval: 1,
+                    interval: 1000,
                     loop: null,
                     cmdObject: null
                 },
@@ -39,14 +39,10 @@
                 execInfo: {
                     cmd: "sh",
                     terminal: null,
-                    interval : 1,
+                    interval : 150,
                     loop : null,
                     cmdObject: null
                 }
-            },
-            updated: function(){
-                logPanel.scrollTop = logPanel.scrollHeight;
-                execPanel.scrollTop = execPanel.scrollHeight;
             },
             computed: {
                 viewContainer: function () {
@@ -83,8 +79,16 @@
                             return;
                         }
 
-                        var cmdContainerLogs = new CmdContainerLogs(this.viewContainer.id);
+                        var cmdContainerLogs = new CmdContainerLogs(this.viewContainer.id, 60);
                         this.logInfo.cmdObject = cmdContainerLogs;
+
+                        //控制启动的时间,避免重复日志的输出
+                        while(true){
+                            var millisSecond = new Date().getUTCMilliseconds();
+                            if(millisSecond>0 && millisSecond<100){
+                                break;
+                            }
+                        }
                         this.logInfo.loop = setInterval(
                             function() {
                                 try {
@@ -105,7 +109,7 @@
                                     viewerVue.logStop();
                                     alert(e)
                                 }
-                            }, this.logInfo.interval*1000
+                            }, this.logInfo.interval
                         );
                     } catch (e) {
                         alertError(e);
@@ -115,9 +119,13 @@
                 logStop: function(){
                     clearInterval(this.logInfo.loop)
                     this.logInfo.loop = null;
-                    if(this.logInfo.cmdObject!=null) {
-                        this.logInfo.cmdObject.close();
-                        this.logInfo.cmdObject.release();
+                    try {
+                        if (this.logInfo.cmdObject != null) {
+                            this.logInfo.cmdObject.close();
+                            this.logInfo.cmdObject.release();
+                        }
+                    }catch(e){
+                    console.log(e.message)
                     }
                     this.logInfo.cmdObject = null;
                 },
@@ -172,23 +180,22 @@
                         cmdExecCreate.close();
                         cmdExecCreate.release();
 
-                        var cmdExecStart = new CmdExecStart(eval("k="+execId).Id);
+                        var cmdExecStart = new CmdExecStart(eval("k="+execId).Id, 60);
                         this.execInfo.cmdObject = cmdExecStart;
                         cmdExecStart.tty(true);
                         cmdExecStart.send();
                         if(this.execInfo.terminal==null){
                             this.execInfo.terminal = terminal("execPanel")
                             this.execInfo.terminal.on("data", function(data){
-                                console.log(data)
                                 if(data.length==1) {
-                                    viewerVue.execInfo.cmdObject.send(data);
+                                    if(viewerVue.execInfo.cmdObject!=null) {
+                                        viewerVue.execInfo.cmdObject.send(data);
+                                    }
                                 }
                             })
                         }
 
                         cmdExecStart.beginLoadStream();
-
-
 
                         this.execInfo.loop = setInterval(
                             function () {
@@ -201,17 +208,13 @@
                                         execData = execData.replaceAll("\u0000","\r\n");
                                         viewerVue.execInfo.terminal.write(execData);
                                     } else {
-                                        clearInterval(viewerVue.execInfo.loop);
-                                        viewerVue.execInfo.loop = null;
-                                        cmdExecStart.endLoadStream();
-                                        cmdExecStart.close();
-                                        cmdExecStart.release();
+                                        viewerVue.execStop();
                                     }
                                 }catch (e){
                                     viewerVue.execStop();
                                     alertError(e)
                                 }
-                            }, this.execInfo.interval*1000);
+                            }, this.execInfo.interval);
                     } catch (e) {
                         clearInterval(this.execInfo.loop );
                         alertError(e);
@@ -221,11 +224,13 @@
                 execStop: function(){
                     clearInterval(this.execInfo.loop)
                     this.execInfo.loop = null;
-                    if(this.execInfo.cmdObject!=null) {
-                        this.execInfo.cmdObject.close();
-                        this.execInfo.cmdObject.release();
-                    }
-                    this.execInfo.cmdObject=null;
+                        try {
+                            if (this.execInfo.cmdObject != null) {
+                                this.execInfo.cmdObject.close();
+                                this.execInfo.cmdObject.release();
+                            }
+                        }catch(e){}
+                    this.execInfo.cmdObject = null;
                 },
 
                 execClear: function(){

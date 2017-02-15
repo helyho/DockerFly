@@ -37,14 +37,21 @@
     function alertError(e){
         var errMsg = "<h3 class='uk-text-danger uk-text-bold'>Ops , We hava an error!</h3><div style='margin: 0px 15px 0px 15px;'>";
         if(e instanceof Error) {
-            var errObj = eval("err_" + currentTimeMills() + " = " + e.message);
-            if(errObj.errMsg!=null) {
-                errMsg = errMsg + errObj.errMsg.replaceAll("\\\"", "\"");
-            }else{
-                errMsg = errMsg + errObj.errClass;
+            if(e.name == "Error") {
+                var errObj = eval("err_" + currentTimeMills() + " = " + e.message);
+
+                if(errObj.errClass == "java.nio.channels.InterruptedByTimeoutException"){
+                    errMsg = errMsg + "Network time out, try connect again."
+                } else if (errObj.errMsg != null) {
+                    errMsg = errMsg + errObj.errMsg.replaceAll("\\\"", "\"");
+                } else {
+                    errMsg = errMsg + errObj.errClass;
+                }
+            }else if(e.name == "NetworkError"){
+                errMsg = "Network has some problem, check it."
             }
-        }else{
-            errMsg = errMsg + e;
+        }else {
+            errMsg = errMsg + "[" + e.name+ "] "+ e.message;
         }
         errMsg = errMsg+"</div>"
         alert(errMsg);
