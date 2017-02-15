@@ -38,7 +38,11 @@
         var errMsg = "<h3 class='uk-text-danger uk-text-bold'>Ops , We hava an error!</h3><div style='margin: 0px 15px 0px 15px;'>";
         if(e instanceof Error) {
             var errObj = eval("err_" + currentTimeMills() + " = " + e.message);
-            errMsg = errMsg + errObj.errMsg.replaceAll("\\\"", "\"");
+            if(errObj.errMsg!=null) {
+                errMsg = errMsg + errObj.errMsg.replaceAll("\\\"", "\"");
+            }else{
+                errMsg = errMsg + errObj.errClass;
+            }
         }else{
             errMsg = errMsg + e;
         }
@@ -49,10 +53,11 @@
     //创建终端
     function terminal(elementFlag) {
         var term = new Terminal({
-            cursorBlink: false,
+            cursorBlink: true,
             cols: 120,
             rows: 20
         });
+        term.capsLock = false
         term.open(document.getElementById(elementFlag));
         return term;
         //term.write('Hello from \033[1;3;31mxterm.js\033[0m $ ')

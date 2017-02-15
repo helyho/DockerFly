@@ -37,7 +37,7 @@
                 stats : null,
                 processes: null,
                 execInfo: {
-                    cmd: "ifconfig",
+                    cmd: "sh",
                     terminal: null,
                     interval : 1,
                     loop : null,
@@ -102,8 +102,8 @@
                                     logData = logData.replaceAll("\u0000", "\r\n");
                                     viewerVue.logInfo.terminal.write(logData);
                                 }catch(e){
-                                    alert(e)
                                     viewerVue.logStop();
+                                    alert(e)
                                 }
                             }, this.logInfo.interval*1000
                         );
@@ -159,11 +159,6 @@
 
                 execute: function(){
                     try {
-
-                        if(viewerVue.execInfo.terminal==null){
-                            viewerVue.execInfo.terminal = terminal("execPanel")
-                        }
-
                         if(this.execInfo.loop !=null){
                             alert("Executor is running.")
                             return;
@@ -177,14 +172,23 @@
                         cmdExecCreate.close();
                         cmdExecCreate.release();
 
-                        viewerVue.execInfo.terminal.write("root@"+shortDockerId(this.viewContainer.id,12)+"# "+this.execInfo.cmd+"\r\n");
-
-                        var cmdExecStart = new CmdExecStart(execId);
+                        var cmdExecStart = new CmdExecStart(eval("k="+execId).Id);
+                        this.execInfo.cmdObject = cmdExecStart;
                         cmdExecStart.tty(true);
                         cmdExecStart.send();
+                        if(this.execInfo.terminal==null){
+                            this.execInfo.terminal = terminal("execPanel")
+                            this.execInfo.terminal.on("data", function(data){
+                                console.log(data)
+                                if(data.length==1) {
+                                    viewerVue.execInfo.cmdObject.send(data);
+                                }
+                            })
+                        }
+
                         cmdExecStart.beginLoadStream();
 
-                        this.execInfo.cmdObject = cmdExecStart;
+
 
                         this.execInfo.loop = setInterval(
                             function () {
@@ -192,7 +196,6 @@
                                 try {
                                     var execData = cmdExecStart.loadStream();
                                     if (execData != null) {
-                                        //viewerVue.execInfo.data += tmp.replaceAll("\n", "<br/>");
                                         execData = execData.replaceAll("\r","")
                                         execData = execData.replaceAll("\n","\u0000")
                                         execData = execData.replaceAll("\u0000","\r\n");
@@ -205,8 +208,8 @@
                                         cmdExecStart.release();
                                     }
                                 }catch (e){
-                                    alert(e)
                                     viewerVue.execStop();
+                                    alertError(e)
                                 }
                             }, this.execInfo.interval*1000);
                     } catch (e) {
