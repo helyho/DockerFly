@@ -47,7 +47,7 @@
                 } else {
                     errMsg = errMsg + errObj.errClass;
                 }
-            }else if(e.name == "NetworkError"){
+            } else if(e.name == "NetworkError"){
                 errMsg = "Network has some problem, check it."
             }
         }else {

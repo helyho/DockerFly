@@ -70,10 +70,6 @@
             methods:{
                 logView: function(){
                     try{
-                        if(viewerVue.logInfo.terminal==null){
-                            viewerVue.logInfo.terminal = terminal("logPanel")
-                        }
-
                         if(this.logInfo.loop !=null){
                             alert("Log view is running.")
                             return;
@@ -89,6 +85,13 @@
                                 break;
                             }
                         }
+
+                        //构造终端面板
+                        if(viewerVue.logInfo.terminal==null){
+                            viewerVue.logInfo.terminal = terminal("logPanel")
+                        }
+
+                        //循环输出日志
                         this.logInfo.loop = setInterval(
                             function() {
                                 try {
@@ -100,14 +103,13 @@
                                     }
                                     viewerVue.logInfo.timeStamp = parseInt(currentTimeMills() / 1000);
                                     var logData = cmdContainerLogs.send();
-                                    //viewerVue.logInfo.data += logData.replaceAll("\n", "<br/>");
                                     logData = logData.replaceAll("\r", "")
                                     logData = logData.replaceAll("\n", "\u0000")
                                     logData = logData.replaceAll("\u0000", "\r\n");
                                     viewerVue.logInfo.terminal.write(logData);
                                 }catch(e){
                                     viewerVue.logStop();
-                                    alert(e)
+                                    alertError(e)
                                 }
                             }, this.logInfo.interval
                         );
@@ -184,8 +186,12 @@
                         this.execInfo.cmdObject = cmdExecStart;
                         cmdExecStart.tty(true);
                         cmdExecStart.send();
+
+                        //构造终端面板
                         if(this.execInfo.terminal==null){
                             this.execInfo.terminal = terminal("execPanel")
+
+                            //绑定键盘输入动作
                             this.execInfo.terminal.on("data", function(data){
                                 if(data.length==1) {
                                     if(viewerVue.execInfo.cmdObject!=null) {
@@ -197,17 +203,16 @@
 
                         cmdExecStart.beginLoadStream();
 
+                        //循环输出日志
                         this.execInfo.loop = setInterval(
                             function () {
                                 var execData = null;
                                 try {
                                     var execData = cmdExecStart.loadStream();
                                     if (execData != null) {
-                                        execData = execData.replaceAll("\r","")
-                                        execData = execData.replaceAll("\n","\u0000")
-                                        execData = execData.replaceAll("\u0000","\r\n");
                                         viewerVue.execInfo.terminal.write(execData);
                                     } else {
+                                        alert("Server disconnect and then try again.");
                                         viewerVue.execStop();
                                     }
                                 }catch (e){
