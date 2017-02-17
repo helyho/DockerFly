@@ -201,8 +201,6 @@
                             })
                         }
 
-                        cmdExecStart.beginLoadStream();
-
                         //循环输出日志
                         this.execInfo.loop = setInterval(
                             function () {
@@ -212,7 +210,7 @@
                                     if (execData != null) {
                                         viewerVue.execInfo.terminal.write(execData);
                                     } else {
-                                        alert("Server disconnect and then try again.");
+//                                        alert("Server disconnect and then try again.");
                                         viewerVue.execStop();
                                     }
                                 }catch (e){
