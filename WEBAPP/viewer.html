@@ -249,7 +249,7 @@
     }
 </script>
 <body onload="init()" class="frameBody" style="margin-right: 35px">
-<div id="viewerApp" style="display: none" v-show="this.viewContainer!=null">
+<div id="viewerApp" class="uk-grid" style="display: none" v-show="this.viewContainer!=null">
     <div class="uk-width-6-6">
         <div class="uk-panel"></div>
         <h3 class="uk-text-middle"><span class="uk-text-danger uk-text-bold uk-text-large">
@@ -365,6 +365,14 @@
                 <hr>
                 <div id="logPanel" class="terminal"></div>
             </div>
+        </div>
+    </div>
+    <div class="uk-width-6-6">
+        <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
+            <div><img height="27" width="120" src="img/logo.jpg"/></div>
+            <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
+            <div>Powered by Voovan open source framework.</div>
+            <div></div>
         </div>
     </div>
 </div>
