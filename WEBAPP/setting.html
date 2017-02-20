@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DockerFly</title>
+</head>
+<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+<link rel="stylesheet" href="css/uikit/uikit.css"/>
+<script src="js/common/jquery.min.js"></script>
+<script src="js/common/vue.min.js"></script>
+<script src="js/common/uikit.js"></script>
+
+<link rel="stylesheet" href="css/main.css"/>
+<script lang="javascript" src="js/utils.js"></script>
+<script lang="javascript">
+    doImport("org.voovan.docker.command.Info.CmdDockerInfo")
+    doImport("org.voovan.docker.command.CmdDockerFlyConfig")
+
+    function init() {
+        dockerSettingVue = new Vue({
+            el: '#dockerSetting',
+            computed: {
+                config: function () {
+                    try {
+                        var dockerConfig = null;
+                        var cmdDockerFlyConfig = new CmdDockerFlyConfig();
+                        dockerConfig = cmdDockerFlyConfig.config()
+                        cmdDockerFlyConfig.release();
+                        return dockerConfig;
+                    } catch (e) {
+                        alertError(e)
+                    }
+                }
+            },
+            methods:{
+                connect: function(){
+                    try{
+                        var cmdDockerFlyConfig = new CmdDockerFlyConfig();
+                        if(this.config.host!="" && this.config.port!="") {
+                            cmdDockerFlyConfig.config(this.config.host, this.config.port, this.config.timeout, this.config.isDebug)
+                        }else{
+                            alertError("We need correct data of host and port !")
+                        }
+                        cmdDockerFlyConfig.release();
+                    }catch(e){
+                        alertError("Need correct host and port data!")
+                    }
+                }
+            }
+        });
+    }
+</script>
+<body onload="init()" class="frameBody">
+<div id="dockerSetting" class="uk-grid" style="display: none" v-show="this.config!=null">
+    <div class="uk-width-6-6">
+            <h3 class="uk-text-middle">Connect docker</h3>
+            <table id="config" class="uk-form uk-table uk-overflow-container uk-panel-box">
+                <tbody>
+                <tr>
+                    <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Host:</td>
+                    <td class="uk-width-1-4">
+                        <input type="text" class="" placeholder="DockerFly host" v-model="config.host"/>
+                    </td>
+                    <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Port:</td>
+                    <td class="uk-width-1-4">
+                        <input type="text" class="" placeholder="DockerFly port" v-model="config.port"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Timeout:</td>
+                    <td class="uk-width-1-4">
+                        <input type="text" class="" placeholder="DockerFly timeout" v-model="config.timeout"/>
+                    </td>
+                    <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Debug:</td>
+                    <td class="uk-width-1-4">
+                        <select v-model="config.isDebug">
+                            <option value="true">true</option>
+                            <option value="false">false</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4" class="uk-text-right">
+                        <a href="#" class="uk-button uk-button-primary" @click="connect()">Connect</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="uk-width-6-6">
+        <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
+            <div><img height="27" width="120" src="img/logo.jpg"/></div>
+            <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
+            <div>Powered by Voovan open source framework.</div>
+            <div></div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

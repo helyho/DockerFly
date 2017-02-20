@@ -19,12 +19,6 @@
     function init() {
         dockerInfoVue = new Vue({
             el: '#dockerApp',
-            data: {
-                config:{
-                    host:"",
-                    port:""
-                }
-            },
             computed: {
                 dockerInfo: function () {
                     try {
@@ -36,22 +30,6 @@
                         return dockerInfo;
                     } catch (e) {
                         alertError(e)
-                    }
-                }
-            },
-            methods:{
-                connect: function(){
-                    try{
-                        var cmdDockerFlyConfig = new CmdDockerFlyConfig();
-                        if(this.config.host!="" && this.config.port!="") {
-                            cmdDockerFlyConfig.config(this.config.host, this.config.port)
-                        }else{
-                            alertError("We need correct data of host and port !")
-                        }
-
-                        cmdDockerFlyConfig.release();
-                    }catch(e){
-                        alertError("Need correct host and port data!")
                     }
                 }
             }
@@ -122,27 +100,6 @@
                     <td class="uk-width-1-4">{{remoteManager.nodeID}}</td>
                     <td class="uk-width-1-10 uk-text-right summeryField">Manager addr:</td>
                     <td class="uk-width-1-4">{{remoteManager.addr}}</td>
-                </tr>
-                </tbody>
-            </table>
-
-            <h3 class="uk-text-middle">Connect docker</h3>
-            <table id="config" class="uk-form uk-table uk-overflow-container uk-panel-box">
-                <tbody>
-                <tr>
-                    <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Host:</td>
-                    <td class="uk-width-1-4">
-                        <input type="text" class="" placeholder="DockerFly host" v-model="config.host"/>
-                    </td>
-                    <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Port:</td>
-                    <td class="uk-width-1-4">
-                        <input type="text" class="" placeholder="DockerFly port" v-model="config.port"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="4" class="uk-text-right">
-                        <a href="#" class="uk-button uk-button-primary" @click="connect()">Connect</a>
-                    </td>
                 </tr>
                 </tbody>
             </table>
