@@ -122,10 +122,10 @@
             <tbody>
             <tr v-for="(volume,index) in volumeList">
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
-                <td class="uk-text-bold uk-text-middle uk-text-primary">{{volume.name}}</td>
+                <td class="uk-text-bold uk-text-middle uk-text-primary">{{volume.name |shortDockerId(18)}}</td>
                 <td>{{volume.scope}}</td>
                 <td>{{volume.driver}}</td>
-                <td class="uk-text-bold uk-text-middle uk-text-success">{{volume.mountpoint}}</td>
+                <td class="uk-text-bold uk-text-middle uk-text-success">{{volume.mountpoint |shortDockerId(60)}}</td>
                 <td class="uk-text-center uk-text-middle">
                     <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
                            @click="remove(volume)"/>
