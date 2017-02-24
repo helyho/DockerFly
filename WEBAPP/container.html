@@ -371,9 +371,9 @@
             <tr>
                 <th class="uk-text-center">NO.</th>
                 <th>Name</th>
-                <th>Image</th>
-                <th>Export Port</th>
+                <!--<th>Image</th>-->
                 <th>Network & IP</th>
+                <th>Export Port</th>
                 <th class="uk-text-center">Status</th>
                 <th class="uk-text-center">Operation</th>
             </tr>
@@ -389,17 +389,17 @@
                           class="icon uk-icon-desktop uk-text-success" title="Stander container"></span>
                      {{container.names[0]|delFirestChar|shortDockerId(18)}}
                 </td>
-                <td class="uk-text-middle">{{container.image | shortDockerId(12)}}</td>
-                <td class="uk-text-middle">
-                    <div v-for="port in container.ports">
-                        <code>{{port.type}}/{{port.privatePort}}:{{port.publicPort}}</code>
-                    </div>
-                </td>
+                <!--<td class="uk-text-middle">{{container.image | shortDockerId(12)}}</td>-->
                 <td class="uk-text-middle">
                     <div v-for="(network,networkName) in container.networkSettings.networks">
                         <code>
                             <a :href="'network.html?id='+network.networkID">{{networkName}}{{network.ipAddress==""?"":":"}}{{network.ipAddress}}</a>
                         </code>
+                    </div>
+                </td>
+                <td class="uk-text-middle">
+                    <div v-for="port in container.ports">
+                        <code>{{port.type}}/{{port.privatePort}}:{{port.publicPort}}</code>
                     </div>
                 </td>
                 <td :class="container.state" class="uk-text-center uk-text-bold uk-text-middle">
