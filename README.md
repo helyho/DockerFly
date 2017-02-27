@@ -7,7 +7,7 @@
 ###最新版本:
  - `20170227` 首个发布版本
 
- 请在 pull 的时候,替换版本号<version>
+ 请在 pull 的时候,替换版本号<version>。
 
 
 
@@ -20,14 +20,15 @@ cd DockerFly
 git clone https://git.oschina.net/helyho/DockerFly.git
 ./start.sh
 ```
-    访问:http://127.0.0.1:28083即刻
+    > `start.sh` 脚本依赖 socat,所以请您先安装 socat 到您的系统中,或者您已经暴露了一个 docker 的 TCP 端口,请删除对应的命令。
+    访问:http://127.0.0.1:28083
 
  - 直接 pull 一个 dockerfly 容器
 ```shell
     docker pull registry.cn-hangzhou.aliyuncs.com/voovan/dockerfly:<version> 
     docker run --name dockerfly -d -v /var/run/docker.sock:/var/run/docker.sock -p 2735:2735 -p 28083:28083 dockerfly
 ```
-    访问:http://127.0.0.1:28083即刻
+    访问:http://127.0.0.1:28083
 
 ------------------
 
