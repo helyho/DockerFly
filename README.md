@@ -17,7 +17,7 @@ git clone https://git.oschina.net/helyho/DockerFly.git
 
  - 直接 pull 一个 dockerfly 容器
 ```shell
-    docker pull registry.cn-hangzhou.aliyuncs.com/voovan/dockerfly
+    docker pull registry.cn-hangzhou.aliyuncs.com/voovan/dockerfly:<version>
     docker run --name dockerfly -d -v /var/run/docker.sock:/var/run/docker.sock -p 2735:2735 -p 28083:28083 dockerfly
 ```
     访问:http://127.0.0.1:28083即刻
@@ -28,3 +28,16 @@ git clone https://git.oschina.net/helyho/DockerFly.git
 ------------------
 ####容器操作
 ![容器操作](http://git.oschina.net/uploads/images/2017/0227/125522_866b27ec_116083.gif "容器操作")
+
+------------------
+版本说明:
+ - `20170222` 首个发布版本
+
+------------------
+**使用到了 Voovan 项目**
+
+ - [https://git.oschina.net/helyho/Voovan](https://git.oschina.net/helyho/Voovan)
+
+**以及两个子项目:**
+ - [https://git.oschina.net/helyho/JDocker](https://git.oschina.net/helyho/JDocker)
+ - [https://git.oschina.net/helyho/Vestful](https://git.oschina.net/helyho/Vestful)
