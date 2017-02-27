@@ -40,9 +40,9 @@ git clone https://git.oschina.net/helyho/DockerFly.git
 ------------------
 
 ###相关项目
-Dockerfly 是一个开源项目Voovan 的子项目,如果您觉得软件好用请推广给你的朋友并请您抽出宝贵时间 Star 一下项目.谢谢
+Dockerfly 是一个开源项目Voovan 的子项目,如果您觉得软件好用请推广给你的朋友并请您抽出宝贵时间 Star 一下项目。感谢各位的支持！！！
 
-** Voovan 项目**
+**Voovan项目**
  - [https://git.oschina.net/helyho/Voovan](https://git.oschina.net/helyho/Voovan) 
 
 **JDocker:**
