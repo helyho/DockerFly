@@ -2,6 +2,12 @@
 ------------------
 
 #####Dockerfly是基于 Docker1.12+ (Docker API 1.24+) 开发出Docker 管理工具,提供里最基本的基于 Docker 的管理功能,目的是能够方便广大Docker初学者以及 Docker 管理员能够快速的进行Docker 容器的管理和维护。
+------------------
+> 使用 dockerfly 可以管理docker中 swarm、container、network、volume、image 等等你在 docker 中想管理的所有东西。
+
+> 通过 dockerfly 的swarm管理你可以轻松的构建起一个基于 Docker 原生的集群系统。
+
+> 当然首先你要懂 Docker 不要拿他当虚拟机。
 
 ------------------
 ###最新版本:
