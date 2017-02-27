@@ -23,6 +23,10 @@ git clone https://git.oschina.net/helyho/DockerFly.git
     访问:http://127.0.0.1:28083即刻
 
 ------------------
+版本说明:
+ - `20170222` 首个发布版本
+
+------------------
 ####功能概览
 ![功能概览](http://git.oschina.net/uploads/images/2017/0227/125457_aa86c71d_116083.gif "功能概览")
 ------------------
@@ -30,10 +34,7 @@ git clone https://git.oschina.net/helyho/DockerFly.git
 ![容器操作](http://git.oschina.net/uploads/images/2017/0227/125522_866b27ec_116083.gif "容器操作")
 
 ------------------
-版本说明:
- - `20170222` 首个发布版本
 
-------------------
 ###相关项目
 Dockerfly 是一个开源项目Voovan 的子项目,如果您觉得软件好用请推广给你的朋友并请您抽出宝贵时间 Star 一下项目.谢谢
 
