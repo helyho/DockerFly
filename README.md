@@ -32,7 +32,12 @@ git clone https://git.oschina.net/helyho/DockerFly.git
  - 直接 pull 一个 dockerfly 容器
 ```shell
     docker pull registry.cn-hangzhou.aliyuncs.com/voovan/dockerfly:<version> 
-    docker run --name dockerfly -d -v /var/run/docker.sock:/var/run/docker.sock -p 2735:2735 -p 28083:28083 dockerfly
+    docker run \
+            --name dockerfly -d \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -p 2735:2735 \
+            -p 28083:28083 \
+    dockerfly
 ```
     访问:http://127.0.0.1:28083
 
