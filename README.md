@@ -36,8 +36,8 @@ git clone https://git.oschina.net/helyho/DockerFly.git
 ------------------
 **使用到了 Voovan 项目**
 
- - [https://git.oschina.net/helyho/Voovan](https://git.oschina.net/helyho/Voovan)
+ - [https://git.oschina.net/helyho/Voovan](https://git.oschina.net/helyho/Voovan) [Star 它](https://git.oschina.net/helyho/Voovan/star)
 
 **以及两个子项目:**
- - [https://git.oschina.net/helyho/JDocker](https://git.oschina.net/helyho/JDocker)
- - [https://git.oschina.net/helyho/Vestful](https://git.oschina.net/helyho/Vestful)
+ - [https://git.oschina.net/helyho/JDocker](https://git.oschina.net/helyho/JDocker) [Star 它](https://git.oschina.net/helyho/JDocker/star)
+ - [https://git.oschina.net/helyho/Vestful](https://git.oschina.net/helyho/Vestful) [Star 它](https://git.oschina.net/helyho/Vestful/star)
