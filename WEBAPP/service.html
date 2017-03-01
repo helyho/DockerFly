@@ -41,6 +41,7 @@
                     image:"",
                     command:"",
                     env:"",
+                    mode:"replicated",
                     cpuLimit:1,
                     memoryLimit:64,
                     cpuReservation:0,
@@ -362,6 +363,15 @@
                         </td>
                     </tr>
                     <tr>
+                        <td class="dialogField">Mode:</td>
+                        <td>
+                            <select class="uk-form-width-medium" v-model="createParams.mode">
+                                <option value="global">global</option>
+                                <option value="replicated">replicated</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr v-if="createParams.mode=='replicated'">
                         <td class="dialogField">Replicate:</td>
                         <td><input class="uk-form-width-mini uk-text-center" type="text"
                                    placeholder="replicate count" v-model="createParams.replicate"/></td>
