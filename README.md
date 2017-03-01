@@ -35,7 +35,6 @@ git clone https://git.oschina.net/helyho/DockerFly.git
     docker run \
             --name dockerfly -d \
             -v /var/run/docker.sock:/var/run/docker.sock \
-            -p 2735:2735 \
             -p 28083:28083 \
     dockerfly
 ```
