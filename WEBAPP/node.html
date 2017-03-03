@@ -153,23 +153,26 @@
             <thead>
             <tr>
                 <th class="uk-text-center ">NO.</th>
-                <th class="uk-width-1-10">ID</th>
+                <th class="uk-width-2-10">ID</th>
                 <th class="uk-width-1-10">Name</th>
                 <th class="uk-width-1-10">Role</th>
                 <th class="uk-width-1-10">Status</th>
                 <th class="uk-width-1-10">Availability</th>
-                <th class="uk-width-1-10">IsLeader</th>
                 <th class="uk-width-2-10">Platform</th>
                 <th class="uk-text-center">Opertaion</th>
             </tr>
             </thead>
 
             <tbody>
-            <tr v-for="(node,index) in nodeList">
+            <tr v-for="(node,index) in nodeList" :class='{ created: node.managerStatus.leader=="true" }'>
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
-                <td class="uk-text-middle uk-text-bold uk-text-primary">{{node.id|shortDockerId(12)}}</td>
+                <td class="uk-text-middle uk-text-bold uk-text-primary">
+                    <span v-if='node.managerStatus.leader=="true"' class="uk-text-danger uk-icon-leaf" title="Leader"></span>
+                    {{node.id|shortDockerId(12)}}
+                </td>
                 <td class="uk-text-middle uk-text-success">
-                    <span v-if="node.spec.name==undefined">
+
+                    <span v-if="node.spec.name==null">
                         <a href='#' class="uk-button uk-button-success uk-button-mini" @click='updateName(node)'>Set name</a>
                     </span>
                     <span v-else>
@@ -181,7 +184,6 @@
                 <td class="uk-text-bold uk-text-middle uk-text-danger">
                     {{node.spec.availability}}
                 </td>
-                <td class="uk-text-middle">{{node.managerStatus.leader}}</td>
                 <td class="uk-text-middle">{{node.description.hostname}} @ ( {{node.description.platform.os}}-{{node.description.platform.architecture}} )</td>
                 <td class="uk-text-center uk-text-middle">
                     <div class="uk-button-group">
