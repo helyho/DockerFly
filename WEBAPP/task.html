@@ -187,10 +187,10 @@
                 <td class=" uk-text-middle uk-text-bold ">
                     <a class="uk-text-danger" :href="'container.html?id='+task.status.containerStatus.containerId"
                        v-if="containers[task.status.containerStatus.containerId]!=null">
-                            {{containers[task.status.containerStatus.containerId]|delFirestChar|shortDockerId(18)}}
+                        <span class="uk-text-success uk-icon-circle"></span> {{containers[task.status.containerStatus.containerId]|delFirestChar|shortDockerId(18)}}
                     </a>
                     <span class="uk-text-danger" v-else>
-                        {{task.status.containerStatus.containerId|shortDockerId(12)}}
+                        <span class="uk-text-primary uk-icon-circle"></span> {{task.status.containerStatus.containerId|shortDockerId(12)}}
                     </span>
                 </td>
                 <td class=" uk-text-middle uk-text-bold">{{task.desiredState}}</td>
