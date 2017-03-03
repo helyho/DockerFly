@@ -105,7 +105,7 @@
 
                     for(var i=0;i<nodeList.length;i++){
                         var node = nodeList[i];
-                        this.nodes[node.id] = node.spec.name;
+                        this.nodes[node.id] = (node.spec.name==null?node.description.hostname:node.spec.name);
                     }
                     cmdNodeList.close();
                     cmdNodeList.release();
