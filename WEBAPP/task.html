@@ -177,12 +177,21 @@
                     <a class="uk-text-success" :href="'node.html?id='+task.nodeId">{{nodes[task.nodeId]}}</a>
                 </td>
                 <td class=" uk-text-middle uk-text-bold ">
-                    <a class="uk-text-warning" :href="'service.html?id='+task.serviceId">{{services[task.serviceId]}}</a>
+                    <a class="uk-text-warning" :href="'service.html?id='+task.serviceId" v-if="services[task.serviceId]!=null">
+                        {{services[task.serviceId]}}
+                    </a>
+                    <span class="uk-text-warning" v-else>
+                        {{task.serviceId|shortDockerId(12)}}
+                    </span>
                 </td>
                 <td class=" uk-text-middle uk-text-bold ">
-                    <a class="uk-text-danger" :href="'container.html?id='+task.status.containerStatus.containerId">
-                        {{containers[task.status.containerStatus.containerId]|delFirestChar|shortDockerId(18)}}
+                    <a class="uk-text-danger" :href="'container.html?id='+task.status.containerStatus.containerId"
+                       v-if="containers[task.status.containerStatus.containerId]!=null">
+                            {{containers[task.status.containerStatus.containerId]|delFirestChar|shortDockerId(18)}}
                     </a>
+                    <span class="uk-text-danger" v-else>
+                        {{task.status.containerStatus.containerId|shortDockerId(12)}}
+                    </span>
                 </td>
                 <td class=" uk-text-middle uk-text-bold">{{task.desiredState}}</td>
                 <td class=" uk-text-middle uk-text-small">{{task.createdAt|strToDate}}</td>
