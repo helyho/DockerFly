@@ -5,11 +5,13 @@
     "classPath": "org.voovan.vestful.entity.DirectObject",
     "desc": "Restful API for DirectObject",
     "params": {
-      //自动寻找参数名对应的方法,本例中程序寻找 setPackageControl 方法
+      "route":"ajax/do",
       "classControl": [
         "org.voovan.docker.command.*"
       ],
-      "route":"ajax/do"
+      "alias":{
+        "ovdc":"org\.voovan\.docker\.command"
+      }
     }
   }
 ]
