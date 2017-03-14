@@ -5,7 +5,7 @@
     "classPath": "org.voovan.vestful.entity.DirectObject",
     "desc": "Restful API for DirectObject",
     "params": {
-      "route":"ajax/do",
+      "route":"/ajax/do",
       "classControl": [
         "org.voovan.docker.command.*"
       ],
