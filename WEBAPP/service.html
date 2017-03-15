@@ -85,6 +85,7 @@
                 query: function () {
                     try {
                         var cmdServiceList = new CmdServiceList();
+                        cmdServiceList.connect();
 
                         if (this.queryParams.id != "") {
                             cmdServiceList.id([this.queryParams.id]);
@@ -112,6 +113,7 @@
                         UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + name + "</span> ?", function () {
                             try {
                                 var cmdServiceRemove = new CmdServiceRemove(id);
+                                cmdServiceRemove.connect();
                                 cmdServiceRemove.send();
                                 cmdServiceRemove.close();
                                 cmdServiceRemove.release();
@@ -130,6 +132,7 @@
                     UIkit.modal.prompt("Replicas:", service.spec.mode.replicated.replicas, function(newvalue){
                         try {
                             var cmdServiceUpdate = new CmdServiceUpdate(service);
+                            cmdServiceUpdate.connect();
                             cmdServiceUpdate.replicate(newvalue)
                             cmdServiceUpdate.send();
                             cmdServiceUpdate.close();
@@ -155,6 +158,7 @@
                 getImageList: function () {
                     try{
                         var cmdImageList = new CmdImageList();
+                        cmdImageList.connect();
 
                         this.imageList = cmdImageList.send().sortBy("Created");
                         cmdImageList.close();
@@ -166,6 +170,7 @@
                 getNetworkList: function () {
                     try{
                         var cmdNetworkList = new CmdNetworkList();
+                        cmdNetworkList.connect();
                         //cmdNetworkList.type("custom");
                         this.networkList = cmdNetworkList.send().sortBy("name");
                         cmdNetworkList.close();
@@ -177,6 +182,7 @@
                 getVolumeList: function () {
                     try{
                         var cmdVolumeList = new CmdVolumeList();
+                        cmdVolumeList.connect();
                         this.volumeList = cmdVolumeList.send().sortBy("name");
                         cmdVolumeList.close();
                         cmdVolumeList.release();
@@ -188,6 +194,7 @@
                     try {
 
                         var cmdServiceCreate = new CmdServiceCreate();
+                        cmdServiceCreate.connect();
 
                         if(this.createParams.name!=""){
                             cmdServiceCreate.name(this.createParams.name);

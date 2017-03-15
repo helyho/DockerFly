@@ -38,7 +38,7 @@
                 query: function () {
                     try {
                         var cmdTaskList = new CmdTaskList();
-
+                        cmdTaskList.connect();
                         if (this.queryParams.id != "") {
                             cmdTaskList.id([this.queryParams.id]);
                         }
@@ -67,6 +67,7 @@
                 getContainers: function(){
                     try {
                         var cmdContainerList = new CmdContainerList();
+                        cmdContainerList.connect();
                         cmdContainerList.all(true)
 
                         //cmdContainerList.label("author","helyho");
@@ -84,7 +85,7 @@
                 getServices: function(){
                     try {
                         var cmdServiceList = new CmdServiceList();
-
+                        cmdServiceList.connect();
                         //cmdServiceList.label("author","helyho");
                         var serviceList = cmdServiceList.send().sortBy("id", true);
                         for(var i=0;i<serviceList.length;i++){
@@ -99,7 +100,7 @@
                 },
                 getNodes: function(){
                     var cmdNodeList = new CmdNodeList();
-
+                    cmdNodeList.connect();
                     //cmdContainerList.label("author","helyho");
                     var nodeList = cmdNodeList.send().sortBy("name");
 

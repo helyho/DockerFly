@@ -50,6 +50,7 @@
 
                         var containerId = getQueryString("id");
                         var cmdContainerList = new CmdContainerList()
+                        cmdContainerList.connect()
                         cmdContainerList.all(true);
                         cmdContainerList.id([containerId])
                         var viewContainer = cmdContainerList.send();
@@ -75,7 +76,8 @@
                             return;
                         }
 
-                        var cmdContainerLogs = new CmdContainerLogs(this.viewContainer.id, 60);
+                        var cmdContainerLogs = new CmdContainerLogs(this.viewContainer.id);
+                        cmdContainerLogs.connect(60);
                         this.logInfo.cmdObject = cmdContainerLogs;
 
                         //控制启动的时间,避免重复日志的输出
@@ -140,6 +142,7 @@
                 processView: function(){
                     try{
                         var cmdContainerTop = new CmdContainerTop(this.viewContainer.id)
+                        cmdContainerTop.connect();
                         this.processes = cmdContainerTop.send();
                         cmdContainerTop.close();
                         cmdContainerTop.release();
@@ -150,6 +153,7 @@
                 statsView: function(){
                     try{
                         var cmdContainerStats = new CmdContainerStats(this.viewContainer.id)
+                        cmdContainerStats.connect();
                         var statsData = cmdContainerStats.send();
                         cmdContainerStats.close();
                         cmdContainerStats.release();
@@ -176,6 +180,7 @@
                         }
 
                         var cmdExecCreate = new CmdExecCreate(this.viewContainer.id);
+                        cmdExecCreate.connect();
                         cmdExecCreate.cmd(this.execInfo.cmd.split(" "));
                         cmdExecCreate.tty(true);
                         cmdExecCreate.attachStdin(true);
@@ -183,7 +188,8 @@
                         cmdExecCreate.close();
                         cmdExecCreate.release();
 
-                        var cmdExecStart = new CmdExecStart(eval("k="+execId).Id, 60);
+                        var cmdExecStart = new CmdExecStart(eval("k="+execId).Id);
+                        cmdExecStart.connect(60);
                         this.execInfo.cmdObject = cmdExecStart;
                         cmdExecStart.tty(true);
                         cmdExecStart.send();
@@ -211,7 +217,6 @@
                                     if (execData != null) {
                                         viewerVue.execInfo.terminal.write(execData);
                                     } else {
-//                                        alert("Server disconnect and then try again.");
                                         viewerVue.execStop();
                                     }
                                 }catch (e){

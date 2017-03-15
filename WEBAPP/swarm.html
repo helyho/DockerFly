@@ -37,6 +37,7 @@
                 swarmInfo: function(){
                     try {
                         var cmdSwarmInfo = new CmdSwarmInfo();
+                        cmdSwarmInfo.connect();
                         var swarmInfo= cmdSwarmInfo.send()
                         cmdSwarmInfo.close();
                         cmdSwarmInfo.release();
@@ -62,7 +63,7 @@
                 init: function(){
                     try {
                         var cmdSwarmInit = new CmdSwarmInit();
-
+                        cmdSwarmInit.connect();
                         if(this.initParams.advertiseAddr!=null){
                             cmdSwarmInit.advertiseAddr(this.initParams.advertiseAddr)
                         }
@@ -88,7 +89,7 @@
                 join: function(){
                     try {
                         var cmdSwarmJoin = new CmdSwarmJoin();
-
+                        cmdSwarmJoin.connect();
                         if(this.joinParams.advertiseAddr!=null){
                             cmdSwarmJoin.advertiseAddr(this.joinParams.advertiseAddr)
                         }
@@ -120,6 +121,7 @@
                     UIkit.modal.confirm("Are you sure to leava this swarm ? ", function(){
                         try{
                             var cmdSwarmLeave = new CmdSwarmLeave();
+                            cmdSwarmLeave.connect();
                             cmdSwarmLeave.force(true);
                             cmdSwarmLeave.send()
                             cmdSwarmLeave.close();

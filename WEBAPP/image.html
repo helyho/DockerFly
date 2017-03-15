@@ -17,6 +17,7 @@
     doImport("org.voovan.docker.command.Image.CmdImageList")
     doImport("org.voovan.docker.command.Image.CmdImageRemove")
     doImport("org.voovan.docker.command.Image.CmdImageCreate")
+    doImport("org.voovan.docker.command.Image.CmdImageTag")
 
     function init() {
         imageListVue = new Vue({
@@ -38,6 +39,7 @@
                 query: function () {
                     try {
                         var cmdImageList = new CmdImageList();
+                        cmdImageList.connect();
 //                        cmdImageList.all(true);
 
                         if(this.queryParams.name!=""){
@@ -54,14 +56,38 @@
                 //移除方法
                 remove: function (image) {
                     name = image.repoTags.length > 0 ? image.repoTags[0] : "";
-                    id = image.id
                     UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + name + "</span> ?", function () {
                         try {
-                            var cmdImageRemove = new CmdImageRemove(shortDockerId(id, 12));
+                            var cmdImageRemove = new CmdImageRemove(shortDockerId(image.id, 12));
+                            cmdImageRemove.connect();
                             cmdImageRemove.send();
                             cmdImageRemove.close();
                             cmdImageRemove.release();
                             imageListVue.query();
+                        } catch (e) {
+                            alertError(e)
+                        }
+                    });
+
+
+                },
+                //重命名
+                tag: function (image) {
+                    name = image.repoTags.length > 0 ? image.repoTags[0] : "";
+                    id = image.id
+                    UIkit.modal.prompt("Images tags: (like repo:tag)", name, function(newvalue){
+                        try {
+                            if(newvalue!=""){
+                                var reppAndTag = newvalue.split(":");
+                                var cCmdImageTag = new CmdImageTag(shortDockerId(image.id,12));
+                                cCmdImageTag.connect();
+                                cCmdImageTag.repo(reppAndTag[0])
+                                cCmdImageTag.tag(reppAndTag[1])
+                                cCmdImageTag.send();
+                                cCmdImageTag.close();
+                                cCmdImageTag.release();
+                            }
+
                         } catch (e) {
                             alertError(e)
                         }
@@ -75,6 +101,7 @@
                             return
                         }
                         var cmdHubImageInfo = new CmdHubImageInfo();
+                        cmdHubImageInfo.connect();
                         cmdHubImageInfo.term(this.searchParams.name);
                         cmdHubImageInfo.limit(this.searchParams.limit);
                         this.hubImageList = cmdHubImageInfo.send().sortBy("star_count", true);
@@ -94,6 +121,7 @@
                         UIkit.modal.prompt("Pull an image with tag:", this.pullTag, function(newvalue) {
                             this.pullTag = newvalue;
                             var cmdImageCreate = new CmdImageCreate();
+                            cmdImageCreate.connect();
                             cmdImageCreate.fromImage(hubImage.name);
                             cmdImageCreate.tag(this.pullTag);
 
@@ -163,6 +191,8 @@
                 <td class="uk-text-center">{{new Date(parseInt(image.created*1000)).format("yyyy-MM-dd hh:mm:ss")}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-danger">{{(parseInt(image.size)/1024/1024).toFixed(2)}}</td>
                 <td class="uk-text-center uk-text-middle">
+                    <input class="uk-button uk-button-small uk-button-primary" type="button" value="Tag"
+                           @click="rename(image)"/>
                     <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
                            @click="remove(image)"/>
                 </td>

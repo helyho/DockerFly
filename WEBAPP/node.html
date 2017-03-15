@@ -38,6 +38,7 @@
                 query: function () {
                     try {
                         var cmdNodeList = new CmdNodeList();
+                        cmdNodeList.connect();
 
                         if (this.queryParams.id != "") {
                             cmdNodeList.id([this.queryParams.id]);
@@ -62,6 +63,7 @@
                     UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + id + "</span> ?", function () {
                         try {
                             var cmdNodeRemove = new CmdNodeRemove(id);
+                            cmdNodeRemove.connect();
                             cmdNodeRemove.send();
                             cmdNodeRemove.close();
                             cmdNodeRemove.release();
@@ -84,6 +86,7 @@
                     try {
                         var node = this.updateParams.node;
                         var cmdNodeUpdate = new CmdNodeUpdate(node.id, parseInt(node.version.index));
+                        cmdNodeUpdate.connect();
                         if(this.updateParams.name!=""){
                             cmdNodeUpdate.name(this.updateParams.name)
                         }
@@ -106,6 +109,7 @@
                     UIkit.modal.prompt("Node name:", node.spec.name, function(newvalue){
                         try {
                             var cmdNodeUpdate = new CmdNodeUpdate(node.id, parseInt(node.version.index));
+                            cmdNodeUpdate.connect();
                             if(newvalue!=""){
                                 cmdNodeUpdate.name(newvalue)
                             }
