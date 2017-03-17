@@ -32,9 +32,8 @@
 ###使用方法
  - Clone 后在本地使用
 ```shell
-mkdir DockerFly
-cd DockerFly
 git clone https://git.oschina.net/helyho/DockerFly.git
+cd DockerFly
 ./start.sh
 ```
     > `start.sh` 脚本依赖 socat,所以请您先安装 socat 到您的系统中,或者您已经暴露了一个 docker 的 TCP 端口,请删除对应的命令。并访问:http://127.0.0.1:28083 在 setting 页面配置您的 ip 和 端口。
