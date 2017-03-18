@@ -380,7 +380,7 @@
             <tr>
                 <th class="uk-text-center">NO.</th>
                 <th>Name</th>
-                <!--<th>Image</th>-->
+                <th>Image</th>
                 <th>Network & IP</th>
                 <th>Export Port</th>
                 <th class="uk-text-center">Status</th>
@@ -398,7 +398,7 @@
                           class="icon uk-icon-desktop uk-text-success" title="Stander container"></span>
                      {{container.names[0]|delFirestChar|shortDockerId(18)}}
                 </td>
-                <!--<td class="uk-text-middle">{{container.image | shortDockerId(12)}}</td>-->
+                <td class="uk-text-middle uk-text-warning uk-text-bold">{{container.image | shortDockerId(12)}}</td>
                 <td class="uk-text-middle">
                     <div v-for="(network,networkName) in container.networkSettings.networks">
                         <code>
