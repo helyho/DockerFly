@@ -165,8 +165,13 @@
                         this.stats.ioRead  = (statsData.ioRead/1000).toFixed(0);
                         this.stats.ioSend  = (statsData.ioWrite/1000).toFixed(0);
                         this.stats.ioTotal = (statsData.ioTotal/1000).toFixed(0);
-                        this.stats.netRx = (statsData.netRxBytes/1000).toFixed(0);
-                        this.stats.netTx = (statsData.netTxBytes/1000).toFixed(0);
+                        for(var etherName in statsData.network) {
+                            var etherStats = ether = eval("statsData.network."+etherName);
+                            eval("this.stats.network={}");
+                            eval("this.stats.network."+etherName+"={}");
+                            eval("this.stats.network."+etherName+".netRx = (etherStats.netRxBytes / 1000).toFixed(0)");
+                            eval("this.stats.network."+etherName+".netTx = (etherStats.netTxBytes / 1000).toFixed(0)");
+                        }
                     } catch (e) {
                         alertError(e);
                     }
@@ -301,8 +306,11 @@
                                 <span class="uk-text-success">{{stats.ioTotal}} KB</span>
                             </td>
                             <td class="uk-text-center">
-                                <span class="uk-text-primary">{{stats.netRx}} KB </span>/
-                                <span class="uk-text-success">{{stats.netTx}} KB </span>
+                                <div v-for="(etherStats, etherName) in stats.network">
+                                    <span class=""><code>{{etherName}}</code></span>
+                                    <span class="uk-text-primary">{{etherStats.netRx}} KB </span>/
+                                    <span class="uk-text-success">{{etherStats.netTx}} KB </span>
+                                </div>
                             </td>
                         </tr>
                         </tbody>
