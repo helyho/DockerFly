@@ -161,10 +161,10 @@
                         this.stats = {};
                         this.stats.cpu = (statsData.cpuUsage/statsData.cpuTotal*100).toFixed(2);
                         this.stats.memUsage  = (statsData.memoryUsage/1024/1024).toFixed(2);
-                        this.stats.memeLimit = (statsData.memoryMaxLimit/1024/1024).toFixed(2);
-                        this.stats.ioRead  = (statsData.ioRead/1000).toFixed(0);
-                        this.stats.ioSend  = (statsData.ioWrite/1000).toFixed(0);
-                        this.stats.ioTotal = (statsData.ioTotal/1000).toFixed(0);
+                        this.stats.memeLimit = Math.ceil(statsData.memoryMaxLimit/1024/1024);
+                        this.stats.ioRead  = (statsData.ioRead/1000).toFixed(2);
+                        this.stats.ioSend  = (statsData.ioWrite/1000).toFixed(2);
+                        this.stats.ioTotal = (statsData.ioTotal/1000).toFixed(2);
                         for(var etherName in statsData.network) {
                             var etherStats = ether = eval("statsData.network."+etherName);
                             eval("this.stats.network={}");
