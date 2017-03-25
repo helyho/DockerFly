@@ -1,14 +1,19 @@
-FROM openjdk:8-jre
+FROM nimmis/alpine-java
 
-COPY ./ /data/dockerfly/
+MAINTAINER helyho <helyho@gmail.com>
 
-RUN chmod -R 777 /data/dockerfly/ \
-    && sed -i 's/http:\/\/archive\.ubuntu\.com\/ubuntu\//http:\/\/mirrors\.163\.com\/ubuntu\//g' /etc/apt/sources.list \
-    && apt-get update && apt-get install -y socat
+RUN mkdir /dockerfly
 
+COPY ./ /dockerfly/
+
+RUN echo "http://mirrors.aliyun.com/alpine/v3.5/main" > /etc/apk/repositories
+RUN apk --no-cache add socat
+RUN echo "#!/bin/sh"
 
 EXPOSE 28083
 
-WORKDIR /data/dockerfly
+WORKDIR /dockerfly
 
-ENTRYPOINT  ["/bin/bash" , "/data/dockerfly/start.sh"]
+RUN chmod +x /dockerfly/start.sh
+
+ENTRYPOINT  ["/bin/sh" , "/dockerfly/start.sh"]
