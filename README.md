@@ -37,7 +37,10 @@ cd DockerFly
 ./start.sh
 ```
     > `start.sh` 脚本依赖 socat,所以请您先安装 socat 到您的系统中,或者您已经暴露了一个 docker 的 TCP 端口,请删除对应的命令。并访问:http://127.0.0.1:28083 在 setting 页面配置您的 ip 和 端口。
-    
+
+    > `Ubuntu安装socat`: shell sudo apt-get install socat
+
+    > `Centos安装socat`: shell yum install -y sccat
 
  - 直接 pull 一个 dockerfly 容器
 ```shell
