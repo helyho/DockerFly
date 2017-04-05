@@ -40,7 +40,7 @@ cd DockerFly
 
     > `Ubuntu安装socat`: shell sudo apt-get install socat
 
-    > `Centos安装socat`: shell yum install -y sccat
+    > `Centos安装socat`: shell yum install -y socat
 
  - 直接 pull 一个 dockerfly 容器
 ```shell
