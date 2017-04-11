@@ -50,7 +50,7 @@
 
                         var containerId = getQueryString("id");
                         var cmdContainerList = new CmdContainerList()
-                        cmdContainerList.connect()
+                        connect(cmdContainerList)
                         cmdContainerList.all(true);
                         cmdContainerList.id([containerId])
                         var viewContainer = cmdContainerList.send();
@@ -142,7 +142,7 @@
                 processView: function(){
                     try{
                         var cmdContainerTop = new CmdContainerTop(this.viewContainer.id)
-                        cmdContainerTop.connect();
+                        connect(cmdContainerTop);
                         this.processes = cmdContainerTop.send();
                         cmdContainerTop.close();
                         cmdContainerTop.release();
@@ -153,7 +153,7 @@
                 statsView: function(){
                     try{
                         var cmdContainerStats = new CmdContainerStats(this.viewContainer.id)
-                        cmdContainerStats.connect();
+                        connect(cmdContainerStats);
                         var statsData = cmdContainerStats.send();
                         cmdContainerStats.close();
                         cmdContainerStats.release();
@@ -185,7 +185,7 @@
                         }
 
                         var cmdExecCreate = new CmdExecCreate(this.viewContainer.id);
-                        cmdExecCreate.connect();
+                        connect(cmdExecCreate);
                         cmdExecCreate.cmd(this.execInfo.cmd.split(" "));
                         cmdExecCreate.tty(true);
                         cmdExecCreate.attachStdin(true);

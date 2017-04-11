@@ -39,7 +39,7 @@
                 query: function () {
                     try {
                         var cmdImageList = new CmdImageList();
-                        cmdImageList.connect();
+                        connect(cmdImageList);
 //                        cmdImageList.all(true);
 
                         if(this.queryParams.name!=""){
@@ -59,7 +59,7 @@
                     UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + name + "</span> ?", function () {
                         try {
                             var cmdImageRemove = new CmdImageRemove(shortDockerId(image.id, 12));
-                            cmdImageRemove.connect();
+                            connect(cmdImageRemove);
                             cmdImageRemove.send();
                             cmdImageRemove.close();
                             cmdImageRemove.release();
@@ -80,7 +80,7 @@
                             if(newvalue!=""){
                                 var reppAndTag = newvalue.split(":");
                                 var cCmdImageTag = new CmdImageTag(shortDockerId(image.id,12));
-                                cCmdImageTag.connect();
+                                connect(cCmdImageTag);
                                 cCmdImageTag.repo(reppAndTag[0])
                                 cCmdImageTag.tag(reppAndTag[1])
                                 cCmdImageTag.send();
@@ -101,7 +101,7 @@
                             return
                         }
                         var cmdHubImageInfo = new CmdHubImageInfo();
-                        cmdHubImageInfo.connect();
+                        connect(cmdHubImageInfo);
                         cmdHubImageInfo.term(this.searchParams.name);
                         cmdHubImageInfo.limit(this.searchParams.limit);
                         this.hubImageList = cmdHubImageInfo.send().sortBy("star_count", true);
@@ -121,7 +121,7 @@
                         UIkit.modal.prompt("Pull an image with tag:", this.pullTag, function(newvalue) {
                             this.pullTag = newvalue;
                             var cmdImageCreate = new CmdImageCreate();
-                            cmdImageCreate.connect();
+                            connect(cmdImageCreate);
                             cmdImageCreate.fromImage(hubImage.name);
                             cmdImageCreate.tag(this.pullTag);
 

@@ -234,8 +234,8 @@ h5,
 h6 {
   margin: 0 0 15px 0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: normal;
-  color: #444;
+  font-weight: 300;
+  color: #222;
   text-transform: none;
 }
 /*
@@ -1831,7 +1831,7 @@ ul.uk-nav-sub {
  * Items
  */
 .uk-nav-side > li > a {
-  color: #444;
+  color: #CCC;
 }
 /*
  * Hover
@@ -1841,11 +1841,11 @@ ul.uk-nav-sub {
 .uk-nav-side > li > a:hover,
 .uk-nav-side > li > a:focus {
   background: rgba(0, 0, 0, 0.03);
-  color: #444;
+  color: #fff;
   /* 2 */
   outline: none;
   box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.1);
-  text-shadow: 0 -1px 0 #fff;
+  text-shadow: 0 -1px 0 #777;
 }
 /* Active */
 .uk-nav-side > li.uk-active > a {
@@ -1864,8 +1864,8 @@ ul.uk-nav-sub {
  * Sub-object: `uk-nav-divider`
  */
 .uk-nav-side .uk-nav-divider {
-  border-top: 1px solid #ddd;
-  box-shadow: 0 1px 0 #fff;
+  border-top: 1px solid #333;
+  box-shadow: 0 1px 0 #333;
 }
 /*
  * Nested items

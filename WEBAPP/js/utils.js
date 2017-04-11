@@ -12,8 +12,12 @@
     //取 URL 中的参数
     function getQueryString(name) {
         var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-        var r = window.location.search.substr(1).match(reg);
-        if(r!=null)return  unescape(r[2]); return null;
+        var paramString = window.location.search.substr(1).match(reg);
+        if(paramString!=null) {
+            return unescape(paramString[2]);
+        } else {
+            return null;
+        }
     }
 
     //导入后台类
@@ -28,9 +32,19 @@
         return new Date().getTime();
     }
 
-
     function alert(msg){
         UIkit.modal.alert(msg);
+    }
+
+    function connect(cmd) {
+        host = getQueryString("host");
+        port = getQueryString("port");
+
+        if(host==null || port == null) {
+            cmd.connect();
+        }else{
+            cmd.connect(host, port);
+        }
     }
 
     //展示错误信息

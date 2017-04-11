@@ -101,7 +101,7 @@
                 query: function () {
                     try {
                         var cmdContainerList = new CmdContainerList();
-                        cmdContainerList.connect();
+                        connect(cmdContainerList);
                         cmdContainerList.all(true)
 
                         if (this.queryParams.name != "") {
@@ -118,6 +118,7 @@
 
                         //cmdContainerList.label("author","helyho");
                         this.containerList = cmdContainerList.send().sortBy("id", true);
+                        containerList.host = "127.0.0.1";
                         cmdContainerList.close();
                         cmdContainerList.release();
                     } catch (e) {
@@ -130,13 +131,13 @@
                     try {
                         if (container.state == "paused") {
                             var cmdContainerUnPause = new CmdContainerUnPause(container.id);
-                            cmdContainerUnPause.connect();
+                            connect(cmdContainerUnPause);
                             cmdContainerUnPause.send();
                             cmdContainerUnPause.close();
                             cmdContainerUnPause.release();
                         } else {
                             var cmdContainerStart = new CmdContainerStart(container.id);
-                            cmdContainerStart.connect();
+                            connect(cmdContainerStart);
                             cmdContainerStart.send()
                             cmdContainerStart.close();
                             cmdContainerStart.release()
@@ -151,7 +152,7 @@
                 stop: function (container) {
                     try {
                         var cmdContainerStop = new CmdContainerStop(container.id);
-                        cmdContainerStop.connect();
+                        connect(cmdContainerStop);
                         cmdContainerStop.waitForKill(3);
                         cmdContainerStop.send();
                         cmdContainerStop.close();
@@ -171,7 +172,7 @@
                         UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + delFirestChar(name) + "</span> ?", function () {
                             try {
                                 var cmdContainerRemove = new CmdContainerRemove(id);
-                                cmdContainerRemove.connect();
+                                connect(cmdContainerRemove);
                                 cmdContainerRemove.send();
                                 cmdContainerRemove.close();
                                 cmdContainerRemove.release();
@@ -189,7 +190,7 @@
                 pause: function (container) {
                     try {
                         var cmdContainerPause = new CmdContainerPause(container.id);
-                        cmdContainerPause.connect();
+                        connect(cmdContainerPause);
                         cmdContainerPause.send();
                         cmdContainerPause.close();
                         cmdContainerPause.release();
@@ -203,7 +204,7 @@
                 getImageList: function () {
                     try{
                         var cmdImageList = new CmdImageList();
-                        cmdImageList.connect();
+                        connect(cmdImageList);
                         this.imageList = cmdImageList.send().sortBy("Created");
                         cmdImageList.close();
                         cmdImageList.release();
@@ -214,7 +215,7 @@
                 getNetworkList: function () {
                     try{
                         var cmdNetworkList = new CmdNetworkList();
-                        cmdNetworkList.connect();
+                        connect(cmdNetworkList);
                         //cmdNetworkList.type("custom");
                         this.networkList = cmdNetworkList.send().sortBy("name");
                         cmdNetworkList.close();
@@ -226,7 +227,7 @@
                 getVolumeList: function () {
                     try{
                         var cmdVolumeList = new CmdVolumeList();
-                        cmdVolumeList.connect()
+                        connect(cmdVolumeList)
                         this.volumeList = cmdVolumeList.send().sortBy("name");
                         cmdVolumeList.close();
                         cmdVolumeList.release();
@@ -252,7 +253,7 @@
                 create: function () {
                     try {
                         cmdContainerCreate = new CmdContainerCreate(this.createParams.name);
-                        cmdContainerCreate.connect();
+                        connect(cmdContainerCreate);
 
                         if (this.createParams.image != "") {
                             cmdContainerCreate.image(this.createParams.image);

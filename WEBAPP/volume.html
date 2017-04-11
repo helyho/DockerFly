@@ -35,7 +35,7 @@
                 query: function () {
                     try {
                         var cmdVolumeList = new CmdVolumeList();
-                        cmdVolumeList.connect();
+                        connect(cmdVolumeList);
 
                         if (this.queryParams.name != "") {
                             cmdVolumeList.name([this.queryParams.name]);
@@ -56,7 +56,7 @@
                     UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + name + "</span> ?", function () {
                         try {
                             var cmdVolumeRemove = new CmdVolumeRemove(name);
-                            cmdVolumeRemove.connect()
+                            connect(cmdVolumeRemove)
                             cmdVolumeRemove.send();
                             cmdVolumeRemove.close();
                             cmdVolumeRemove.release();
@@ -73,7 +73,7 @@
                 create: function () {
                     try {
                         var cmdVolumeCreate = new CmdVolumeCreate();
-                        cmdVolumeCreate.connect()
+                        connect(cmdVolumeCreate)
                         cmdVolumeCreate.name(this.createParams.name);
                         cmdVolumeCreate.driver(this.createParams.driver);
                         cmdVolumeCreate.send();

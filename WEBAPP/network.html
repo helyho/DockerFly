@@ -41,7 +41,7 @@
                 query: function () {
                     try {
                         var cmdNetworkList = new CmdNetworkList();
-                        cmdNetworkList.connect();
+                        connect(cmdNetworkList);
 
                         if (this.queryParams.name != "") {
                             cmdNetworkList.name([this.queryParams.name]);
@@ -71,7 +71,7 @@
                     UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + name + "</span> ?", function () {
                         try {
                             var cmdNetworkRemove = new CmdNetworkRemove(id);
-                            cmdNetworkRemove.connect();
+                            connect(cmdNetworkRemove);
                             cmdNetworkRemove.send();
                             cmdNetworkRemove.close();
                             cmdNetworkRemove.release();
@@ -89,7 +89,7 @@
                 create: function () {
                     try {
                         var cmdNetworkCreate = new CmdNetworkCreate();
-                        cmdNetworkCreate.connect();
+                        connect(cmdNetworkCreate);
                         cmdNetworkCreate.checkDuplicate(true);
                         cmdNetworkCreate.name(this.createParams.name);
                         cmdNetworkCreate.driver(this.createParams.driver);

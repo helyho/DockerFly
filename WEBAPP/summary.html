@@ -24,7 +24,7 @@
                     try {
 
                         var cmdDockerInfo = new CmdDockerInfo();
-                        cmdDockerInfo.connect();
+                        connect(cmdDockerInfo);
                         var dockerInfo = cmdDockerInfo.send()
                         cmdDockerInfo.close();
                         cmdDockerInfo.release();

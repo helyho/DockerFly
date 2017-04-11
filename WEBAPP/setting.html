@@ -52,41 +52,53 @@
 </script>
 <body onload="init()" class="frameBody">
 <div id="dockerSetting" class="uk-grid" style="display: none" v-show="this.config!=null">
-    <div class="uk-width-6-6">
-            <h3 class="uk-text-middle">Connect docker</h3>
-            <table id="config" class="uk-form uk-table uk-overflow-container uk-panel-box">
-                <tbody>
-                <tr>
-                    <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Host:</td>
-                    <td class="uk-width-1-4">
-                        <input type="text" class="" placeholder="DockerFly host" v-model="config.host"/>
-                    </td>
-                    <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Port:</td>
-                    <td class="uk-width-1-4">
-                        <input type="text" class="" placeholder="DockerFly port" v-model="config.port"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Timeout:</td>
-                    <td class="uk-width-1-4">
-                        <input type="text" class="" placeholder="DockerFly timeout" v-model="config.timeout"/>
-                    </td>
-                    <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Debug:</td>
-                    <td class="uk-width-1-4">
-                        <select v-model="config.isDebug">
-                            <option value="true">true</option>
-                            <option value="false">false</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="4" class="uk-text-right">
-                        <a href="#" class="uk-button uk-button-primary" @click="connect()">Connect</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+    <div class="uk-width-6-6" style="margin-top: 25px ">
+        <ul class="uk-subnav uk-subnav-pill" data-uk-tab="{connect:'#tab-content'}">
+            <li class="uk-active">
+                <a href="#">Server</a>
+            </li>
+            <li>
+                <a href="#">Host</a>
+            </li>
+        </ul>
+        <hr/>
+        <ul id="tab-content" class="uk-switcher uk-margin">
+            <li class="uk-active">
+                <h3 class="uk-text-middle">Connect docker</h3>
+                <table id="config" class="uk-form uk-table uk-overflow-container uk-panel-box">
+                    <tbody>
+                    <tr>
+                        <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Host:</td>
+                        <td class="uk-width-1-4">
+                            <input type="text" class="" placeholder="DockerFly host" v-model="config.host"/>
+                        </td>
+                        <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Port:</td>
+                        <td class="uk-width-1-4">
+                            <input type="text" class="" placeholder="DockerFly port" v-model="config.port"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Timeout:</td>
+                        <td class="uk-width-1-4">
+                            <input type="text" class="" placeholder="DockerFly timeout" v-model="config.timeout"/>
+                        </td>
+                        <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Debug:</td>
+                        <td class="uk-width-1-4">
+                            <select v-model="config.isDebug">
+                                <option value="true">true</option>
+                                <option value="false">false</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="uk-text-right">
+                            <a href="#" class="uk-button uk-button-primary" @click="connect()">Connect</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </li>
+        </ul>
     </div>
     <div class="uk-width-6-6">
         <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
