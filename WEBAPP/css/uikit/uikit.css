@@ -1525,16 +1525,16 @@ ul.uk-nav-sub {
 
 .uk-nav-side>li>a:focus,
 .uk-nav-side>li>a:hover {
-  background: rgba(0, 0, 0, .03);
-  color: #fff;
+  background: rgba(0, 0, 0, .3);
+  color: #009dd8;
   outline: 0;
-  box-shadow: inset 0 0 1px rgba(0, 0, 0, .1);
-  text-shadow: 0 -1px 0 #777
+  /*box-shadow: inset 0 0 1px rgba(255, 255, 255, .1);*/
+  /*text-shadow: 0 -1px 0 #FFF*/
 }
 
 .uk-nav-side>li.uk-active>a {
-  background: #009dd8;
-  color: #fff;
+  background: #007bb6;
+  color: #ddd;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, .2);
   text-shadow: 0 -1px 0 rgba(0, 0, 0, .2)
 }
