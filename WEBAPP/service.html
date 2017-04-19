@@ -373,14 +373,14 @@
                         <td class="dialogField">Mode:</td>
                         <td>
                             <select class="uk-form-width-medium" v-model="createParams.mode">
-                                <option value="global">global</option>
-                                <option value="replicated">replicated</option>
+                                <option value="global">Global</option>
+                                <option value="replicated">Replicated</option>
                             </select>
                         </td>
                     </tr>
                     <tr v-if="createParams.mode=='replicated'">
                         <td class="dialogField">Replicate:</td>
-                        <td><input class="uk-form-width-mini uk-text-center" type="text"
+                        <td><input class="uk-form-width-small uk-text-center" type="number"
                                    placeholder="replicate count" v-model="createParams.replicate"/></td>
                     </tr>
                     <tr>
@@ -395,12 +395,12 @@
                     </tr>
                     <tr>
                         <td class="dialogField">CPU:</td>
-                        <td><input type="text" class="uk-form-width-small uk-text-center"
+                        <td><input type="number" class="uk-form-width-small uk-text-center"
                                    placeholder="cpu core count" v-model="createParams.cpuLimit"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Memory:</td>
-                        <td><input type="text" class="uk-form-width-small uk-text-center"
+                        <td><input type="number" class="uk-form-width-small uk-text-center"
                                    placeholder="memory size (Mb)" v-model="createParams.memoryLimit"/></td>
                     </tr>
                     <tr>
@@ -446,8 +446,8 @@
                                                type="text" placeholder="guest" v-model="createParams.port.containerPort"/>
                                         &nbsp;/&nbsp;
                                         <select v-model="createParams.port.protocol">
-                                            <option value="tcp">tcp</option>
-                                            <option value="udp">udp</option>
+                                            <option value="tcp">TCP</option>
+                                            <option value="udp">UDP</option>
                                         </select>
                                         <a href="#" class="uk-button uk-button-primary" @click="createParams.port.add()"><i class="uk-icon-plus-square"></i></a>
                                     </li>

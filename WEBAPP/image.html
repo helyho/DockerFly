@@ -55,10 +55,19 @@
                 },
                 //移除方法
                 remove: function (image) {
-                    name = image.repoTags.length > 0 ? image.repoTags[0] : "";
-                    UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + name + "</span> ?", function () {
+                    var repoTags = "<option value='image'>This image</option>";
+                    for(var i=0;i<image.repoTags.length;i++){
+                        repoTags = repoTags + "<option value='"+image.repoTags[i]+"'>Tag: "+image.repoTags[i]+"</option>";
+                    }
+                    UIkit.modal.confirm("Choice which one you want to remove?  <br><select id='imageRepoTag' class='uk-form-width-medium'>" + repoTags + "</select>", function () {
                         try {
-                            var cmdImageRemove = new CmdImageRemove(shortDockerId(image.id, 12));
+                            var imageRepoTag = $('#imageRepoTag').val();
+
+                            if(imageRepoTag=="image"){
+                                imageRepoTag = shortDockerId(image.id, 12);
+                            }
+
+                            var cmdImageRemove = new CmdImageRemove(imageRepoTag);
                             connect(cmdImageRemove);
                             cmdImageRemove.send();
                             cmdImageRemove.close();
@@ -87,7 +96,7 @@
                                 cCmdImageTag.close();
                                 cCmdImageTag.release();
                             }
-
+                            imageListVue.query();
                         } catch (e) {
                             alertError(e)
                         }
@@ -168,8 +177,8 @@
             <thead>
             <tr>
                 <th class="uk-text-center uk-width-1-10">NO.</th>
-                <th class="uk-width-3-10">Name</th>
                 <th class="uk-width-1-10">ID</th>
+                <th class="uk-width-3-10">Name</th>
                 <th class="uk-text-center uk-width-2-10">Created</th>
                 <th class="uk-width-1-10">Size(Mb)</th>
                 <th class="uk-text-center">Operation</th>
@@ -179,16 +188,16 @@
             <tbody>
             <tr v-for="(image,index) in imageList">
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
-                <td class="uk-text-bold uk-text-middle uk-text-primary">
-                    <div v-if="image.repoTags.length!=0" v-for="repoTag,index in image.repoTags">
-                        {{repoTag}}
-                    </div>
-                    <div v-if="image.repoTags.length == 0" v-for="repoDigest,index in image.repoDigests">
-                        {{repoDigest.split("@")[0]}}
-                    </div>
-                </td>
                 <td class="uk-text-bold uk-text-middle uk-text-success">{{image.id|shortDockerId(12)}}</td>
-                <td class="uk-text-center">{{new Date(parseInt(image.created*1000)).format("yyyy-MM-dd hh:mm:ss")}}</td>
+                <td class="uk-text-bold uk-text-middle uk-text-primary">
+                    <span v-if="image.repoTags.length!=0" v-for="repoTag,index in image.repoTags">
+                        <code>{{repoTag}}</code> &nbsp;
+                    </span>&nbsp;
+                    <span v-if="image.repoTags.length == 0" v-for="repoDigest,index in image.repoDigests">
+                        <code>{{repoDigest.split("@")[0]}}</code>&nbsp;
+                    </span>
+                </td>
+                <td class="uk-text-center uk-text-middle">{{new Date(parseInt(image.created*1000)).format("yyyy-MM-dd hh:mm:ss")}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-danger">{{(parseInt(image.size)/1024/1024).toFixed(2)}}</td>
                 <td class="uk-text-center uk-text-middle">
                     <input class="uk-button uk-button-small uk-button-primary" type="button" value="Tag"

@@ -103,7 +103,7 @@
                                         cmdContainerLogs.tail("all");
                                         cmdContainerLogs.since(viewerVue.logInfo.timeStamp);
                                     }
-                                    viewerVue.logInfo.timeStamp = parseInt(currentTimeMills() / 1000);
+                                    viewerVue.logInfo.timeStamp = parseInt(currentTimeMills() - 500/ 1000);
                                     var logData = cmdContainerLogs.send();
                                     logData = logData.replaceAll("\r", "")
                                     logData = logData.replaceAll("\n", "\u0000")
@@ -263,18 +263,20 @@
 <div id="viewerApp" class="uk-grid" style="display: none" v-show="this.viewContainer!=null">
     <div class="uk-width-6-6">
         <div class="uk-panel"></div>
-        <h3 class="uk-text-middle"><span class="uk-text-danger uk-text-bold uk-text-large">
-            {{viewContainer.names[0]|delFirestChar}}</span> [ {{viewContainer.state}} ]
+        <h3 class="uk-text-middle">
+            <span class="uk-text-danger uk-text-bold uk-text-large">{{viewContainer.names[0]|delFirestChar}}</span>
+            <span class="uk-text"> [ {{viewContainer.state}} ] </span>
+            <span class="uk-text uk-text-muted uk-text-small">{{viewContainer.status}}</span>
         </h3>
+
         <ul class="uk-tab" data-uk-switcher="{connect:'#Viewers'}">
             <li><a href="#">Performance</a></li>
             <li><a href="#">Execute</a></li>
             <li><a href="#">Log</a></li>
         </ul>
-        <div id="Viewers" class="uk-switcher" style="padding-top:15px">
+        <div id="Viewers" class="uk-switcher">
             <!-- 性能信息 -->
             <div>
-
                 <div>
                     <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box">
                         <caption>
@@ -313,6 +315,30 @@
                                 </div>
                             </td>
                         </tr>
+                        </tbody>
+                    </table>
+                    <hr/>
+                    <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box">
+                        <caption>
+                            <div class="uk-grid"  style="margin-bottom: 3px">
+                                <div class="uk-width-5-6">Network infomation</div>
+                            </div>
+                        </caption>
+                        <thead class="uk-text-center">
+                            <th class="uk-width-2-10 uk-text-center">Id</th>
+                            <th class="uk-width-2-10 uk-text-center">Name</th>
+                            <th class="uk-width-2-10 uk-text-center">Gateway</th>
+                            <th class="uk-width-2-10 uk-text-center">IP Address</th>
+                            <th class="uk-width-2-10 uk-text-center">Mac Address</th>
+                        </thead>
+                        <tbody>
+                            <tr class="uk-text-center" v-for=" (value, key) in viewContainer.networkSettings.networks">
+                                <td class="uk-text-success uk-text-bold">{{value.networkID | shortDockerId(12)}}</td>
+                                <td>{{key}}</td>
+                                <td>{{value.gateway}}</td>
+                                <td>{{value.ipAddress}}</td>
+                                <td>{{value.macAddress}}</td>
+                            </tr>
                         </tbody>
                     </table>
                     <hr/>

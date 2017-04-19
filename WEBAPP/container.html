@@ -330,7 +330,7 @@
                 //查看容器
                 view: function (container) {
                     this.viewContainerId = container.id;
-                    window.open("viewer.html?id="+container.id);
+                    window.open("container_viewer.html?id="+container.id);
                 }
             }
         });
@@ -398,7 +398,7 @@
                           class="icon uk-icon-desktop uk-text-success" title="Stander container"></span>
                      {{container.names[0]|delFirestChar|shortDockerId(18)}}
                 </td>
-                <td class="uk-text-middle uk-text-warning uk-text-bold">{{container.image | shortDockerId(12)}}</td>
+                <td class="uk-text-middle uk-text-warning uk-text-bold uk-text-small">{{container.image | shortDockerId(18)}}</td>
                 <td class="uk-text-middle">
                     <div v-for="(network,networkName) in container.networkSettings.networks">
                         <code>
@@ -426,6 +426,7 @@
                                @click="pause(container)"/>
                         <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
                                @click="remove(container)"/>
+                        <input class="uk-button uk-button-small" type="text" value="Remove"/>
                     </div>
                 </td>
             </tr>
@@ -471,12 +472,12 @@
                     </tr>
                     <tr>
                         <td class="dialogField">CPU:</td>
-                        <td><input type="text" class="uk-form-width-small uk-text-center"
+                        <td><input type="number" class="uk-form-width-small uk-text-center"
                                    placeholder="cpu core count" v-model="createParams.cpu"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Memory:</td>
-                        <td><input type="text" class="uk-form-width-small uk-text-center"
+                        <td><input type="number" class="uk-form-width-small uk-text-center"
                                    placeholder="memory size (Mb)" v-model="createParams.memory"/></td>
                     </tr>
                     <tr>
@@ -522,8 +523,8 @@
                                                id="containerPort" type="text" placeholder="guest" v-model="createParams.port.containerPort"/>
                                         &nbsp;/&nbsp;
                                         <select v-model="createParams.port.protocol">
-                                            <option value="tcp">tcp</option>
-                                            <option value="udp">udp</option>
+                                            <option value="tcp">TCP</option>
+                                            <option value="udp">UDP</option>
                                         </select>
                                         <a href="#" class="uk-button uk-button-primary" @click="createParams.port.add()"><i class="uk-icon-plus-square"></i></a>
                                     </li>
@@ -589,15 +590,15 @@
                                         </div>
                                     </li>
                                     <li>
-                                        <select class="uk-form-width-medium" v-model="createParams.link.linkContainer">
+                                        <select class="uk-form-width-medium uk-text-center" v-model="createParams.link.linkContainer">
                                             <option value="">Nothing</option>
                                             <option v-for="container in containerList"
                                                     :value="container.id | shortDockerId(12)">
                                                 {{container.names[0]|delFirestChar|shortDockerId(18)}}
                                             </option>
                                         </select>
-                                        :
-                                        <input type="text" placeholder="name in contianer"
+                                        :&nbsp;
+                                        <input class="uk-form-width-medium uk-text-center" type="text" placeholder="name in contianer"
                                                 v-model="createParams.link.linkName"/>
                                         <a href="#" class="uk-button uk-button-primary" @click="createParams.link.add()"><i class="uk-icon-plus-square"></i></a>
                                     </li>

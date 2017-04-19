@@ -102,4 +102,34 @@ th{
     width: 95%;
 }
 
+.uk-switcher{
+    padding:10px;
+    border:1px solid #e5e5e5;
+    border-top: 0px
+}
+
+
+
+.uk-tab > li > a{
+    color:#666666;
+}
+
+.uk-tab > li.uk-active > a{
+    color:#1d8acb;
+    font-weight: bold;
+    background: #f5f5f5;
+}
+
+.uk-tab > li > a:hover,
+.uk-tab > li > a:focus,
+.uk-tab > li.uk-open > a {
+    border-color: rgba(0, 0, 0, 0.06);
+    background: #f5f5f5;
+    color: #333333;
+    /* 2 */
+    outline: none;
+}
+
+
+
 

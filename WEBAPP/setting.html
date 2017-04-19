@@ -53,7 +53,7 @@
 <body onload="init()" class="frameBody">
 <div id="dockerSetting" class="uk-grid" style="display: none" v-show="this.config!=null">
     <div class="uk-width-6-6" style="margin-top: 25px ">
-        <ul class="uk-subnav uk-subnav-pill" data-uk-tab="{connect:'#tab-content'}">
+        <ul class="uk-tab" data-uk-tab="{connect:'#tab-content'}">
             <li class="uk-active">
                 <a href="#">Server</a>
             </li>
@@ -61,8 +61,7 @@
                 <a href="#">Host</a>
             </li>
         </ul>
-        <hr/>
-        <ul id="tab-content" class="uk-switcher uk-margin">
+        <ul id="tab-content" class="uk-switcher">
             <li class="uk-active">
                 <h3 class="uk-text-middle">Connect docker server</h3>
                 <table id="config" class="uk-form uk-table uk-overflow-container uk-panel-box">
