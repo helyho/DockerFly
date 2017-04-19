@@ -299,14 +299,14 @@
             <caption>Service list</caption>
             <thead>
             <tr>
-                <th class="uk-text-center">NO.</th>
+                <th class="uk-text-center table_colume_index">NO.</th>
                 <th>ID</th>
                 <th>Name</th>
                 <th>Image</th>
                 <th>IP</th>
                 <th>Replicas</th>
-                <th>Created</th>
-                <th>Updated</th>
+                <th class="uk-text-center">Created</th>
+                <th class="uk-text-center">Updated</th>
                 <th class="uk-text-center">Operation</th>
             </tr>
             </thead>
@@ -329,10 +329,10 @@
                     </div>
                 </td>
                 <td class="uk-text-middle uk-text-bold uk-text-success uk-text-center">{{service.spec.mode.replicated.replicas}}</td>
-                <td class="uk-text-middle">
+                <td class="uk-text-middle uk-text-center">
                    {{service.createdAt|strToDate}}
                 </td>
-                <td class="uk-text-middle">
+                <td class="uk-text-middle uk-text-center">
                     {{service.updatedAt|strToDate}}
                 </td>
                 <td class="uk-text-center uk-text-middle">

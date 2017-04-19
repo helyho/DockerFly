@@ -15,6 +15,7 @@
 <script lang="javascript">
     doImport("org.voovan.docker.command.Info.CmdDockerInfo")
     doImport("org.voovan.docker.command.CmdDockerFlyConfig")
+    doImport("org.voovan.docker.command.Image.CmdImageList")
 
     function init() {
         dockerInfoVue = new Vue({
@@ -31,7 +32,21 @@
                     } catch (e) {
                         alertError(e)
                     }
-                }
+                },
+                //查询方法
+                imageList : function() {
+                    try {
+                        var cmdImageList = new CmdImageList();
+                        connect(cmdImageList);
+
+                        var imageList = cmdImageList.send().sortBy("Created");
+                        cmdImageList.close();
+                        cmdImageList.release();
+                        return imageList;
+                    } catch (e) {
+                        alertError(e)
+                    }
+                },
             }
         });
     }
@@ -59,7 +74,7 @@
                 </tr>
                 </tbody>
             </table>
-            <h3 class="uk-text-middle"><span class="icon uk-icon-book"></span> Docker info</h3>
+            <h3 class="uk-text-middle"><span class="icon uk-icon-info-circle"></span> Docker info</h3>
             <table class="uk-table uk-overflow-container uk-panel-box">
                 <tbody>
                 <tr>
@@ -70,7 +85,7 @@
                         <span class="uk-text-danger uk-text-bold"> Stoped: {{dockerInfo.containersStopped}} </span>
                     </td>
                     <td class="uk-width-1-10 uk-text-right summeryField">Images:</td>
-                    <td class="uk-width-1-4 ">{{dockerInfo.images}}</td>
+                    <td class="uk-width-1-4 ">{{imageList.length}}</td>
                 </tr>
                 <tr>
                     <td class="uk-width-1-10 uk-text-right summeryField">Docker home:</td>
@@ -86,7 +101,7 @@
                 </tr>
                 </tbody>
             </table>
-            <h3 class="uk-text-middle"><span class="icon uk-icon-connectdevelop"></span> Swarm info</h3>
+            <h3 class="uk-text-middle"><span class="icon uk-icon-mixcloud"></span> Cluster info</h3>
             <table class="uk-table uk-overflow-container uk-panel-box">
                 <tbody>
                 <tr>

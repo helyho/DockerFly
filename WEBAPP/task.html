@@ -132,7 +132,7 @@
 <div id="taskApp" class="uk-grid" style="display: none" v-show="this.taskList!=null">
     <div class="uk-width-6-6">
         <div class="uk-panel"></div>
-        <h3 class="uk-text-middle"><span class="icon uk-icon-tasks"></span> Task manager</h3>
+        <h3 class="uk-text-middle"><span class="icon uk-icon-tasks"></span>Task manager</h3>
         <div id="query" class="uk-panel uk-panel-box uk-text-bold">
             <div class="uk-grid">
                 <div class="uk-width-6-6 uk-form">
@@ -159,14 +159,14 @@
             <caption>Task list</caption>
             <thead>
             <tr>
-                <th class="uk-text-center uk-width-1-10"> NO.</th>
+                <th class="uk-text-center table_colume_index"> NO.</th>
                 <th class="uk-width-1-10">ID</th>
                 <th class="uk-width-1-10">Node</th>
                 <th class="uk-width-1-10">Service</th>
-                <th class="uk-width-1-10">Container</th>
-                <th class="uk-width-1-10">State</th>
-                <th class="uk-width-1-10">Create</th>
-                <th class="uk-width-1-10">Update</th>
+                <th class="uk-width-2-10">Container</th>
+                <th class="uk-width-1-10 ">State</th>
+                <th class="uk-width-2-10 uk-text-center">Create</th>
+                <th class="uk-width-2-10 uk-text-center">Update</th>
             </tr>
             </thead>
 
@@ -195,8 +195,8 @@
                     </span>
                 </td>
                 <td class=" uk-text-middle uk-text-bold">{{task.desiredState}}</td>
-                <td class=" uk-text-middle uk-text-small">{{task.createdAt|strToDate}}</td>
-                <td class=" uk-text-middle uk-text-small">{{task.updatedAt|strToDate}}</td>
+                <td class=" uk-text-middle uk-text-small uk-text-center">{{task.createdAt|strToDate}}</td>
+                <td class=" uk-text-middle uk-text-small uk-text-center">{{task.updatedAt|strToDate}}</td>
             </tr>
             </tbody>
         </table>

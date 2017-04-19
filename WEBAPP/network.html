@@ -160,11 +160,13 @@
             <caption>Network list</caption>
             <thead>
             <tr>
-                <th class="uk-text-center uk-width-1-10">NO.</th>
-                <th class="uk-width-2-10">ID</th>
+                <th class="uk-text-center table_colume_index">NO.</th>
+                <th class="uk-width-1-10">ID</th>
                 <th class="uk-width-2-10">Name</th>
+                <th class="uk-width-1-10">Scope</th>
                 <th class="uk-width-1-10">Driver</th>
-                <th class="uk-width-2-10">Subnet</th>
+                <th class="uk-width-1-10">Subnet</th>
+                <th class="uk-width-1-10">GateWay</th>
                 <th class="uk-text-center">Operation</th>
             </tr>
             </thead>
@@ -174,9 +176,13 @@
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-primary">{{network.id|shortDockerId(12)}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-success">{{network.name}}</td>
+                <td class="uk-text-middle">{{network.scope}}</td>
                 <td>{{network.driver}}</td>
                 <td class="uk-text-middle uk-text-success">
                     <code v-if="network.ipam.config.length > 0">{{network.ipam.config[0].subnet}}</code>
+                </td>
+                <td>
+                    <code v-if="network.ipam.config.length > 0">{{network.ipam.config[0].gateway}}</code>
                 </td>
                 <td class="uk-text-center uk-text-middle">
                     <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
