@@ -409,16 +409,32 @@
                 </td>
                 <td class="uk-text-center uk-text-middle">
                     <div class="uk-button-group">
-                        <input class="uk-button uk-button-small " type="button" value="View" @click="view(container)"/>
-                        <input class="uk-button uk-button-small uk-button-primary" type="button" value="Start"
-                               :disabled="container.state=='running'" @click="start(container)"/>
-                        <input class="uk-button uk-button-small uk-button-success" type="button" value="Stop"
-                               :disabled="container.state!='running'" @click="stop(container)"/>
-                        <input class="uk-button uk-button-small" type="button" value="Pause"
-                               :disabled="container.state=='paused' || container.state!='running' "
-                               @click="pause(container)"/>
-                        <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
-                               @click="remove(container)"/>
+                        <a href="#" class="uk-button uk-button-primary uk-button-small" @click="view(container)"><span class="uk-icon-list-alt"></span> View</a>
+                        <div data-uk-dropdown="{mode:'click'}">
+                            <!-- 触发下拉菜单的按钮 -->
+                            <a href="" class="uk-button uk-button-primary uk-button-small"><span class="uk-icon-caret-down"></span></a>
+
+                            <!-- 下拉菜单 -->
+                            <div class="uk-dropdown uk-dropdown-small">
+                                <ul class="uk-nav uk-nav-dropdown uk-text-left">
+                                    <li v-if="container.state!='running' || container.state=='paused'">
+                                        <a href=""
+                                           class=" uk-text-primary"
+                                           @click="start(container)"><span class="uk-icon-play"></span> Start</a></li>
+                                    <li v-if="container.state=='running'">
+                                        <a href=""
+                                           class=" uk-text-warning"
+                                           @click="stop(container)"><span class="uk-icon-stop"></span> Stop</a></li>
+                                    <li v-if="container.state=='running'">
+                                        <a href=""
+                                           class=" uk-text-success"
+                                           @click="pause(container)"><span class="uk-icon-pause"></span> Pause</a></li>
+                                    <li><a href="" @click="remove(container)"
+                                           class=" uk-text-danger"><span class="uk-icon-remove"></span> Remove</a></li>
+                                </ul>
+                            </div>
+
+                        </div>
                     </div>
                 </td>
             </tr>
