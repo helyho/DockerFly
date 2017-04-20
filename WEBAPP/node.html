@@ -106,7 +106,7 @@
                     }
                 },
                 updateName: function (node) {
-                    UIkit.modal.prompt("Node name:", node.spec.name, function(newvalue){
+                    UIkit.modal.prompt("<span class='dialogField'>Node name:</span>", node.spec.name, function(newvalue){
                         try {
                             var cmdNodeUpdate = new CmdNodeUpdate(node.id, parseInt(node.version.index));
                             connect(cmdNodeUpdate);
@@ -205,7 +205,7 @@
     <div id="updateNodeDialog" class="uk-modal">
         <div class="uk-modal-dialog uk-overflow-container">
             <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
-            <div class="uk-modal-header"><h2 class="uk-text-success">Update node</h2></div>
+            <div class="uk-modal-header"><h3 class="uk-text-primary uk-text-bold"><span class="icon uk-icon-cube"></span> &nbsp;Update node</h3></div>
             <div class="uk-form">
                 <table class="uk-table uk-overflow-container uk-panel-box">
                     <tr>

@@ -48,15 +48,12 @@
                     memoryReservation:0,
                     network:"",
                     port: {
-                        hostPort: "",
-                        containerPort: "",
-                        protocol: "tcp",
                         ports:[],
                         add: function(){
                             var port = {};
-                            port.hostPort = this.hostPort;
-                            port.containerPort = this.containerPort;
-                            port.protocol = this.protocol;
+                            port.hostPort = null;
+                            port.containerPort = null;
+                            port.protocol = "tcp";
                             this.ports.push(port);
                         },
                         remove: function(index){
@@ -64,13 +61,11 @@
                         }
                     },
                     volume:{
-                        volumeSource:"",
-                        volumeTarget:"",
                         volumes:[],
                         add: function(){
                             var volume = {};
-                            volume.volumeSource = this.volumeSource;
-                            volume.volumeTarget = this.volumeTarget;
+                            volume.volumeSource = null;
+                            volume.volumeTarget = null;
                             this.volumes.push(volume);
                         },
                         remove: function(index){
@@ -129,7 +124,7 @@
 
                 scale: function(service){
 
-                    UIkit.modal.prompt("Replicas:", service.spec.mode.replicated.replicas, function(newvalue){
+                    UIkit.modal.prompt("<span class='dialogField'>Replicas:</span>", service.spec.mode.replicated.replicas, function(newvalue){
                         try {
                             var cmdServiceUpdate = new CmdServiceUpdate(service);
                             connect(cmdServiceUpdate);
@@ -350,7 +345,7 @@
     <div id="createServiceDialog" class="uk-modal">
         <div class="uk-modal-dialog uk-modal-dialog-large uk-overflow-service">
             <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
-            <div class="uk-modal-header"><h2 class="uk-text-success">Create a new service</h2></div>
+            <div class="uk-modal-header"><h3 class="uk-text-bold uk-text-primary"><span class="icon uk-icon-gears"></span>&nbsp;&nbsp;Create a new service</h32></div>
             <div class="uk-form">
                 <table class="uk-table uk-overflow-service uk-panel-box">
                     <tr>
@@ -371,11 +366,15 @@
                     </tr>
                     <tr>
                         <td class="dialogField">Mode:</td>
-                        <td>
-                            <select class="uk-form-width-medium" v-model="createParams.mode">
-                                <option value="global">Global</option>
-                                <option value="replicated">Replicated</option>
-                            </select>
+                        <td class="uk-form">
+                            <input id="global"      type="radio" v-model="createParams.mode" value="global" class="uk-hidden"></input>
+                            <input id="replicated"  type="radio" v-model="createParams.mode" value="replicated" class="uk-hidden"></input>
+                            <div data-uk-button-radio class="uk-button-group">
+                                <a href="#" class="uk-button uk-button-primary" :class="{'uk-active': (createParams.mode=='global')}"
+                                   onclick="$('#global').click()">Global</a>
+                                <a href="#" class="uk-button uk-button-primary" :class="{'uk-active': (createParams.mode=='replicated')}"
+                                   onclick="$('#replicated').click()">Replicated</a>
+                            </div>
                         </td>
                     </tr>
                     <tr v-if="createParams.mode=='replicated'">
@@ -419,17 +418,27 @@
                         <td>
                             <div class="uk-panel  uk-width-7-10">
                                 <ul class="uk-list uk-list-line ">
+                                    <li>
+                                        <a href="#" class="uk-button uk-button-primary" @click="createParams.port.add()">
+                                            <i class="uk-icon-plus-square"></i> Add export port</a>
+                                    </li>
                                     <li v-for="(port,index) in createParams.port.ports">
                                         <div class="uk-grid">
                                             <div class="uk-text-bold uk-text- uk-width-8-10">
-                                                <input class="port_input_button uk-text-center" type="text" disabled
-                                                       placeholder="path in container" :value="port.hostPort"/>
+                                                <input class="port_input_button uk-text-center" type="text"
+                                                       placeholder="host" v-model="port.hostPort"/>
                                                 &nbsp;:&nbsp;
-                                                <input class="port_input_button uk-text-center" type="text" disabled
-                                                       placeholder="path in container" :value="port.containerPort"/>
+                                                <input class="port_input_button uk-text-center" type="text"
+                                                       placeholder="guest" v-model="port.containerPort"/>
                                                 &nbsp;/&nbsp;
-                                                <input class="port_input_button uk-text-center" type="text" disabled
-                                                       placeholder="path in container" :value="port.protocol"/>
+                                                <input :id="'tcps'+index"  type="radio" v-model="port.protocol" value="tcp" class="uk-hidden"></input>
+                                                <input :id="'udps'+index"  type="radio" v-model="port.protocol" value="udp" class="uk-hidden"></input>
+                                                <div data-uk-button-radio class="uk-button-group">
+                                                    <a href="#" class="uk-button uk-button-success" :class="{'uk-active': (port.protocol=='tcp')}"
+                                                       :onclick="'$(\'#tcps'+index+'\').click()'">TCP</a>
+                                                    <a href="#" class="uk-button uk-button-success" :class="{'uk-active': (port.protocol=='udp')}"
+                                                       :onclick="'$(\'#udps'+index+'\').click()'">UDP</a>
+                                                </div>
                                             </div>
                                             <div class="uk-width-2-10">
                                                 <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.port.remove(index)">
@@ -437,19 +446,6 @@
                                                 </a>
                                             </div>
                                         </div>
-                                    </li>
-                                    <li>
-                                        <input class="port_input_button uk-text-center"
-                                               type="text" placeholder="host" v-model="createParams.port.hostPort"/>
-                                        &nbsp;:&nbsp;
-                                        <input class="port_input_button uk-text-center"
-                                               type="text" placeholder="guest" v-model="createParams.port.containerPort"/>
-                                        &nbsp;/&nbsp;
-                                        <select v-model="createParams.port.protocol">
-                                            <option value="tcp">TCP</option>
-                                            <option value="udp">UDP</option>
-                                        </select>
-                                        <a href="#" class="uk-button uk-button-primary" @click="createParams.port.add()"><i class="uk-icon-plus-square"></i></a>
                                     </li>
                                 </ul>
                             </div>
@@ -460,14 +456,22 @@
                         <td>
                             <div class="uk-panel  uk-width-7-10">
                                 <ul class="uk-list uk-list-line ">
+                                    <li>
+                                        <a href="#" class="uk-button uk-button-primary" @click="createParams.volume.add()">
+                                            <i class="uk-icon-plus-square"></i> Add volume</a>
+                                    </li>
                                     <li v-for="(volume,index) in createParams.volume.volumes">
                                         <div class="uk-grid">
                                             <div class="uk-text-bold uk-text- uk-width-8-10">
-                                                <input class="uk-form-width-medium uk-text-center" type="text" disabled
-                                                       placeholder="path in container" :value="volume.volumeSource"/>
+                                                <select class="uk-form-width-medium" v-model="volume.volumeSource">
+                                                    <option value="">Nothing</option>
+                                                    <option v-for="volume in volumeList"
+                                                            :value="volume.name">{{volume.name}}
+                                                    </option>
+                                                </select>
                                                 &nbsp;:&nbsp;
-                                                <input class="uk-form-width-medium uk-text-center" type="text" disabled
-                                                       placeholder="path in container" :value="volume.volumeTarget"/>
+                                                <input class="uk-form-width-medium uk-text-center" type="text"
+                                                       placeholder="path in container" v-model="volume.volumeTarget"/>
                                             </div>
                                             <div class="uk-width-2-10">
                                                 <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.volume.remove(index)">
@@ -476,17 +480,7 @@
                                             </div>
                                         </div>
                                     </li>
-                                    <li>
-                                        <select class="uk-form-width-medium" v-model="createParams.volume.volumeSource">
-                                            <option value="">Nothing</option>
-                                            <option v-for="volume in volumeList"
-                                                    :value="volume.name">{{volume.name}}
-                                            </option>
-                                        </select>&nbsp;:&nbsp;
-                                        <input class="uk-form-width-medium uk-text-center" type="text"
-                                               placeholder="path in container" v-model="createParams.volume.volumeTarget"/>
-                                        <a href="#" class="uk-button uk-button-primary" @click="createParams.volume.add()"><i class="uk-icon-plus-square"></i></a>
-                                    </li>
+
                                 </ul>
                             </div>
                         </td>

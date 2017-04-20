@@ -61,6 +61,7 @@ th{
 .dialogField{
     text-align: right;
     font-weight: bolder;
+    color:#000000;
     vertical-align: middle !important;
 }
 
