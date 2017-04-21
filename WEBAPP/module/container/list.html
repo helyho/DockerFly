@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <title>DockerFly</title>
 </head>
-<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
-<link rel="stylesheet" href="css/uikit/uikit.css"/>
-<script src="js/common/jquery.min.js"></script>
-<script src="js/common/vue.min.js"></script>
-<script src="js/common/uikit.js"></script>
+<link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico"/>
+<link rel="stylesheet" href="../../css/uikit/uikit.css"/>
+<script src="../../js/common/jquery.min.js"></script>
+<script src="../../js/common/vue.min.js"></script>
+<script src="../../js/common/uikit.js"></script>
 
-<link rel="stylesheet" href="css/main.css"/>
-<script lang="javascript" src="js/utils.js"></script>
+<link rel="stylesheet" href="../../css/main.css"/>
+<script lang="javascript" src="../../js/utils.js"></script>
 <script lang="javascript">
     doImport("org.voovan.docker.command.Container.CmdContainerCreate")
     doImport("org.voovan.docker.command.Container.CmdContainerList")
@@ -121,14 +121,14 @@
                 //启动方法
                 start: function (container) {
                     try {
-                        if (container.state == "paused") {
-                            var cmdContainerUnPause = new CmdContainerUnPause(container.id);
+                        if (list.state == "paused") {
+                            var cmdContainerUnPause = new CmdContainerUnPause(list.id);
                             connect(cmdContainerUnPause);
                             cmdContainerUnPause.send();
                             cmdContainerUnPause.close();
                             cmdContainerUnPause.release();
                         } else {
-                            var cmdContainerStart = new CmdContainerStart(container.id);
+                            var cmdContainerStart = new CmdContainerStart(list.id);
                             connect(cmdContainerStart);
                             cmdContainerStart.send()
                             cmdContainerStart.close();
@@ -143,7 +143,7 @@
                 //停止方法
                 stop: function (container) {
                     try {
-                        var cmdContainerStop = new CmdContainerStop(container.id);
+                        var cmdContainerStop = new CmdContainerStop(list.id);
                         connect(cmdContainerStop);
                         cmdContainerStop.waitForKill(3);
                         cmdContainerStop.send();
@@ -158,8 +158,8 @@
                 //移除方法
                 remove: function (container) {
                     try{
-                        name = container.names[0]
-                        id = container.id
+                        name = list.names[0]
+                        id = list.id
 
                         UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + delFirestChar(name) + "</span> ?", function () {
                             try {
@@ -181,7 +181,7 @@
                 //暂停和恢复方法
                 pause: function (container) {
                     try {
-                        var cmdContainerPause = new CmdContainerPause(container.id);
+                        var cmdContainerPause = new CmdContainerPause(list.id);
                         connect(cmdContainerPause);
                         cmdContainerPause.send();
                         cmdContainerPause.close();
@@ -323,7 +323,7 @@
                 //查看容器
                 view: function (container) {
                     this.viewContainerId = container.id;
-                    window.open("container_viewer.html?id="+container.id);
+                    window.open("viewer.html?id="+container.id);
                 }
             }
         });
@@ -625,7 +625,7 @@
     </div>
     <div class="uk-width-6-6">
         <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
-            <div><img height="27" width="120" src="img/logo.png"/></div>
+            <div><img height="27" width="120" src="../../img/logo.png"/></div>
             <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
             <div>Powered by Voovan open source framework.</div>
         </div>

@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <title>DockerFly</title>
 </head>
-<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
-<link rel="stylesheet" href="css/uikit/uikit.css"/>
-<script src="js/common/jquery.min.js"></script>
-<script src="js/common/vue.min.js"></script>
-<script src="js/common/uikit.js"></script>
-<script src="js/common/xterm.js"></script>
-<link rel="stylesheet" href="css/main.css"/>
-<link rel="stylesheet" href="css/xterm.css"/>
+<link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico"/>
+<link rel="stylesheet" href="../../css/uikit/uikit.css"/>
+<script src="../../js/common/jquery.min.js"></script>
+<script src="../../js/common/vue.min.js"></script>
+<script src="../../js/common/uikit.js"></script>
+<script src="../../js/common/xterm.js"></script>
+<link rel="stylesheet" href="../../css/main.css"/>
+<link rel="stylesheet" href="../../css/xterm.css"/>
 
-<script lang="javascript" src="js/utils.js"></script>
+<script lang="javascript" src="../../js/utils.js"></script>
 <script lang="javascript">
     doImport("org.voovan.docker.command.Container.CmdContainerList")
     doImport("org.voovan.docker.command.Container.CmdContainerLogs")
     doImport("org.voovan.docker.command.Container.CmdContainerTop")
-    doImport("org.voovan.docker.command.Container.CmdContainerTop")
+    doImport("org.voovan.docker.command.Container.CmdContainerAttach")
     doImport("org.voovan.docker.command.Container.CmdContainerStats")
     doImport("org.voovan.docker.command.Exec.CmdExecCreate")
     doImport("org.voovan.docker.command.Exec.CmdExecStart")
@@ -29,7 +29,6 @@
             data: {
                 logInfo :{
                     terminal: null,
-                    timeStamp: null,
                     interval: 1000,
                     loop: null,
                     cmdObject: null
@@ -69,6 +68,34 @@
                 }
             },
             methods:{
+                runCmd : function(cmdStr){
+                    var cmdExecCreate = new CmdExecCreate(this.viewContainer.id);
+                    connect(cmdExecCreate);
+                    cmdExecCreate.cmd(cmdStr.split(" "));
+                    cmdExecCreate.tty(true);
+                    cmdExecCreate.attachStdin(true);
+                    var execId = cmdExecCreate.send();
+                    cmdExecCreate.close();
+                    cmdExecCreate.release();
+
+                    var cmdExecStart = new CmdExecStart(eval("k="+execId).Id);
+                    cmdExecStart.connect(60);
+                    cmdExecStart.tty(true);
+                    cmdExecStart.send();
+
+                    var result;
+
+                    while(true){
+                        result = cmdExecStart.loadStream();
+                        if(result.length > 0){
+                            break;
+                        }
+                    }
+                    cmdExecStart.close();
+                    cmdExecStart.release();
+                    return result;
+                },
+
                 logView: function(){
                     try{
                         if(this.logInfo.loop !=null){
@@ -76,39 +103,41 @@
                             return;
                         }
 
-                        var cmdContainerLogs = new CmdContainerLogs(this.viewContainer.id);
-                        cmdContainerLogs.connect(60);
-                        this.logInfo.cmdObject = cmdContainerLogs;
-
-                        //控制启动的时间,避免重复日志的输出
-                        while(true){
-                            var millisSecond = new Date().getUTCMilliseconds();
-                            if(millisSecond>0 && millisSecond<400){
-                                break;
-                            }
-                        }
-
                         //构造终端面板
                         if(viewerVue.logInfo.terminal==null){
                             viewerVue.logInfo.terminal = terminal("logPanel")
                         }
 
+                        var cmdContainerLogs = new CmdContainerLogs(this.viewContainer.id);
+                        cmdContainerLogs.connect(60);
+                        cmdContainerLogs.tail("15");
+
+                        var logData = cmdContainerLogs.send();
+                        logData = logData.replaceAll("\r", "")
+                        logData = logData.replaceAll("\n", "\u0000")
+                        logData = logData.replaceAll("\u0000", "\r\n");
+                        viewerVue.logInfo.terminal.write(logData);
+
+                        var cmdContainerAttach = new CmdContainerAttach(this.viewContainer.id);
+                        this.logInfo.cmdObject = cmdContainerAttach;
+                        cmdContainerAttach.stream(true);
+                        cmdContainerAttach.stdout(true);
+                        cmdContainerAttach.connect();
+                        cmdContainerAttach.send();
+
                         //循环输出日志
                         this.logInfo.loop = setInterval(
                             function() {
                                 try {
-                                    if(viewerVue.logInfo.timeStamp==null) {
-                                        cmdContainerLogs.tail("15");
-                                    }else{
-                                        cmdContainerLogs.tail("all");
-                                        cmdContainerLogs.since(viewerVue.logInfo.timeStamp);
+                                    var logData = cmdContainerAttach.loadStream();
+                                    if (logData != null) {
+                                        logData = logData.replaceAll("\r", "")
+                                        logData = logData.replaceAll("\n", "\u0000")
+                                        logData = logData.replaceAll("\u0000", "\r\n");
+                                        viewerVue.logInfo.terminal.write(logData);
+                                    } else {
+                                        viewerVue.logStop();
                                     }
-                                    viewerVue.logInfo.timeStamp = parseInt(currentTimeMills() - 500/ 1000);
-                                    var logData = cmdContainerLogs.send();
-                                    logData = logData.replaceAll("\r", "")
-                                    logData = logData.replaceAll("\n", "\u0000")
-                                    logData = logData.replaceAll("\u0000", "\r\n");
-                                    viewerVue.logInfo.terminal.write(logData);
                                 }catch(e){
                                     viewerVue.logStop();
                                     alertError(e)
@@ -150,6 +179,7 @@
                         alertError(e);
                     }
                 },
+
                 statsView: function(){
                     try{
                         var cmdContainerStats = new CmdContainerStats(this.viewContainer.id)
@@ -271,7 +301,7 @@
 
         <ul class="uk-tab" data-uk-switcher="{connect:'#Viewers'}">
             <li><a href="#">Performance</a></li>
-            <li><a href="#">Execute</a></li>
+            <li><a href="#">Console</a></li>
             <li><a href="#">Log</a></li>
         </ul>
         <div id="Viewers" class="uk-switcher">
@@ -409,7 +439,7 @@
     </div>
     <div class="uk-width-6-6">
         <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
-            <div><img height="27" width="120" src="img/logo.png"/></div>
+            <div><img height="27" width="120" src="../../img/logo.png"/></div>
             <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
             <div>Powered by Voovan open source framework.</div>
             <div></div>
