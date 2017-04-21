@@ -110,7 +110,7 @@
 
                         var cmdContainerLogs = new CmdContainerLogs(this.viewContainer.id);
                         cmdContainerLogs.connect(60);
-                        cmdContainerLogs.tail("15");
+                        cmdContainerLogs.tail("50");
 
                         var logData = cmdContainerLogs.send();
                         logData = logData.replaceAll("\r", "")
@@ -301,13 +301,41 @@
 
         <ul class="uk-tab" data-uk-switcher="{connect:'#Viewers'}">
             <li><a href="#">Performance</a></li>
+            <li><a href="#">Process</a></li>
             <li><a href="#">Console</a></li>
             <li><a href="#">Log</a></li>
         </ul>
         <div id="Viewers" class="uk-switcher">
-            <!-- 性能信息 -->
             <div>
                 <div>
+                    <table class="uk-table uk-overflow-container uk-panel-box">
+                        <tbody>
+                        <tr>
+                            <td class="uk-width-1-4 uk-text-left summeryField">ID</td>
+                            <td class="uk-text-bold">{{viewContainer.id}}</td>
+                        </tr>
+                        <tr>
+                            <td class="uk-width-1-4 uk-text-left summeryField">Name</td>
+                            <td class="uk-text-primary">{{viewContainer.names[0] | delFirestChar}}</td>
+                        </tr>
+                        <tr>
+                            <td class="uk-width-1-4 uk-text-left summeryField">Image</td>
+                            <td class="uk-text-success">{{viewContainer.image}} <span class="uk-text-muted">[ {{viewContainer.imageID |shortDockerId(12)}} ]</span></td>
+                        </tr>
+                        <tr>
+                            <td class="uk-width-1-4 uk-text-left summeryField">Command</td>
+                            <td><span class="uk-text-danger">{{viewContainer.command}}</></td>
+                        </tr>
+                        <tr>
+                            <td class="uk-width-1-4 uk-text-left summeryField">Export port</td>
+                            <td class="uk-text-middle">
+                                <div v-for="port in viewContainer.ports">
+                                   <h4 style="margin-bottom: 0px"> <span class="uk-text-danger">{{port.type.toUpperCase()}}</span>  {{port.privatePort}} <span class="uk-icon-exchange"></span> {{port.publicPort}}</h4>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                     <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box">
                         <caption>
                             <div class="uk-grid" style="margin-bottom: 3px">
@@ -355,23 +383,53 @@
                             </div>
                         </caption>
                         <thead class="uk-text-center">
-                            <th class="uk-width-2-10 uk-text-center">Id</th>
-                            <th class="uk-width-2-10 uk-text-center">Name</th>
-                            <th class="uk-width-2-10 uk-text-center">Gateway</th>
-                            <th class="uk-width-2-10 uk-text-center">IP Address</th>
-                            <th class="uk-width-2-10 uk-text-center">Mac Address</th>
+                        <th class="uk-width-2-10 uk-text-center">ID</th>
+                        <th class="uk-width-2-10 uk-text-center">Name</th>
+                        <th class="uk-width-2-10 uk-text-center">Gateway</th>
+                        <th class="uk-width-2-10 uk-text-center">IP Address</th>
+                        <th class="uk-width-2-10 uk-text-center">Mac Address</th>
                         </thead>
                         <tbody>
-                            <tr class="uk-text-center" v-for=" (value, key) in viewContainer.networkSettings.networks">
-                                <td class="uk-text-success uk-text-bold">{{value.networkID | shortDockerId(12)}}</td>
-                                <td>{{key}}</td>
-                                <td>{{value.gateway}}</td>
-                                <td>{{value.ipAddress}}</td>
-                                <td>{{value.macAddress}}</td>
-                            </tr>
+                        <tr class="uk-text-center" v-for=" (value, key) in viewContainer.networkSettings.networks">
+                            <td class="uk-text-success uk-text-bold">{{value.networkID | shortDockerId(12)}}</td>
+                            <td>{{key}}</td>
+                            <td>{{value.gateway}}</td>
+                            <td>{{value.ipAddress}}</td>
+                            <td>{{value.macAddress}}</td>
+                        </tr>
                         </tbody>
                     </table>
                     <hr/>
+                    <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box">
+                        <caption>
+                            <div class="uk-grid"  style="margin-bottom: 3px">
+                                <div class="uk-width-5-6">Mount infomation</div>
+                            </div>
+                        </caption>
+                        <thead class="uk-text-center">
+                        <th class="uk-width-1-10 uk-text-center">Type</th>
+                        <th class="uk-width-1-10 uk-text-center">Driver</th>
+                        <th class="uk-width-2-10 ">Source</th>
+                        <th class="uk-width-2-10 ">Destination</th>
+                        <th class="uk-width-1-10 uk-text-center">RW</th>
+                        </thead>
+                        <tbody>
+                        <tr v-for=" mount in viewContainer.mounts">
+                            <td class="uk-text-center">{{mount.type}}</td>
+                            <td class="uk-text-center">{{mount.driver==null?"none":mount.driver}}</td>
+                            <td>{{mount.source}}</td>
+                            <td>{{mount.destination}}</td>
+                            <td class="uk-text-center">
+                                <span :class="{'uk-icon-check-square':mount.rw,'uk-icon-check-square-o':!mount.rw}"></span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 进程信息 -->
+            <div>
+                <div>
                     <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box">
                         <caption>
                             <div class="uk-grid"  style="margin-bottom: 3px">
