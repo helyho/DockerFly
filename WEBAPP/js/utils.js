@@ -75,7 +75,7 @@
     function terminal(elementFlag) {
         var term = new Terminal({
             cursorBlink: true,
-            cols: 120,
+            cols: 136,
             rows: 20
         });
         term.capsLock = false

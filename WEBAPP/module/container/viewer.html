@@ -300,37 +300,42 @@
         </h3>
 
         <ul class="uk-tab" data-uk-switcher="{connect:'#Viewers'}">
-            <li><a href="#">Performance</a></li>
-            <li><a href="#">Process</a></li>
-            <li><a href="#">Console</a></li>
-            <li><a href="#">Log</a></li>
+            <li><a href="#"><span class="uk-icon-line-chart"></span> Performance</a></li>
+            <li><a href="#"><span class="uk-icon-sliders"></span> Process</a></li>
+            <li><a href="#"><span class="uk-icon-terminal"></span> Console</a></li>
+            <li><a href="#"><span class="uk-icon-file-code-o"></span> Log</a></li>
         </ul>
         <div id="Viewers" class="uk-switcher">
             <div>
                 <div>
                     <table class="uk-table uk-overflow-container uk-panel-box">
+                        <caption>
+                            <div class="uk-grid"  style="margin-bottom: 3px">
+                                <div class="uk-width-5-6"><span class="uk-icon-info-circle"></span> Container infomation</div>
+                            </div>
+                        </caption>
                         <tbody>
                         <tr>
-                            <td class="uk-width-1-4 uk-text-left summeryField">ID</td>
+                            <th class="uk-width-1-10 uk-text-right summeryField">ID </th>
                             <td class="uk-text-bold">{{viewContainer.id}}</td>
                         </tr>
                         <tr>
-                            <td class="uk-width-1-4 uk-text-left summeryField">Name</td>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Name </th>
                             <td class="uk-text-primary">{{viewContainer.names[0] | delFirestChar}}</td>
                         </tr>
                         <tr>
-                            <td class="uk-width-1-4 uk-text-left summeryField">Image</td>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Image </th>
                             <td class="uk-text-success">{{viewContainer.image}} <span class="uk-text-muted">[ {{viewContainer.imageID |shortDockerId(12)}} ]</span></td>
                         </tr>
                         <tr>
-                            <td class="uk-width-1-4 uk-text-left summeryField">Command</td>
-                            <td><span class="uk-text-danger">{{viewContainer.command}}</></td>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Command </th>
+                            <td><span class="uk-text-danger uk-text-bold">{{viewContainer.command}}</></td>
                         </tr>
                         <tr>
-                            <td class="uk-width-1-4 uk-text-left summeryField">Export port</td>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Export port </th>
                             <td class="uk-text-middle">
                                 <div v-for="port in viewContainer.ports">
-                                   <h4 style="margin-bottom: 0px"> <span class="uk-text-danger">{{port.type.toUpperCase()}}</span>  {{port.privatePort}} <span class="uk-icon-exchange"></span> {{port.publicPort}}</h4>
+                                   <h4 class="uk-margin-bottom-remove"> <span class="uk-text-danger">{{port.type.toUpperCase()}}</span>  {{port.privatePort}} <span class="uk-icon-exchange"></span> {{port.publicPort}}</h4>
                                 </div>
                             </td>
                         </tr>
@@ -339,7 +344,7 @@
                     <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box">
                         <caption>
                             <div class="uk-grid" style="margin-bottom: 3px">
-                                <div class="uk-width-5-6">Status</div>
+                                <div class="uk-width-5-6"><span class="uk-icon-heartbeat"></span> Stats</div>
                                 <div class="uk-width-1-6 uk-text-center">
                                     <a class="uk-button uk-button-small uk-button-primary" @click="statsView">Refresh</a>
                                 </div>
@@ -376,10 +381,11 @@
                         </tbody>
                     </table>
                     <hr/>
-                    <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box">
+                    <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box"
+                           v-if="JSON.stringify(viewContainer.networkSettings.networks) != '{}'">
                         <caption>
                             <div class="uk-grid"  style="margin-bottom: 3px">
-                                <div class="uk-width-5-6">Network infomation</div>
+                                <div class="uk-width-5-6"><span class="icon uk-icon-sitemap"></span> Network infomation</div>
                             </div>
                         </caption>
                         <thead class="uk-text-center">
@@ -400,10 +406,11 @@
                         </tbody>
                     </table>
                     <hr/>
-                    <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box">
+                    <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box"
+                           v-if="viewContainer.mounts.length > 0">
                         <caption>
                             <div class="uk-grid"  style="margin-bottom: 3px">
-                                <div class="uk-width-5-6">Mount infomation</div>
+                                <div class="uk-width-5-6"><span class="icon uk-icon-clone"></span> Mount infomation</div>
                             </div>
                         </caption>
                         <thead class="uk-text-center">

@@ -25,7 +25,7 @@ body > .uk-grid {
 }
 
 th{
-    background-color: #70889e;
+    background-color: #1d5782;
     color: #fff;
 }
 
@@ -134,5 +134,9 @@ th{
 }
 
 
+.uk-table caption{
+    font-size: 14px;
+    color:#000;
+}
 
 
