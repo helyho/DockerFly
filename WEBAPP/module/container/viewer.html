@@ -15,7 +15,7 @@
 
 <script lang="javascript" src="../../js/utils.js"></script>
 <script lang="javascript">
-    doImport("org.voovan.docker.command.Container.CmdContainerList")
+    doImport("org.voovan.docker.command.Container.CmdContainerDetail")
     doImport("org.voovan.docker.command.Container.CmdContainerLogs")
     doImport("org.voovan.docker.command.Container.CmdContainerTop")
     doImport("org.voovan.docker.command.Container.CmdContainerAttach")
@@ -30,6 +30,7 @@
                 logInfo :{
                     terminal: null,
                     interval: 1000,
+                    lineCount: "100",
                     loop: null,
                     cmdObject: null
                 },
@@ -48,17 +49,15 @@
                     try {
 
                         var containerId = getQueryString("id");
-                        var cmdContainerList = new CmdContainerList()
-                        connect(cmdContainerList)
-                        cmdContainerList.all(true);
-                        cmdContainerList.id([containerId])
-                        var viewContainer = cmdContainerList.send();
-                        cmdContainerList.close();
-                        cmdContainerList.release();
-                        if(viewContainer.length == 1){
-                            document.title = delFirestChar(viewContainer[0].names[0]) +
-                                " [" +viewContainer[0].state+"] DockerFly";
-                            return viewContainer[0];
+                        var cmdContainerDetail = new CmdContainerDetail(containerId)
+                        connect(cmdContainerDetail)
+                        var viewContainer = cmdContainerDetail.send();
+                        cmdContainerDetail.close();
+                        cmdContainerDetail.release();
+                        if(cmdContainerDetail != null){
+                            document.title = delFirestChar(viewContainer.name) +
+                                " [" +viewContainer.state.status+"] DockerFly";
+                            return viewContainer;
                         }else {
                             return null;
                         }
@@ -110,7 +109,7 @@
 
                         var cmdContainerLogs = new CmdContainerLogs(this.viewContainer.id);
                         cmdContainerLogs.connect(60);
-                        cmdContainerLogs.tail("50");
+                        cmdContainerLogs.tail(this.logInfo.lineCount);
 
                         var logData = cmdContainerLogs.send();
                         logData = logData.replaceAll("\r", "")
@@ -283,7 +282,7 @@
             }
         });
 
-        if(viewerVue.viewContainer.state=="running") {
+        if(viewerVue.viewContainer.state.status=="running") {
             viewerVue.processView();
             viewerVue.statsView();
         }
@@ -294,14 +293,13 @@
     <div class="uk-width-6-6">
         <div class="uk-panel"></div>
         <h3 class="uk-text-middle">
-            <span class="uk-text-danger uk-text-bold uk-text-large">{{viewContainer.names[0]|delFirestChar}}</span>
-            <span class="uk-text"> [ {{viewContainer.state}} ] </span>
-            <span class="uk-text uk-text-muted uk-text-small">{{viewContainer.status}}</span>
+            <span class="uk-text-danger uk-text-bold uk-text-large">{{viewContainer.name|delFirestChar}}</span>
+            <span class="uk-text"> [ {{viewContainer.state.status}} ] </span>
         </h3>
 
         <ul class="uk-tab" data-uk-switcher="{connect:'#Viewers'}">
-            <li><a href="#"><span class="uk-icon-line-chart"></span> Performance</a></li>
-            <li><a href="#"><span class="uk-icon-sliders"></span> Process</a></li>
+            <li><a href="#"><span class="uk-icon-sliders"></span> Summery</a></li>
+            <li><a href="#"><span class="uk-icon-line-chart"></span> Status</a></li>
             <li><a href="#"><span class="uk-icon-terminal"></span> Console</a></li>
             <li><a href="#"><span class="uk-icon-file-code-o"></span> Log</a></li>
         </ul>
@@ -321,26 +319,113 @@
                         </tr>
                         <tr>
                             <th class="uk-width-1-10 uk-text-right summeryField">Name </th>
-                            <td class="uk-text-primary">{{viewContainer.names[0] | delFirestChar}}</td>
+                            <td class="uk-text-primary">{{viewContainer.name | delFirestChar}}</td>
                         </tr>
                         <tr>
                             <th class="uk-width-1-10 uk-text-right summeryField">Image </th>
-                            <td class="uk-text-success">{{viewContainer.image}} <span class="uk-text-muted">[ {{viewContainer.imageID |shortDockerId(12)}} ]</span></td>
+                            <td class="uk-text-success">{{viewContainer.image |shortDockerId(12)}}</td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">CPU </th>
+                            <td class="uk-text-primary">{{viewContainer.hostConfig.cpuQuota/viewContainer.hostConfig.cpuPeriod}}</td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Memory </th>
+                            <td class="uk-text-primary">{{viewContainer.hostConfig.memory/1024/1024}}MB</td>
                         </tr>
                         <tr>
                             <th class="uk-width-1-10 uk-text-right summeryField">Command </th>
-                            <td><span class="uk-text-danger uk-text-bold">{{viewContainer.command}}</></td>
+                            <td><span class="uk-text-danger uk-text-bold">
+                                <span v-for="cmdItem in viewContainer.config.cmd">
+                                    {{cmdItem+" "}}
+                                </span>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Env </th>
+                            <td><span class="uk-text-warning">
+                                <div v-for="envItem in viewContainer.config.env">
+                                    {{envItem}}
+                                </div>
+                                </span>
+                            </td>
                         </tr>
                         <tr>
                             <th class="uk-width-1-10 uk-text-right summeryField">Export port </th>
                             <td class="uk-text-middle">
-                                <div v-for="port in viewContainer.ports">
-                                   <h4 class="uk-margin-bottom-remove"> <span class="uk-text-danger">{{port.type.toUpperCase()}}</span>  {{port.privatePort}} <span class="uk-icon-exchange"></span> {{port.publicPort}}</h4>
+                                <div v-for="(guest,host) in viewContainer.networkSettings.ports">
+                                   <h4 class="uk-margin-bottom-remove">
+                                       <span class="uk-badge uk-badge-danger">{{host.split("/")[1].toUpperCase()}}</span>
+                                       {{host.split("/")[0]}}
+                                       <span class="uk-icon-exchange"></span> {{guest[0].HostIp}}:{{guest[0].HostPort}}
+                                   </h4>
                                 </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Created </th>
+                            <td class="uk-text-success">{{viewContainer.created.replace("T"," ").replace(/\..*/g,"")}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <hr/>
+                    <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box"
+                           v-if="JSON.stringify(viewContainer.networkSettings.networks) != '{}'">
+                        <caption>
+                            <div class="uk-grid"  style="margin-bottom: 3px">
+                                <div class="uk-width-5-6"><span class="icon uk-icon-sitemap"></span> Network infomation</div>
+                            </div>
+                        </caption>
+                        <thead class="uk-text-center">
+                        <th class="uk-width-2-10 uk-text-center">ID</th>
+                        <th class="uk-width-2-10 uk-text-center">Name</th>
+                        <th class="uk-width-2-10 uk-text-center">Gateway</th>
+                        <th class="uk-width-2-10 uk-text-center">IP Address</th>
+                        <th class="uk-width-2-10 uk-text-center">Mac Address</th>
+                        </thead>
+                        <tbody>
+                        <tr class="uk-text-center" v-for=" (value, key) in viewContainer.networkSettings.networks">
+                            <td class="uk-text-success uk-text-bold">{{value.networkID | shortDockerId(12)}}</td>
+                            <td>{{key}}</td>
+                            <td>{{value.gateway}}</td>
+                            <td>{{value.ipAddress}}</td>
+                            <td>{{value.macAddress}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <hr/>
+                    <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box"
+                           v-if="viewContainer.mounts.length > 0">
+                        <caption>
+                            <div class="uk-grid"  style="margin-bottom: 3px">
+                                <div class="uk-width-5-6"><span class="icon uk-icon-clone"></span> Mount infomation</div>
+                            </div>
+                        </caption>
+                        <thead class="uk-text-center">
+                        <th class="uk-width-1-10 uk-text-center">Type</th>
+                        <th class="uk-width-1-10 uk-text-center">Driver</th>
+                        <th class="uk-width-2-10 ">Destination</th>
+                        <th class="uk-width-2-10 ">Source</th>
+                        <th class="uk-width-1-10 uk-text-center">RW</th>
+                        </thead>
+                        <tbody>
+                        <tr v-for=" mount in viewContainer.mounts">
+                            <td class="uk-text-center uk-text-success">{{mount.type}}</td>
+                            <td class="uk-text-center">{{mount.driver==null?"none":mount.driver}}</td>
+                            <td class="uk-text-danger uk-text-bold">{{mount.destination}}</td>
+                            <td class="uk-text-primary">{{mount.source}}</td>
+                            <td class="uk-text-center">
+                                <span class="uk-text-warning" :class="{'uk-icon-check-square':mount.rw,'uk-icon-check-square-o':!mount.rw}"></span>
                             </td>
                         </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+            <!-- 进程信息 -->
+            <div>
+                <div>
                     <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box">
                         <caption>
                             <div class="uk-grid" style="margin-bottom: 3px">
@@ -381,62 +466,6 @@
                         </tbody>
                     </table>
                     <hr/>
-                    <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box"
-                           v-if="JSON.stringify(viewContainer.networkSettings.networks) != '{}'">
-                        <caption>
-                            <div class="uk-grid"  style="margin-bottom: 3px">
-                                <div class="uk-width-5-6"><span class="icon uk-icon-sitemap"></span> Network infomation</div>
-                            </div>
-                        </caption>
-                        <thead class="uk-text-center">
-                        <th class="uk-width-2-10 uk-text-center">ID</th>
-                        <th class="uk-width-2-10 uk-text-center">Name</th>
-                        <th class="uk-width-2-10 uk-text-center">Gateway</th>
-                        <th class="uk-width-2-10 uk-text-center">IP Address</th>
-                        <th class="uk-width-2-10 uk-text-center">Mac Address</th>
-                        </thead>
-                        <tbody>
-                        <tr class="uk-text-center" v-for=" (value, key) in viewContainer.networkSettings.networks">
-                            <td class="uk-text-success uk-text-bold">{{value.networkID | shortDockerId(12)}}</td>
-                            <td>{{key}}</td>
-                            <td>{{value.gateway}}</td>
-                            <td>{{value.ipAddress}}</td>
-                            <td>{{value.macAddress}}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <hr/>
-                    <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box"
-                           v-if="viewContainer.mounts.length > 0">
-                        <caption>
-                            <div class="uk-grid"  style="margin-bottom: 3px">
-                                <div class="uk-width-5-6"><span class="icon uk-icon-clone"></span> Mount infomation</div>
-                            </div>
-                        </caption>
-                        <thead class="uk-text-center">
-                        <th class="uk-width-1-10 uk-text-center">Type</th>
-                        <th class="uk-width-1-10 uk-text-center">Driver</th>
-                        <th class="uk-width-2-10 ">Source</th>
-                        <th class="uk-width-2-10 ">Destination</th>
-                        <th class="uk-width-1-10 uk-text-center">RW</th>
-                        </thead>
-                        <tbody>
-                        <tr v-for=" mount in viewContainer.mounts">
-                            <td class="uk-text-center">{{mount.type}}</td>
-                            <td class="uk-text-center">{{mount.driver==null?"none":mount.driver}}</td>
-                            <td>{{mount.source}}</td>
-                            <td>{{mount.destination}}</td>
-                            <td class="uk-text-center">
-                                <span :class="{'uk-icon-check-square':mount.rw,'uk-icon-check-square-o':!mount.rw}"></span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <!-- 进程信息 -->
-            <div>
-                <div>
                     <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box">
                         <caption>
                             <div class="uk-grid"  style="margin-bottom: 3px">
@@ -458,7 +487,7 @@
                                 <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
                                 <td class="uk-text-primary">{{proecess.pid}}</td>
                                 <td class="uk-text-warning">{{proecess.user}}</td>
-                                <td class="uk-text-success">{{proecess.time}}</td>
+                                <td class="uk-text-success">{{proecess.stime}}</td>
                                 <td><code>{{proecess.command}}</code></td>
                             </tr>
                         </tbody>
@@ -490,6 +519,18 @@
                         <code>{{viewContainer==null?"":viewContainer.command}}</code>
                     </div>
                     <div class="uk-width-2-6 uk-text-right">
+                        <span class="uk-text-bold">Number of lines:</span>
+                        <select v-model="logInfo.lineCount">
+                            <option vale="10">10</option>
+                            <option vale="30">30</option>
+                            <option vale="80">80</option>
+                            <option vale="100">100</option>
+                            <option vale="150">150</option>
+                            <option vale="300">300</option>
+                            <option vale="500">500</option>
+                            <option vale="all">All</option>
+                        </select>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
                         <a class="uk-button uk-button-small uk-button-primary"
                            @click="logView" v-show="logInfo.loop==null">Fetch</a>
                         <a class="uk-button uk-button-small uk-button-danger"

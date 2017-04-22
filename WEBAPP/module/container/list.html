@@ -121,14 +121,14 @@
                 //启动方法
                 start: function (container) {
                     try {
-                        if (list.state == "paused") {
-                            var cmdContainerUnPause = new CmdContainerUnPause(list.id);
+                        if (container.state == "paused") {
+                            var cmdContainerUnPause = new CmdContainerUnPause(container.id);
                             connect(cmdContainerUnPause);
                             cmdContainerUnPause.send();
                             cmdContainerUnPause.close();
                             cmdContainerUnPause.release();
                         } else {
-                            var cmdContainerStart = new CmdContainerStart(list.id);
+                            var cmdContainerStart = new CmdContainerStart(container.id);
                             connect(cmdContainerStart);
                             cmdContainerStart.send()
                             cmdContainerStart.close();
@@ -143,7 +143,7 @@
                 //停止方法
                 stop: function (container) {
                     try {
-                        var cmdContainerStop = new CmdContainerStop(list.id);
+                        var cmdContainerStop = new CmdContainerStop(container.id);
                         connect(cmdContainerStop);
                         cmdContainerStop.waitForKill(3);
                         cmdContainerStop.send();
@@ -158,8 +158,8 @@
                 //移除方法
                 remove: function (container) {
                     try{
-                        name = list.names[0]
-                        id = list.id
+                        name = container.names[0]
+                        id = container.id
 
                         UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + delFirestChar(name) + "</span> ?", function () {
                             try {
@@ -181,7 +181,7 @@
                 //暂停和恢复方法
                 pause: function (container) {
                     try {
-                        var cmdContainerPause = new CmdContainerPause(list.id);
+                        var cmdContainerPause = new CmdContainerPause(container.id);
                         connect(cmdContainerPause);
                         cmdContainerPause.send();
                         cmdContainerPause.close();
@@ -278,7 +278,7 @@
                         if (this.createParams.port.ports.length > 0) {
                             for(var i = 0; i<this.createParams.port.ports.length; i++) {
                                 var port = this.createParams.port.ports[i];
-                                cmdContainerCreate.exposePort(port.protocol, port.containerPort, [port.hostPort]);
+                                cmdContainerCreate.exposePort(port.protocol, port.containerPort+"", [port.hostPort+""]);
                             }
                         }
                         if (this.createParams.volume.volumes.length >= 0) {
@@ -395,7 +395,7 @@
                 <td class="uk-text-middle">
                     <div v-for="(network,networkName) in container.networkSettings.networks">
                         <code>
-                            <a :href="'network.html?id='+network.networkID">{{networkName}}{{network.ipAddress==""?"":":"}}{{network.ipAddress}}</a>
+                            <a :href="'../../network.html?id='+network.networkID">{{networkName}}{{network.ipAddress==""?"":":"}}{{network.ipAddress}}</a>
                         </code>
                     </div>
                 </td>
@@ -418,18 +418,18 @@
                             <div class="uk-dropdown uk-dropdown-small">
                                 <ul class="uk-nav uk-nav-dropdown uk-text-left">
                                     <li v-if="container.state!='running' || container.state=='paused'">
-                                        <a href=""
+                                        <a href="#"
                                            class=" uk-text-primary"
                                            @click="start(container)"><span class="uk-icon-play"></span> Start</a></li>
                                     <li v-if="container.state=='running'">
-                                        <a href=""
+                                        <a href="#"
                                            class=" uk-text-warning"
                                            @click="stop(container)"><span class="uk-icon-stop"></span> Stop</a></li>
                                     <li v-if="container.state=='running'">
-                                        <a href=""
+                                        <a href="#"
                                            class=" uk-text-success"
                                            @click="pause(container)"><span class="uk-icon-pause"></span> Pause</a></li>
-                                    <li><a href="" @click="remove(container)"
+                                    <li><a href="#" @click="remove(container)"
                                            class=" uk-text-danger"><span class="uk-icon-trash"></span> Remove</a></li>
                                 </ul>
                             </div>
