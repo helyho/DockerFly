@@ -54,6 +54,12 @@
                         var viewContainer = cmdContainerDetail.send();
                         cmdContainerDetail.close();
                         cmdContainerDetail.release();
+                        if(viewContainer.hostConfig.cpuPeriod!=0) {
+                            viewContainer.hostConfig.cpu = viewContainer.hostConfig.cpuQuota / viewContainer.hostConfig.cpuPeriod
+                        }else{
+                            viewContainer.hostConfig.cpu = 0;
+                        }
+
                         if(cmdContainerDetail != null){
                             document.title = delFirestChar(viewContainer.name) +
                                 " [" +viewContainer.state.status+"] DockerFly";
@@ -315,7 +321,7 @@
                         <tbody>
                         <tr>
                             <th class="uk-width-1-10 uk-text-right summeryField">ID </th>
-                            <td class="uk-text-bold">{{viewContainer.id}}</td>
+                            <td class="uk-text-bold">{{viewContainer.id |shortDockerId(12)}}</td>
                         </tr>
                         <tr>
                             <th class="uk-width-1-10 uk-text-right summeryField">Name </th>
@@ -327,17 +333,34 @@
                         </tr>
                         <tr>
                             <th class="uk-width-1-10 uk-text-right summeryField">CPU </th>
-                            <td class="uk-text-primary">{{viewContainer.hostConfig.cpuQuota/viewContainer.hostConfig.cpuPeriod}}</td>
+                            <td class="uk-text-primary">{{viewContainer.hostConfig.cpu==0?"unlimited":viewContainer.hostConfig.cpu}}</td>
                         </tr>
                         <tr>
                             <th class="uk-width-1-10 uk-text-right summeryField">Memory </th>
-                            <td class="uk-text-primary">{{viewContainer.hostConfig.memory/1024/1024}}MB</td>
+                            <td class="uk-text-primary">{{viewContainer.hostConfig.memory==0?"unlimited":viewContainer.hostConfig.memory/1024/1024+"MB"}}</td>
                         </tr>
-                        <tr>
+                        <tr v-if="viewContainer.config.workingDir!=''">
+                            <th class="uk-width-1-10 uk-text-right summeryField">WorkingDir </th>
+                            <td>
+                                <span class="">
+                                    {{viewContainer.config.workingDir}}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr v-if="viewContainer.config.cmd!=null">
                             <th class="uk-width-1-10 uk-text-right summeryField">Command </th>
                             <td><span class="uk-text-danger uk-text-bold">
                                 <span v-for="cmdItem in viewContainer.config.cmd">
-                                    {{cmdItem+" "}}
+                                    {{cmdItem}}
+                                </span>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr v-if="viewContainer.config.entrypoint.length != 0">
+                            <th class="uk-width-1-10 uk-text-right summeryField">Entrypoint </th>
+                            <td><span class="uk-text-danger uk-text-bold">
+                                <span v-for="entrypointItem in viewContainer.config.entrypoint">
+                                    {{entrypointItem+" "}}
                                 </span>
                                 </span>
                             </td>
@@ -498,7 +521,7 @@
             <div>
                 <div class="uk-grid uk-form">
                     <div class="uk-width-4-6">
-                        <input class="uk-form-width-large" type="text"
+                        <input class="uk-form-width-large uk-form-success" type="text"
                                placeholder="Command will be execute in contianer" v-model="execInfo.cmd"/>
                     </div>
                     <div class="uk-width-2-6 uk-text-right">
@@ -516,7 +539,12 @@
             <div>
                 <div class="uk-grid uk-form">
                     <div class="uk-width-4-6" style="line-height: 30px">
-                        <code>{{viewContainer==null?"":viewContainer.command}}</code>
+                        <code>
+                            <span>{{viewContainer.path}} </span>
+                            <span v-for="argItem in viewContainer.args">
+                                {{argItem}}
+                            </span>
+                        </code>
                     </div>
                     <div class="uk-width-2-6 uk-text-right">
                         <span class="uk-text-bold">Number of lines:</span>
