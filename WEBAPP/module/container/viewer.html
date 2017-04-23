@@ -356,7 +356,7 @@
                                 </span>
                             </td>
                         </tr>
-                        <tr v-if="viewContainer.config.entrypoint.length != 0">
+                        <tr v-if="viewContainer.config.entrypoint!=null && viewContainer.config.entrypoint.length != 0">
                             <th class="uk-width-1-10 uk-text-right summeryField">Entrypoint </th>
                             <td><span class="uk-text-danger uk-text-bold">
                                 <span v-for="entrypointItem in viewContainer.config.entrypoint">
@@ -374,7 +374,7 @@
                                 </span>
                             </td>
                         </tr>
-                        <tr>
+                        <tr v-if="JSON.stringify(viewContainer.networkSettings.ports) != '{}'">
                             <th class="uk-width-1-10 uk-text-right summeryField">Export port </th>
                             <td class="uk-text-middle">
                                 <div v-for="(guest,host) in viewContainer.networkSettings.ports">
