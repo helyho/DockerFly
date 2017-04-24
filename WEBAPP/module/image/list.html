@@ -253,7 +253,8 @@
                 </div>
             </div>
 
-            <table id="hubImageList" class="uk-table uk-overflow-container uk-panel-box">
+            <table id="hubImageList" class="uk-table uk-overflow-container uk-panel-box"
+                    v-if="hubImageList!=null">
                 <caption>Image list</caption>
                 <thead>
                 <tr>
@@ -261,7 +262,7 @@
                     <th class="uk-width-1-10">Name</th>
                     <th class="uk-width-1-10">Star</th>
                     <th class="uk-text-center uk-width-1-10">Official</th>
-                    <th class="uk-width-4-10">description</th>
+                    <th class="uk-width-4-10">Description</th>
                     <th class="uk-text-center">Operation</th>
                 </tr>
                 </thead>
