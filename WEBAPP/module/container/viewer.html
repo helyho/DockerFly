@@ -409,7 +409,9 @@
                         </thead>
                         <tbody>
                         <tr class="uk-text-center" v-for=" (value, key) in viewContainer.networkSettings.networks">
-                            <td class="uk-text-success uk-text-bold">{{value.networkID | shortDockerId(12)}}</td>
+                            <td class="uk-text-success uk-text-bold">
+                                <a :href="'../network/viewer.html?id='+value.networkID">{{value.networkID | shortDockerId(12)}}</a>
+                            </td>
                             <td>{{key}}</td>
                             <td>{{value.gateway}}</td>
                             <td>{{value.ipAddress}}</td>
@@ -492,7 +494,7 @@
                     <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box">
                         <caption>
                             <div class="uk-grid"  style="margin-bottom: 3px">
-                                <div class="uk-width-5-6">Container process</div>
+                                <div class="uk-width-5-6"><span class="uk-icon-bars"></span> Container process</div>
                                 <div class="uk-width-1-6 uk-text-center">
                                     <a class="uk-button uk-button-small uk-button-primary" @click="processView">Refresh</a>
                                 </div>

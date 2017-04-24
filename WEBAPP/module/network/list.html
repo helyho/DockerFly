@@ -68,7 +68,7 @@
                 remove: function (network) {
                     name = network.name
                     id = network.id
-                    UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + name + "</span> ?", function () {
+                    UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Are you sure to remove </span><span class='uk-text-large uk-text-primary'>[ " + name + " ]</span> ?", function () {
                         try {
                             var cmdNetworkRemove = new CmdNetworkRemove(id);
                             connect(cmdNetworkRemove);
@@ -117,7 +117,7 @@
                         alertError(e);
                     }
                 },
-                //查看容器
+                //查看网络
                 view: function (network) {
                     window.open("viewer.html?id="+network.id);
                 }
@@ -204,7 +204,6 @@
                         </div>
                     </div>
                 </td>
-
             </tr>
             </tbody>
         </table>

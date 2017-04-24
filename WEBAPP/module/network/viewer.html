@@ -31,7 +31,7 @@
                             cmdNetworkDetail.close();
                             cmdNetworkDetail.release();
 
-                            if (cmdNetworkDetail != null) {
+                            if (viewNetwork != null) {
                                 document.title = viewNetwork.name + " - Network";
                                 return viewNetwork;
                             } else {
@@ -143,29 +143,34 @@
             <div>
                 <div>
                     <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box">
+                        <caption>
+                            <div class="uk-grid"  style="margin-bottom: 3px">
+                                <div class="uk-width-5-6"><span class="uk-icon-desktop"></span> Container infomation</div>
+                            </div>
+                        </caption>
                         <thead>
                         <th class="uk-width-1-5 uk-text-center">ID</th>
                         <th class="uk-width-1-5">Name</th>
-                        <th class="uk-width-1-5 uk-text-center">MacAddress</th>
                         <th class="uk-width-1-5 uk-text-center">IPv4Address</th>
                         <th class="uk-width-1-5 uk-text-center">IPv6Address</th>
+                        <th class="uk-width-1-5 uk-text-center">MacAddress</th>
                         </thead>
                         <tbody>
                         <tr v-for="(value, id) in viewNetwork.containers">
                             <td class="uk-text-center">
-                                <span class="uk-text-danger uk-text-bold">{{id  |shortDockerId(12)}}</span>
+                                <a :href="'../container/viewer.html?id='+id" class="uk-text-danger uk-text-bold">{{id  |shortDockerId(12)}}</a>
                             </td>
                             <td class="">
                                 <span class="uk-text-primary">{{value.name}}</span>
                             </td>
                             <td class="uk-text-center">
+                                <span class="uk-text-danger">{{value.ipv4Address}}</span>
+                            </td>
+                            <td class="uk-text-center">
+                                <span class="uk-text-warning">{{value.ipv6Address}}</span>
+                            </td>
+                            <td class="uk-text-center">
                                 <span class="uk-text-primary">{{value.macAddress}}</span>
-                            </td>
-                            <td class="uk-text-center">
-                                <span class="uk-text-primary">{{value.ipv4Address}}</span>
-                            </td>
-                            <td class="uk-text-center">
-                                <span class="uk-text-primary">{{value.ipv6Address}}</span>
                             </td>
                         </tr>
                         </tbody>

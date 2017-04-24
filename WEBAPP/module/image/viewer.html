@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DockerFly</title>
+</head>
+<link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico"/>
+<link rel="stylesheet" href="../../css/uikit/uikit.css"/>
+<script src="../../js/common/jquery.min.js"></script>
+<script src="../../js/common/vue.min.js"></script>
+<script src="../../js/common/uikit.js"></script>
+<script src="../../js/common/xterm.js"></script>
+<link rel="stylesheet" href="../../css/main.css"/>
+<link rel="stylesheet" href="../../css/xterm.css"/>
+
+<script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript">
+    doImport("org.voovan.docker.command.Image.CmdImageDetail")
+
+    function init() {
+        viewerVue = new Vue({
+                el: '#viewerApp',
+                computed: {
+                    viewImage: function () {
+                        try {
+
+                            var imageId = getQueryString("id");
+                            var cmdImageDetail = new CmdImageDetail(imageId)
+                            connect(cmdImageDetail)
+                            var viewImage = cmdImageDetail.send();
+                            cmdImageDetail.close();
+                            cmdImageDetail.release();
+
+                            if (viewImage != null) {
+                                document.title = viewImage.repoTags[0] + " - Image";
+                                return viewImage;
+                            } else {
+                                return null;
+                            }
+                        } catch (e) {
+                            alertError(e)
+                        }
+                    }
+                }
+            }
+            );
+    }
+</script>
+<body onload="init()" class="frameBody" style="margin-right: 35px">
+<div id="viewerApp" class="uk-grid" style="display: none" v-show="this.viewImage!=null">
+    <div class="uk-width-6-6">
+        <div class="uk-panel"></div>
+        <h3 class="uk-text-middle">
+            <span class="uk-text-danger uk-text-bold uk-text-large">{{viewImage.repoTags[0]}}</span>
+            <span class="uk-text"> [ {{(viewImage.size/1024/1024).toFixed(0)}} MB ] </span>
+        </h3>
+
+        <ul class="uk-tab" data-uk-switcher="{connect:'#Viewers'}">
+            <li><a href="#"><span class="uk-icon-sliders"></span> Summery</a></li>
+            <li><a href="#"><span class="uk-icon-object-group"></span> Config </a></li>
+        </ul>
+        <div id="Viewers" class="uk-switcher">
+            <div>
+                <div>
+                    <table class="uk-table uk-overflow-container uk-panel-box">
+                        <caption>
+                            <div class="uk-grid"  style="margin-bottom: 3px">
+                                <div class="uk-width-5-6"><span class="uk-icon-info-circle"></span> Image infomation</div>
+                            </div>
+                        </caption>
+                        <tbody>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">ID </th>
+                            <td class="uk-text-bold">{{viewImage.id |shortDockerId(12)}}</td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">RepoTags </th>
+                            <td class="uk-text-primary">
+                                <div v-for="repoTag in viewImage.repoTags">{{repoTag}}</div>
+                            </td>
+                        </tr>
+                        <tr v-if="viewImage.parent != ''">
+                            <th class="uk-width-1-10 uk-text-right summeryField">Parent </th>
+                            <td class="uk-text-success">{{viewImage.parent |shortDockerId(12)}}</td>
+                        </tr>
+                        <tr v-if="viewImage.author != ''">
+                            <th class="uk-width-1-10 uk-text-right summeryField">Author </th>
+                            <td class="uk-text-warning">{{viewImage.author}}</td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Architecture </th>
+                            <td class="uk-text-muted">{{viewImage.architecture}}</td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Os </th>
+                            <td class="uk-text-muted">{{viewImage.os}}</td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Size </th>
+                            <td class="uk-text-bold uk-text-warning">{{(viewImage.size/1024/1024).toFixed(0)}}MB</td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">GraphDriver </th>
+                            <td class="uk-text-muted">{{viewImage.graphDriver.name}}</td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">RootFS type</th>
+                            <td class="uk-text-bold">
+                                {{viewImage.rootFS.type}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Created </th>
+                            <td class="">{{viewImage.created | strToDate}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 容器镜像配置信息 -->
+            <div>
+                <div>
+                    <table class="uk-table uk-overflow-container uk-panel-box">
+                        <caption>
+                            <div class="uk-grid"  style="margin-bottom: 3px">
+                                <div class="uk-width-5-6"><span class="uk-icon-desktop"></span> Container config</div>
+                            </div>
+                        </caption>
+                        <tbody>
+                        <tr v-if="viewImage.config.user!=''">
+                            <th class="uk-width-1-10 uk-text-right summeryField">User </th>
+                            <td class="uk-text-primary">{{viewImage.config.user}}</td>
+                        </tr>
+
+                        <tr v-if="viewImage.config.workingDir!=''">
+                            <th class="uk-width-1-10 uk-text-right summeryField">WorkingDir </th>
+                            <td>
+                                <span class="">
+                                    {{viewImage.config.workingDir}}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr v-if="viewImage.config.cmd!=null">
+                            <th class="uk-width-1-10 uk-text-right summeryField">Command </th>
+                            <td><span class="uk-text-danger uk-text-bold">
+                                <span v-for="cmdItem in viewImage.config.cmd">
+                                    {{cmdItem}}
+                                </span>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr v-if="viewImage.config.entrypoint!=null && viewImage.config.entrypoint.length != 0">
+                            <th class="uk-width-1-10 uk-text-right summeryField">Entrypoint </th>
+                            <td><span class="uk-text-danger uk-text-bold">
+                                <span v-for="entrypointItem in viewImage.config.entrypoint">
+                                    {{entrypointItem+" "}}
+                                </span>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Env </th>
+                            <td><span class="uk-text-warning">
+                                <div v-for="envItem in viewImage.config.env">
+                                    {{envItem}}
+                                </div>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr v-if="viewImage.config.exposedPorts != null">
+                            <th class="uk-width-1-10 uk-text-right summeryField">Export port </th>
+                            <td class="uk-text-middle">
+                                <div v-for="(guest,host) in viewImage.config.exposedPorts">
+                                    <h4 class="uk-margin-bottom-remove">
+                                        <span class="uk-badge uk-badge-danger">{{host.split("/")[1].toUpperCase()}}</span>
+                                        {{host.split("/")[0]}}
+                                    </h4>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr v-if="viewImage.config.volumes.length != 0">
+                            <th class="uk-width-1-10 uk-text-right summeryField">Volumes </th>
+                            <td class="">
+                                <div v-for="(value,key) in viewImage.config.volumes" class="uk-text-primary uk-text-bold">
+                                    {{key}}
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="uk-width-6-6">
+        <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
+            <div><img height="27" width="120" src="../../img/logo.png"/></div>
+            <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
+            <div>Powered by Voovan open source framework.</div>
+            <div></div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

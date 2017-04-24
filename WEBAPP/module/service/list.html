@@ -105,7 +105,7 @@
                         name = service.spec.name;
                         id = service.id
 
-                        UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + name + "</span> ?", function () {
+                        UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Are you sure to remove </span><span class='uk-text-large uk-text-primary'>[ " + name + " ]</span> ?", function () {
                             try {
                                 var cmdServiceRemove = new CmdServiceRemove(id);
                                 connect(cmdServiceRemove);
@@ -124,7 +124,7 @@
 
                 scale: function(service){
 
-                    UIkit.modal.prompt("<span class='dialogField'>Replicas:</span>", list.spec.mode.replicated.replicas, function(newvalue){
+                    UIkit.modal.prompt("<span class='uk-text-large uk-text-primary '>Replicas:</span>", service.spec.mode.replicated.replicas, function(newvalue){
                         try {
                             var cmdServiceUpdate = new CmdServiceUpdate(service);
                             connect(cmdServiceUpdate);
@@ -257,6 +257,10 @@
                     } catch (e) {
                         alertError(e);
                     }
+                },
+                //查看网络
+                view: function (service) {
+                    window.open("viewer.html?id="+service.id);
                 }
             }
         });
@@ -332,10 +336,22 @@
                 </td>
                 <td class="uk-text-center uk-text-middle">
                     <div class="uk-button-group">
-                        <input class="uk-button uk-button-small uk-button-primary" type="button" value="Scale"
-                               @click="scale(service)"/>
-                        <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
-                               @click="remove(service)"/>
+                        <a href="#" class="uk-button uk-button-primary uk-button-small" @click="view(service)"><span class="uk-icon-list-alt"></span> View</a>
+                        <div data-uk-dropdown="{mode:'click'}">
+                            <!-- 触发下拉菜单的按钮 -->
+                            <a href="" class="uk-button uk-button-primary uk-button-small"><span class="uk-icon-caret-down"></span></a>
+
+                            <!-- 下拉菜单 -->
+                            <div class="uk-dropdown uk-dropdown-small">
+                                <ul class="uk-nav uk-nav-dropdown uk-text-left">
+                                    <li><a href="#"
+                                           class=" uk-text-primary"
+                                           @click="scale(service)"><span class="uk-icon-play"></span> Scale</a></li>
+                                    <li><a href="#" @click="remove(service)"
+                                           class=" uk-text-danger"><span class="uk-icon-trash"></span> Remove</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </td>
             </tr>

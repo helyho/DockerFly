@@ -60,9 +60,13 @@
                 <tbody>
                 <tr>
                     <td class="uk-width-1-10 uk-text-right summeryField">ID:</td>
-                    <td class="uk-width-1-4 uk-text-bold uk-text-primary uk-text-small">{{dockerInfo.id}}</td>
+                    <td class="uk-width-1-4 uk-text-bold uk-text-primary uk-text-small" colspan="3">
+                        {{dockerInfo.id}}
+                    </td>
+                </tr>
+                <tr>
                     <td class="uk-width-1-10 uk-text-right summeryField">System info:</td>
-                    <td class="uk-width-1-4 ">
+                    <td class="uk-width-1-4 uk-text-muted" colspan="3">
                         {{dockerInfo.osType}}({{dockerInfo.architecture}})_{{dockerInfo.operatingSystem}}({{dockerInfo.kernelVersion}})
                     </td>
                 </tr>
@@ -117,9 +121,9 @@
                     </td>
                 </tr>-->
                 <tr>
-                    <td class="uk-width-1-10 uk-text-right summeryField">Cpu count:</td>
+                    <td class="uk-width-1-10 uk-text-right summeryField uk-text-warning">Cpu count:</td>
                     <td class="uk-width-1-4">{{dockerInfo.nCPU}}</td>
-                    <td class="uk-width-1-10 uk-text-right summeryField">Memory:</td>
+                    <td class="uk-width-1-10 uk-text-right summeryField uk-text-warning">Memory:</td>
                     <td class="uk-width-1-4 ">{{Math.ceil(dockerInfo.memTotal/1000/1024)}}Mb</td>
                 </tr>
                 </tbody>

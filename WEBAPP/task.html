@@ -23,14 +23,66 @@
             el: '#taskApp',
             data: {
                 taskList: null,
-                containers:[],
-                services:[],
-                nodes:[],
                 queryParams: {
                     id:"",
                     service:"",
                     node:"",
-                    desiredState:"ALL"
+                    desiredState:"shutdown"
+                }
+            },
+            computed: {
+                containers: function(){
+                    try {
+                        var containers = [];
+                        var cmdContainerList = new CmdContainerList();
+                        connect(cmdContainerList);
+                        cmdContainerList.all(true)
+
+                        //cmdContainerList.label("author","helyho");
+                        var containerList = cmdContainerList.send().sortBy("id", true);
+                        for(var i=0;i<containerList.length;i++){
+                            var container = containerList[i];
+                            containers[container.id] = container.names[0];
+                        }
+                        cmdContainerList.close();
+                        cmdContainerList.release();
+                        return containers;
+                    } catch (e) {
+                        alertError(e)
+                    }
+                },
+                services: function(){
+                    try {
+                        var services = [];
+                        var cmdServiceList = new CmdServiceList();
+                        connect(cmdServiceList);
+                        //cmdServiceList.label("author","helyho");
+                        var serviceList = cmdServiceList.send().sortBy("id", true);
+                        for(var i=0;i<serviceList.length;i++){
+                            var service = serviceList[i];
+                            services[service.id] = service.spec.name;
+                        }
+                        cmdServiceList.close();
+                        cmdServiceList.release();
+                        return services;
+                    } catch (e) {
+                        alertError(e)
+                    }
+                },
+                nodes: function(){
+                    var nodes = [];
+                    var cmdNodeList = new CmdNodeList();
+                    connect(cmdNodeList);
+                    //cmdContainerList.label("author","helyho");
+                    var nodeList = cmdNodeList.send().sortBy("name");
+
+                    for(var i=0;i<nodeList.length;i++){
+                        var node = nodeList[i];
+                        nodes[node.id] = (node.spec.name==null?node.description.hostname:node.spec.name);
+                    }
+                    cmdNodeList.close();
+                    cmdNodeList.release();
+                    return nodes;
                 }
             },
             methods: {
@@ -63,53 +115,6 @@
                     } catch (e) {
                         alertError(e)
                     }
-                },
-                getContainers: function(){
-                    try {
-                        var cmdContainerList = new CmdContainerList();
-                        connect(cmdContainerList);
-                        cmdContainerList.all(true)
-
-                        //cmdContainerList.label("author","helyho");
-                        var containerList = cmdContainerList.send().sortBy("id", true);
-                        for(var i=0;i<containerList.length;i++){
-                            var container = containerList[i];
-                            this.containers[container.id] = container.names[0];
-                        }
-                        cmdContainerList.close();
-                        cmdContainerList.release();
-                    } catch (e) {
-                        alertError(e)
-                    }
-                },
-                getServices: function(){
-                    try {
-                        var cmdServiceList = new CmdServiceList();
-                        connect(cmdServiceList);
-                        //cmdServiceList.label("author","helyho");
-                        var serviceList = cmdServiceList.send().sortBy("id", true);
-                        for(var i=0;i<serviceList.length;i++){
-                            var service = serviceList[i];
-                            this.services[service.id] = service.spec.name;
-                        }
-                        cmdServiceList.close();
-                        cmdServiceList.release();
-                    } catch (e) {
-                        alertError(e)
-                    }
-                },
-                getNodes: function(){
-                    var cmdNodeList = new CmdNodeList();
-                    connect(cmdNodeList);
-                    //cmdContainerList.label("author","helyho");
-                    var nodeList = cmdNodeList.send().sortBy("name");
-
-                    for(var i=0;i<nodeList.length;i++){
-                        var node = nodeList[i];
-                        this.nodes[node.id] = (node.spec.name==null?node.description.hostname:node.spec.name);
-                    }
-                    cmdNodeList.close();
-                    cmdNodeList.release();
                 }
             }
         });
@@ -122,10 +127,7 @@
         if(urlId != null || urlService!=null){
             $("#query").hide();
         }
-        taskListVue.getContainers();
-        taskListVue.getServices();
-        taskListVue.getNodes();
-        taskListVue.query()
+        taskListVue.query();
     }
 </script>
 <body onload="init()" class="frameBody">
@@ -143,8 +145,8 @@
                         type="text" placeholder="service id" v-model="queryParams.service">
                     <span class="mr5">Node:</span><input class="uk-form-width-medium"
                         type="text" placeholder="node id" v-model="queryParams.node">
-                    <span class="mr5">State:</span>
-                        <select v-model="queryParams.desiredState" class="uk-form-width-mini">
+                    <span class="mr5">Desired State:</span>
+                        <select v-model="queryParams.desiredState">
                         <option value="ALL">All</option>
                         <option value="running">running</option>
                         <option value="shutdown">shutdown</option>
@@ -163,8 +165,9 @@
                 <th class="uk-width-1-10">ID</th>
                 <th class="uk-width-1-10">Node</th>
                 <th class="uk-width-1-10">Service</th>
-                <th class="uk-width-2-10">Container</th>
+                <th class="uk-width-1-10">Container</th>
                 <th class="uk-width-1-10 ">State</th>
+                <th class="uk-width-1-10 ">Desired State</th>
                 <th class="uk-width-2-10 uk-text-center">Create</th>
                 <th class="uk-width-2-10 uk-text-center">Update</th>
             </tr>
@@ -178,7 +181,9 @@
                     <a class="uk-text-success" :href="'node.html?id='+task.nodeId">{{nodes[task.nodeId]}}</a>
                 </td>
                 <td class=" uk-text-middle uk-text-bold ">
-                    <a class="uk-text-warning" :href="'service.html?id='+task.serviceId" v-if="services[task.serviceId]!=null">
+                    <a class="uk-text-warning" :href="'/module/service/viewer.html?id='+task.serviceId"
+                       target="viewer"
+                       v-if="services[task.serviceId]!=null">
                         {{services[task.serviceId]}}
                     </a>
                     <span class="uk-text-warning" v-else>
@@ -186,14 +191,16 @@
                     </span>
                 </td>
                 <td class=" uk-text-middle uk-text-bold ">
-                    <a class="uk-text-danger" :href="'/module/container/list.html?id='+task.status.containerStatus.containerId"
+                    <a class="uk-text-danger" :href="'/module/container/viewer.html?id='+task.status.containerStatus.containerId"
+                       target="viewer"
                        v-if="containers[task.status.containerStatus.containerId]!=null">
-                        <span class="uk-text-success uk-icon-circle"></span> {{containers[task.status.containerStatus.containerId]|delFirestChar|shortDockerId(18)}}
+                        <span class="uk-text-success running"></span> {{containers[task.status.containerStatus.containerId]|delFirestChar|shortDockerId(18)}}
                     </a>
                     <span class="uk-text-danger" v-else>
-                        <span class="uk-text-primary uk-icon-circle"></span> {{task.status.containerStatus.containerId|shortDockerId(12)}}
+                        <span class="uk-text-primary stop"></span> {{task.status.containerStatus.containerId|shortDockerId(12)}}
                     </span>
                 </td>
+                <td class=" uk-text-middle uk-text-bold">{{task.status.state}}</td>
                 <td class=" uk-text-middle uk-text-bold">{{task.desiredState}}</td>
                 <td class=" uk-text-middle uk-text-small uk-text-center">{{task.createdAt|strToDate}}</td>
                 <td class=" uk-text-middle uk-text-small uk-text-center">{{task.updatedAt|strToDate}}</td>

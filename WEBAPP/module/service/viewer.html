@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DockerFly</title>
+</head>
+<link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico"/>
+<link rel="stylesheet" href="../../css/uikit/uikit.css"/>
+<script src="../../js/common/jquery.min.js"></script>
+<script src="../../js/common/vue.min.js"></script>
+<script src="../../js/common/uikit.js"></script>
+<script src="../../js/common/xterm.js"></script>
+<link rel="stylesheet" href="../../css/main.css"/>
+<link rel="stylesheet" href="../../css/xterm.css"/>
+
+<script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript">
+    doImport("org.voovan.docker.command.Service.CmdServiceList")
+    doImport("org.voovan.docker.command.Network.CmdNetworkList")
+
+    function init() {
+        viewerVue = new Vue({
+                el: '#viewerApp',
+                data:{
+                },
+                computed: {
+                    viewService: function () {
+                        try {
+
+                            var serviceId = getQueryString("id");
+                            var cmdServiceList= new CmdServiceList()
+                            cmdServiceList.id([serviceId])
+                            connect(cmdServiceList)
+                            var viewService= cmdServiceList.send();
+                            cmdServiceList.close();
+                            cmdServiceList.release();
+
+                            if (viewService.length == 1) {
+                                viewService = viewService[0]
+                                document.title = viewService.spec.name + " - Service";
+                                return viewService;
+                            } else {
+                                return null;
+                            }
+                        } catch (e) {
+                            alertError(e)
+                        }
+                    },
+                    networks: function(){
+                        try {
+                            var networks = [];
+                            var cmdNetworkList = new CmdNetworkList();
+                            connect(cmdNetworkList);
+
+                            //cmdContainerList.label("author","helyho");
+                            var networkList = cmdNetworkList.send().sortBy("id", true);
+                            for(var i=0;i<networkList.length;i++){
+                                var network = networkList[i];
+                                networks[network.id] = network.name;
+                            }
+                            cmdNetworkList.close();
+                            cmdNetworkList.release();
+                            return networks;
+                        } catch (e) {
+                            alertError(e)
+                        }
+                    }
+                }
+        });
+    }
+</script>
+<body onload="init()" class="frameBody" style="margin-right: 35px">
+<div id="viewerApp" class="uk-grid" style="display: none" v-show="this.viewService!=null">
+    <div class="uk-width-6-6">
+        <div class="uk-panel"></div>
+        <h3 class="uk-text-middle">
+            <span class="uk-text-danger uk-text-bold uk-text-large">{{viewService.name}}</span>
+        </h3>
+
+        <ul class="uk-tab" data-uk-switcher="{connect:'#Viewers'}">
+            <li><a href="#"><span class="uk-icon-sliders"></span> Summery</a></li>
+            <li><a href="#"><span class="uk-icon-database"></span> Resource</a></li>
+        </ul>
+        <div id="Viewers" class="uk-switcher">
+            <div>
+                <div>
+                    <table class="uk-table uk-overflow-container uk-panel-box">
+                        <caption>
+                            <div class="uk-grid"  style="margin-bottom: 3px">
+                                <div class="uk-width-5-6"><span class="uk-icon-info-circle"></span> Service infomation</div>
+                            </div>
+                        </caption>
+                        <tbody>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">ID </th>
+                            <td class="uk-text-bold">{{viewService.id |shortDockerId(12)}}</td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Name </th>
+                            <td class="uk-text-primary">{{viewService.spec.name}}</td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Image </th>
+                            <td class="uk-text-success">{{viewService.spec.taskTemplate.containerSpec.image}}</td>
+                        </tr>
+
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Cmd </th>
+                            <td class="uk-text-warning">
+                                <span class="uk-text-warning">
+                                    <span v-for="argItem in viewService.spec.taskTemplate.containerSpec.args">
+                                        {{argItem}}
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+
+
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Scheduling </th>
+                            <td class="">{{viewService.spec.mode.type}}</td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Updated </th>
+                            <td class="">{{viewService.updatedAt | strToDate}}</td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Created </th>
+                            <td class="">{{viewService.createdAt | strToDate}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+            <!-- 资源信息 -->
+            <div>
+                <table class="uk-table uk-overflow-container uk-panel-box">
+                    <caption>
+                        <div class="uk-grid"  style="margin-bottom: 3px">
+                            <div class="uk-width-5-6"><span class="uk-icon-info-circle"></span> Service infomation</div>
+                        </div>
+                    </caption>
+                    <tbody>
+                    <tr>
+                        <th class="uk-width-1-10 uk-text-right summeryField">CPU </th>
+                        <td class="uk-text-primary">{{viewService.spec.taskTemplate.resources.limits.nanoCPUs/1000000000}}</td>
+                    </tr>
+                    <tr>
+                        <th class="uk-width-1-10 uk-text-right summeryField">Memory </th>
+                        <td class="uk-text-primary">{{viewService.spec.taskTemplate.resources.limits.memoryBytes/1024/1024}} MB</td>
+                    </tr>
+                    <tr>
+                        <th class="uk-width-1-10 uk-text-right summeryField">Ports </th>
+                        <td class="uk-text-muted">
+                            <div v-for="port in viewService.spec.endpointSpec.ports">
+                                <h4 class="uk-margin-bottom-remove">
+                                    <span class="uk-badge uk-badge-danger">{{port.protocol.toUpperCase()}}</span>
+                                    {{port.publishedPort}}
+                                    <span class="uk-icon-exchange"></span> {{port.targetPort}}
+                                </h4>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <table class="uk-table uk-overflow-container uk-panel-box"
+                       v-if="viewService.endpoint.virtualIPs.length!=0">
+                    <caption>
+                        <div class="uk-grid"  style="margin-bottom: 3px">
+                            <div class="uk-width-5-6"><span class="uk-icon-sitemap"></span> Network infomation</div>
+                        </div>
+                    </caption>
+                    <thead>
+                    <th class="uk-width-3-5">Network</th>
+                    <th>IP</th>
+                    </thead>
+                    <tbody>
+                    <tr v-for="virtualIP in viewService.endpoint.virtualIPs">
+                        <td><a :href="'../network/viewer.html?id='+virtualIP.networkID" class="uk-text-bold">{{networks[virtualIP.networkID]}}</a>
+                            <span class="uk-text-muted">[{{virtualIP.networkID}}]</span></td>
+                        <td class="uk-text-danger">{{virtualIP.addr}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="uk-table uk-overflow-container uk-panel-box"
+                       v-if="viewService.spec.taskTemplate.containerSpec.mounts.length!=0">
+                    <caption>
+                        <div class="uk-grid"  style="margin-bottom: 3px">
+                            <div class="uk-width-5-6"><span class="uk-icon-clone"></span> Mount infomation</div>
+                        </div>
+                    </caption>
+                    <thead>
+                    <th class="uk-width-1-10">Type</th>
+                    <th class="uk-width-4-10">Source</th>
+                    <th class="uk-width-4-10">Target</th>
+                    <th class="uk-width-1-10">ReadOnly</th>
+                    </thead>
+                    <tbody>
+                    <tr v-for="mount in viewService.spec.taskTemplate.containerSpec.mounts">
+                        <td class="uk-text-primary">{{mount.type}}</td>
+                        <td class="uk-text-success">{{mount.source}}</td>
+                        <td class="uk-text-danger">{{mount.target}}</td>
+                        <td><span class="uk-text-warning" :class="{'uk-icon-check-square':mount.readOnly,'uk-icon-check-square-o':!mount.readOnly}"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="uk-width-6-6">
+        <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
+            <div><img height="27" width="120" src="../../img/logo.png"/></div>
+            <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
+            <div>Powered by Voovan open source framework.</div>
+            <div></div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

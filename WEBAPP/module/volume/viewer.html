@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DockerFly</title>
+</head>
+<link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico"/>
+<link rel="stylesheet" href="../../css/uikit/uikit.css"/>
+<script src="../../js/common/jquery.min.js"></script>
+<script src="../../js/common/vue.min.js"></script>
+<script src="../../js/common/uikit.js"></script>
+<script src="../../js/common/xterm.js"></script>
+<link rel="stylesheet" href="../../css/main.css"/>
+<link rel="stylesheet" href="../../css/xterm.css"/>
+
+<script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript">
+    doImport("org.voovan.docker.command.Volume.CmdVolumeDetail")
+
+    function init() {
+        viewerVue = new Vue({
+                el: '#viewerApp',
+                computed: {
+                    viewVolume: function () {
+                        try {
+
+                            var volumeId = getQueryString("id");
+                            var cmdVolumeDetail = new CmdVolumeDetail(volumeId)
+                            connect(cmdVolumeDetail)
+                            var viewVolume = cmdVolumeDetail.send();
+                            cmdVolumeDetail.close();
+                            cmdVolumeDetail.release();
+
+                            if (viewVolume != null) {
+                                document.title = shortDockerId(viewVolume.name,12) + " - Volume";
+                                return viewVolume;
+                            } else {
+                                return null;
+                            }
+                        } catch (e) {
+                            alertError(e)
+                        }
+                    }
+                }
+            }
+            );
+    }
+</script>
+<body onload="init()" class="frameBody" style="margin-right: 35px">
+<div id="viewerApp" class="uk-grid" style="display: none" v-show="this.viewVolume!=null">
+    <div class="uk-width-6-6">
+        <div class="uk-panel"></div>
+        <h3 class="uk-text-middle">
+        </h3>
+
+        <ul class="uk-tab" data-uk-switcher="{connect:'#Viewers'}">
+            <li><a href="#"><span class="uk-icon-sliders"></span> Summery</a></li>
+        </ul>
+        <div id="Viewers" class="uk-switcher">
+            <div>
+                <div>
+                    <table class="uk-table uk-overflow-container uk-panel-box">
+                        <caption>
+                            <div class="uk-grid"  style="margin-bottom: 3px">
+                                <div class="uk-width-5-6"><span class="uk-icon-clone"></span> Volume infomation</div>
+                            </div>
+                        </caption>
+                        <tbody>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Name </th>
+                            <td class="uk-text-primary">{{viewVolume.name}}</td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Scope </th>
+                            <td class="uk-text-success">{{viewVolume.scope}}</td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Driver </th>
+                            <td class="uk-text-warning">{{viewVolume.driver}}</td>
+                        </tr>
+                        <tr>
+                            <th class="uk-width-1-10 uk-text-right summeryField">Mountpoint </th>
+                            <td class="uk-text-muted">{{viewVolume.mountpoint}}</td>
+                        </tr>
+                        <tr v-if="viewVolume.options!=null">
+                            <th class="uk-width-1-10 uk-text-right summeryField">Options </th>
+                            <td class="uk-text-muted">{{viewVolume.options}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="uk-width-6-6">
+        <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
+            <div><img height="27" width="120" src="../../img/logo.png"/></div>
+            <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
+            <div>Powered by Voovan open source framework.</div>
+            <div></div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

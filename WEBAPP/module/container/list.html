@@ -160,7 +160,7 @@
                         name = container.names[0]
                         id = container.id
 
-                        UIkit.modal.confirm("Are you sure to remove <span class='uk-text-danger'>" + delFirestChar(name) + "</span> ?", function () {
+                        UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Are you sure to remove </span> <span class='uk-text-large uk-text-primary'>[ " + delFirestChar(name) + " ]</span> ?", function () {
                             try {
                                 var cmdContainerRemove = new CmdContainerRemove(id);
                                 connect(cmdContainerRemove);
@@ -393,13 +393,16 @@
                 <td class="uk-text-middle">
                     <div v-for="(network,networkName) in container.networkSettings.networks">
                         <code>
-                            <a :href="'../../network.html?id='+network.networkID">{{networkName}}{{network.ipAddress==""?"":":"}}{{network.ipAddress}}</a>
+                            <a :href="'../network/viewer.html?id='+network.networkID"
+                            target="view">
+                                {{networkName}}{{network.ipAddress==""?"":":"}}{{network.ipAddress}}
+                            </a>
                         </code>
                     </div>
                 </td>
                 <td class="uk-text-middle">
                     <div v-for="port in container.ports">
-                        <code>{{port.type}}/{{port.privatePort}}:{{port.publicPort}}</code>
+                        <span class="uk-icon-external-link uk-text-primary uk-text-small"> </span><code>{{port.type}}/{{port.privatePort}}:{{port.publicPort}}</code>
                     </div>
                 </td>
                 <td :class="container.state" class="uk-text-center uk-text-bold uk-text-middle">

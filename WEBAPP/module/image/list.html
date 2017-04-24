@@ -59,7 +59,7 @@
                     for(var i=0;i<image.repoTags.length;i++){
                         repoTags = repoTags + "<option value='"+image.repoTags[i]+"'>Tag: "+image.repoTags[i]+"</option>";
                     }
-                    UIkit.modal.confirm("Choice which one you want to remove?  <br><select id='imageRepoTag' class='uk-form-width-medium'>" + repoTags + "</select>", function () {
+                    UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Choice which one you want to remove? </span><br><select id='imageRepoTag' class='uk-form-width-medium'>" + repoTags + "</select>", function () {
                         try {
                             var imageRepoTag = $('#imageRepoTag').val();
 
@@ -84,7 +84,7 @@
                 tag: function (image) {
                     name = image.repoTags.length > 0 ? image.repoTags[0] : "";
                     id = image.id
-                    UIkit.modal.prompt("Images tags: (like repo:tag)", name, function(newvalue){
+                    UIkit.modal.prompt("<span class='uk-text-large uk-text-primary'>Images tags: (like repo:tag)</span>", name, function(newvalue){
                         try {
                             if(newvalue!=""){
                                 var reppAndTag = newvalue.split(":");
@@ -146,6 +146,10 @@
                         alertError(e)
                     }
 
+                },
+                //查看镜像
+                view: function (network) {
+                    window.open("viewer.html?id="+network.id);
                 }
             }
         });
@@ -200,10 +204,24 @@
                 <td class="uk-text-center uk-text-middle">{{new Date(parseInt(image.created*1000)).format("yyyy-MM-dd hh:mm:ss")}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-danger">{{(parseInt(image.size)/1024/1024).toFixed(2)}}</td>
                 <td class="uk-text-center uk-text-middle">
-                    <input class="uk-button uk-button-small uk-button-primary" type="button" value="Tag"
-                           @click="tag(image)"/>
-                    <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
-                           @click="remove(image)"/>
+                    <div class="uk-button-group">
+                        <a href="#" class="uk-button uk-button-primary uk-button-small" @click="view(image)"><span class="uk-icon-list-alt"></span> View</a>
+                        <div data-uk-dropdown="{mode:'click'}">
+                            <!-- 触发下拉菜单的按钮 -->
+                            <a href="" class="uk-button uk-button-primary uk-button-small"><span class="uk-icon-caret-down"></span></a>
+                            <!-- 下拉菜单 -->
+                            <div class="uk-dropdown uk-dropdown-small">
+                                <ul class="uk-nav uk-nav-dropdown uk-text-left">
+                                    <li><a href="#" @click="tag(image)"
+                                           class=" uk-text-primary"><span class="uk-icon-trash"></span> Tag</a></li>
+                                </ul>
+                                <ul class="uk-nav uk-nav-dropdown uk-text-left">
+                                    <li><a href="#" @click="remove(image)"
+                                           class=" uk-text-danger"><span class="uk-icon-trash"></span> Remove</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </td>
 
             </tr>
