@@ -97,7 +97,7 @@
                             <th class="uk-width-1-10 uk-text-right summeryField">attachable </th>
                             <td class="uk-text-muted">{{viewNetwork.attachable}}</td>
                         </tr>
-                        <tr>
+                        <tr v-if="viewNetwork.ipam.config.length!=0">
                             <th class="uk-width-1-10 uk-text-right summeryField">IP </th>
                             <td class="uk-text-bold">
                                 <div v-for="ipConfig in viewNetwork.ipam.config">
@@ -106,7 +106,7 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
+                        <tr v-if="JSON.stringify(viewNetwork.options)!='{}'">
                             <th class="uk-width-1-10 uk-text-right summeryField">Options </th>
                             <td class="uk-text-bold">
                                 <div v-for="(value, key) in viewNetwork.options">
@@ -118,11 +118,25 @@
                             <th class="uk-width-1-10 uk-text-right summeryField">Created </th>
                             <td class="">{{viewNetwork.created | strToDate}}</td>
                         </tr>
-
                         </tbody>
                     </table>
-                    <hr/>
-
+                    <table class="uk-table uk-overflow-container uk-panel-box" v-if="viewNetwork.peers.length!=0">
+                        <caption>
+                            <div class="uk-grid"  style="margin-bottom: 3px">
+                                <div class="uk-width-5-6"><span class="uk-icon-info-circle"></span> Peer infomation</div>
+                            </div>
+                        </caption>
+                        <thead>
+                        <th>Host Name</th>
+                        <th>IP</th>
+                        </thead>
+                        <tbody>
+                        <tr v-for="peer in viewNetwork.peers">
+                            <td>{{peer.name}}</td>
+                            <td>{{peer.ip}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <!-- 容器信息 -->
