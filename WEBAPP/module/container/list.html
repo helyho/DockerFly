@@ -35,7 +35,6 @@
                 networkList: null,
                 volumeList: null,
                 imageList: null,
-                viewContainerId : null,
                 queryParams:{
                     name:"",
                     id:"",
@@ -322,7 +321,6 @@
                 },
                 //查看容器
                 view: function (container) {
-                    this.viewContainerId = container.id;
                     window.open("viewer.html?id="+container.id);
                 }
             }

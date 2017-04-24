@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <title>DockerFly</title>
 </head>
-<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
-<link rel="stylesheet" href="css/uikit/uikit.css"/>
-<script src="js/common/jquery.min.js"></script>
-<script src="js/common/vue.min.js"></script>
-<script src="js/common/uikit.js"></script>
+<link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico"/>
+<link rel="stylesheet" href="../../css/uikit/uikit.css"/>
+<script src="../../js/common/jquery.min.js"></script>
+<script src="../../js/common/vue.min.js"></script>
+<script src="../../js/common/uikit.js"></script>
 
-<link rel="stylesheet" href="css/main.css"/>
-<script lang="javascript" src="js/utils.js"></script>
+<link rel="stylesheet" href="../../css/main.css"/>
+<script lang="javascript" src="../../js/utils.js"></script>
 <script lang="javascript">
     doImport("org.voovan.docker.command.Network.CmdNetworkCreate")
     doImport("org.voovan.docker.command.Network.CmdNetworkList")
@@ -116,6 +116,10 @@
                     } catch (e) {
                         alertError(e);
                     }
+                },
+                //查看容器
+                view: function (network) {
+                    window.open("viewer.html?id="+network.id);
                 }
             }
         });
@@ -161,13 +165,13 @@
             <thead>
             <tr>
                 <th class="uk-text-center table_colume_index">NO.</th>
-                <th class="uk-width-3-10">ID</th>
+                <th class="uk-width-2-10">ID</th>
                 <th class="uk-width-2-10">Name</th>
                 <th class="uk-width-1-10">Scope</th>
                 <th class="uk-width-1-10">Driver</th>
                 <th class="uk-width-1-10">Subnet</th>
                 <th class="uk-width-1-10">GateWay</th>
-                <th class="uk-width-1-10 uk-text-center">Operation</th>
+                <th class="uk-width-2-10 uk-text-center">Operation</th>
             </tr>
             </thead>
 
@@ -185,8 +189,20 @@
                     <code v-if="network.ipam.config.length > 0">{{network.ipam.config[0].gateway}}</code>
                 </td>
                 <td class="uk-text-center uk-text-middle">
-                    <input class="uk-button uk-button-small uk-button-danger" type="button" value="Remove"
-                           @click="remove(network)"/>
+                    <div class="uk-button-group">
+                        <a href="#" class="uk-button uk-button-primary uk-button-small" @click="view(network)"><span class="uk-icon-list-alt"></span> View</a>
+                        <div data-uk-dropdown="{mode:'click'}">
+                            <!-- 触发下拉菜单的按钮 -->
+                            <a href="" class="uk-button uk-button-primary uk-button-small"><span class="uk-icon-caret-down"></span></a>
+                            <!-- 下拉菜单 -->
+                            <div class="uk-dropdown uk-dropdown-small">
+                                <ul class="uk-nav uk-nav-dropdown uk-text-left">
+                                    <li><a href="#" @click="remove(network)"
+                                           class=" uk-text-danger"><span class="uk-icon-trash"></span> Remove</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </td>
 
             </tr>
@@ -247,7 +263,7 @@
     </div>
     <div class="uk-width-6-6">
         <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
-            <div><img height="27" width="120" src="img/logo.png"/></div>
+            <div><img height="27" width="120" src="../../img/logo.png"/></div>
             <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
             <div>Powered by Voovan open source framework.</div>
             <div></div>

@@ -62,7 +62,7 @@
 
                         if(cmdContainerDetail != null){
                             document.title = delFirestChar(viewContainer.name) +
-                                " [" +viewContainer.state.status+"] DockerFly";
+                                " - Container";
                             return viewContainer;
                         }else {
                             return null;
@@ -374,21 +374,21 @@
                                 </span>
                             </td>
                         </tr>
-                        <tr v-if="JSON.stringify(viewContainer.networkSettings.ports) != '{}'">
+                        <tr v-if="JSON.stringify(viewContainer.hostConfig.portBindings) != '{}'">
                             <th class="uk-width-1-10 uk-text-right summeryField">Export port </th>
                             <td class="uk-text-middle">
-                                <div v-for="(guest,host) in viewContainer.networkSettings.ports">
+                                <div v-for="(guest,host) in viewContainer.hostConfig.portBindings">
                                    <h4 class="uk-margin-bottom-remove">
                                        <span class="uk-badge uk-badge-danger">{{host.split("/")[1].toUpperCase()}}</span>
                                        {{host.split("/")[0]}}
-                                       <span class="uk-icon-exchange"></span> {{guest[0].HostIp}}:{{guest[0].HostPort}}
+                                       <span class="uk-icon-exchange"></span> {{guest[0].HostIp==""?"0.0.0.0":guest[0].HostIp}}:{{guest[0].HostPort}}
                                    </h4>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <th class="uk-width-1-10 uk-text-right summeryField">Created </th>
-                            <td class="uk-text-success">{{viewContainer.created.replace("T"," ").replace(/\..*/g,"")}}</td>
+                            <td class="">{{viewContainer.created|strToDate}}</td>
                         </tr>
                         </tbody>
                     </table>
