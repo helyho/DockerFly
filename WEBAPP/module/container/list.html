@@ -386,10 +386,12 @@
                     <span v-if="container.labels['com.docker.swarm.task']==''"
                           class="icon uk-icon-gears uk-text-danger" title="Swarm container"></span>
                     <span v-if="container.labels['com.docker.swarm.task']==undefined"
-                          class="icon uk-icon-desktop uk-text-success" title="Stander container"></span>
-                     {{container.names[0]|delFirestChar|shortDockerId(18)}}
+                          class="icon uk-icon-desktop uk-text-success uk-text-small" title="Stander container"></span>
+                     {{container.names[0]|delFirestChar}}
                 </td>
-                <td class="uk-text-middle uk-text-warning uk-text-bold uk-text-small">{{container.image | shortDockerId(18)}}</td>
+                <td class="uk-text-middle uk-text-warning uk-text-bold uk-text-small">
+                    {{container.image | shortDockerId(18)}}
+                </td>
                 <td class="uk-text-middle">
                     <div v-for="(network,networkName) in container.networkSettings.networks">
                         <code>

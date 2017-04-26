@@ -178,7 +178,7 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr v-if="viewImage.config.volumes.length != 0">
+                        <tr v-if="viewImage.config.volumes!=null && viewImage.config.volumes.length != 0">
                             <th class="uk-width-1-10 uk-text-right summeryField">Volumes </th>
                             <td class="">
                                 <div v-for="(value,key) in viewImage.config.volumes" class="uk-text-primary uk-text-bold">
