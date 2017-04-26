@@ -84,9 +84,6 @@
                     } catch (e) {
                         alertError(e);
                     }
-                },
-                view: function (volume) {
-                    window.open("viewer.html?id="+volume.name);
                 }
             }
         });
@@ -133,7 +130,9 @@
                 <td class="uk-text-bold uk-text-middle uk-text-success">{{volume.mountpoint |shortDockerId(60)}}</td>
                 <td class="uk-text-center uk-text-middle">
                     <div class="uk-button-group">
-                        <a href="#" class="uk-button uk-button-primary uk-button-small" @click="view(volume)"><span class="uk-icon-list-alt"></span> View</a>
+                        <a :href="'viewer.html?id='+volume.name" class="uk-button uk-button-primary uk-button-small">
+                            <span class="uk-icon-list-alt"></span> View
+                        </a>
                         <div data-uk-dropdown="{mode:'click'}">
                             <!-- 触发下拉菜单的按钮 -->
                             <a href="" class="uk-button uk-button-primary uk-button-small"><span class="uk-icon-caret-down"></span></a>

@@ -146,10 +146,6 @@
                         alertError(e)
                     }
 
-                },
-                //查看镜像
-                view: function (network) {
-                    window.open("viewer.html?id="+network.id);
                 }
             }
         });
@@ -205,7 +201,9 @@
                 <td class="uk-text-bold uk-text-middle uk-text-danger">{{(parseInt(image.size)/1024/1024).toFixed(2)}}</td>
                 <td class="uk-text-center uk-text-middle">
                     <div class="uk-button-group">
-                        <a href="#" class="uk-button uk-button-primary uk-button-small" @click="view(image)"><span class="uk-icon-list-alt"></span> View</a>
+                        <a :href="'viewer.html?id='+image.id" class="uk-button uk-button-primary uk-button-small">
+                            <span class="uk-icon-list-alt"></span> View
+                        </a>
                         <div data-uk-dropdown="{mode:'click'}">
                             <!-- 触发下拉菜单的按钮 -->
                             <a href="" class="uk-button uk-button-primary uk-button-small"><span class="uk-icon-caret-down"></span></a>

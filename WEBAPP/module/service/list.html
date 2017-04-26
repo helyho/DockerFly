@@ -258,10 +258,6 @@
                         alertError(e);
                     }
                 },
-                //查看网络
-                view: function (service) {
-                    window.open("viewer.html?id="+service.id);
-                }
             }
         });
         var urlId = getQueryString("id");
@@ -289,8 +285,7 @@
                     <a class="uk-button uk-button-small" @click="query()"><i class="uk-icon-search"></i></a>
                 </div>
                 <div class="uk-width-1-6 uk-text-right">
-                    <a class="uk-button uk-button-small uk-button-primary"
-                       @click="openCreateDialog"><i class="uk-icon-plus-square"></i> </a>
+                    <a href="create.html" class="uk-button uk-button-small uk-button-primary"><i class="uk-icon-plus-square"></i> </a>
                 </div>
             </div>
         </div>
@@ -336,7 +331,9 @@
                 </td>
                 <td class="uk-text-center uk-text-middle">
                     <div class="uk-button-group">
-                        <a href="#" class="uk-button uk-button-primary uk-button-small" @click="view(service)"><span class="uk-icon-list-alt"></span> View</a>
+                        <a :href="'viewer.html?id='+service.id" class="uk-button uk-button-primary uk-button-small">
+                            <span class="uk-icon-list-alt"></span> View
+                        </a>
                         <div data-uk-dropdown="{mode:'click'}">
                             <!-- 触发下拉菜单的按钮 -->
                             <a href="" class="uk-button uk-button-primary uk-button-small"><span class="uk-icon-caret-down"></span></a>
