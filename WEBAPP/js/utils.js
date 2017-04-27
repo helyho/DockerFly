@@ -76,7 +76,7 @@
         var term = new Terminal({
             cursorBlink: true,
             cols: 136,
-            rows: 20
+            rows: 24
         });
         term.capsLock = false
         term.open(document.getElementById(elementFlag));
