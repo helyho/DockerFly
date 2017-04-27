@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="../../css/uikit/uikit.css"/>
 <script src="../../js/common/jquery.min.js"></script>
 <script src="../../js/common/vue.min.js"></script>
+<script src="../../js/component/switch.js"></script>
 <script src="../../js/common/uikit.js"></script>
 
 <link rel="stylesheet" href="../../css/main.css"/>
@@ -195,152 +196,141 @@
     <div class="uk-width-6-6">
         <div class="uk-panel"></div>
         <h3 class="uk-text-middle"><span class="icon uk-icon-gears"></span> Create a new Service</h3>
-        <div class="uk-form">
-                        <table class="uk-table uk-overflow-service uk-panel-box">
-                        <tr>
+            <div class="uk-form">
+                <table class="uk-table uk-overflow-service uk-panel-box">
+                    <tr>
                         <td class="dialogField">Name:</td>
                         <td><input class="uk-form-width-medium" type="text"
-                        placeholder="e.g. myService" v-model="createParams.name"/></td>
-                        </tr>
-                        <tr>
+                                   placeholder="e.g. myService" v-model="createParams.name"/></td>
+                    </tr>
+                    <tr>
                         <td class="dialogField">Image:</td>
                         <td>
-                        <select class="uk-form-width-medium" v-model="createParams.image" autocomplete="off">
-                        <option v-for="(image,index) in imageList"
-                        :value="image.repoTags[0]"
-                        v-if="image.repoTags.length!=0">{{image.repoTags[0]}}
-                        </option>
-                        </select>
+                            <select class="uk-form-width-medium" v-model="createParams.image" autocomplete="off">
+                                <option v-for="(image,index) in imageList"
+                                        :value="image.repoTags[0]"
+                                v-if="image.repoTags.length!=0">{{image.repoTags[0]}}
+                                </option>
+                            </select>
                         </td>
-                        </tr>
-                        <tr>
+                    </tr>
+                    <tr>
                         <td class="dialogField">Mode:</td>
                         <td class="uk-form">
-                        <input id="global"      type="radio" v-model="createParams.mode" value="global" class="uk-hidden"></input>
-                        <input id="replicated"  type="radio" v-model="createParams.mode" value="replicated" class="uk-hidden"></input>
-                        <div data-uk-button-radio class="uk-button-group">
-                        <a href="#" class="uk-button uk-button-primary" :class="{'uk-active': (createParams.mode=='global')}"
-                        onclick="$('#global').click()">Global</a>
-                        <a href="#" class="uk-button uk-button-primary" :class="{'uk-active': (createParams.mode=='replicated')}"
-                        onclick="$('#replicated').click()">Replicated</a>
-                        </div>
+                            <c-switch bind="createParams.mode"
+                                      :switch='{"Global":"global","Replicated":"replicated"}'
+                                      theme="uk-button-success"></c-switch>
                         </td>
-                        </tr>
-                        <tr v-if="createParams.mode=='replicated'">
+                    </tr>
+                    <tr v-if="createParams.mode=='replicated'">
                         <td class="dialogField">Replicate:</td>
                         <td><input class="uk-form-width-small uk-text-center" type="number"
-                        placeholder="replicate count" v-model="createParams.replicate"/></td>
-                        </tr>
-                        <tr>
+                                   placeholder="replicate count" v-model="createParams.replicate"/></td>
+                    </tr>
+                    <tr>
                         <td class="dialogField">Command:</td>
                         <td><input class="uk-form-width-large" type="text"
-                        placeholder="e.g. /usr/bin/nginx -t -c /mynginx.conf" v-model="createParams.command"/></td>
-                        </tr>
-                        <tr>
+                                   placeholder="e.g. /usr/bin/nginx -t -c /mynginx.conf" v-model="createParams.command"/></td>
+                    </tr>
+                    <tr>
                         <td class="dialogField">Env:</td>
                         <td><input class="uk-form-width-large" type="text"
-                        placeholder="e.g. author=dockerfly,host=linux" v-model="createParams.env"/></td>
-                        </tr>
-                        <tr>
+                                   placeholder="e.g. author=dockerfly,host=linux" v-model="createParams.env"/></td>
+                    </tr>
+                    <tr>
                         <td class="dialogField">CPU:</td>
                         <td><input type="number" class="uk-form-width-small uk-text-center"
-                        placeholder="cpu core count" v-model="createParams.cpuLimit"/></td>
-                        </tr>
-                        <tr>
+                                   placeholder="cpu core count" v-model="createParams.cpuLimit"/></td>
+                    </tr>
+                    <tr>
                         <td class="dialogField">Memory:</td>
                         <td><input type="number" class="uk-form-width-small uk-text-center"
-                        placeholder="memory size (Mb)" v-model="createParams.memoryLimit"/></td>
-                        </tr>
-                        <tr>
+                                   placeholder="memory size (Mb)" v-model="createParams.memoryLimit"/></td>
+                    </tr>
+                    <tr>
                         <td class="dialogField">Network:</td>
                         <td>
-                        <select class="uk-form-width-medium" v-model="createParams.network">
-                        <option value="">Nothing</option>
-                        <option v-for="network in networkList" v-if="network.driver=='overlay'"
-                        :value="network.id">{{network.name}}
-                        </option>
-                        </select>
+                            <select class="uk-form-width-medium" v-model="createParams.network">
+                                <option value="">Nothing</option>
+                                <option v-for="network in networkList" v-if="network.driver=='overlay'"
+                                        :value="network.id">{{network.name}}
+                                </option>
+                            </select>
                         </td>
-                        </tr>
-                        <tr>
+                    </tr>
+                    <tr>
                         <td class="dialogField">Port:</td>
                         <td>
-                        <div class="uk-panel  uk-width-10-10">
-                        <ul class="uk-list uk-list-line ">
-                        <li>
-                        <a href="#" class="uk-button uk-button-primary" @click="createParams.port.add()">
-                        <i class="uk-icon-plus-square"></i> Add export port</a>
-                        </li>
-                        <li v-for="(port,index) in createParams.port.ports">
-                        <div class="uk-grid">
-                        <div class="uk-text-bold uk-text- uk-width-9-10">
-                        <input class="uk-form-width-medium" type="number"
-                        placeholder="e.g. 80 on host" v-model="port.hostPort"/>
-                        &nbsp;:&nbsp;
-                        <input class="uk-form-width-medium" type="number"
-                        placeholder="e.g. 80 on container" v-model="port.containerPort"/>
-                        &nbsp;/&nbsp;
-                        <input :id="'tcps'+index"  type="radio" v-model="port.protocol" value="tcp" class="uk-hidden"></input>
-                        <input :id="'udps'+index"  type="radio" v-model="port.protocol" value="udp" class="uk-hidden"></input>
-                        <div data-uk-button-radio class="uk-button-group">
-                        <a href="#" class="uk-button uk-button-success" :class="{'uk-active': (port.protocol=='tcp')}"
-                        :onclick="'$(\'#tcps'+index+'\').click()'">TCP</a>
-                        <a href="#" class="uk-button uk-button-success" :class="{'uk-active': (port.protocol=='udp')}"
-                        :onclick="'$(\'#udps'+index+'\').click()'">UDP</a>
-                        </div>
-                        </div>
-                        <div class="uk-width-1-10">
-                        <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.port.remove(index)">
-                        <span class="uk-icon-remove"></span>
-                        </a>
-                        </div>
-                        </div>
-                        </li>
-                        </ul>
-                        </div>
+                            <div class="uk-panel  uk-width-10-10">
+                                <ul class="uk-list uk-list-line ">
+                                    <li>
+                                        <a href="#" class="uk-button uk-button-primary" @click="createParams.port.add()">
+                                            <i class="uk-icon-plus-square"></i> Add export port</a>
+                                    </li>
+                                    <li v-for="(port,index) in createParams.port.ports">
+                                        <div class="uk-grid">
+                                            <div class="uk-text-bold uk-text- uk-width-9-10">
+                                                <input class="uk-form-width-medium" type="number"
+                                                       placeholder="e.g. 80 on host" v-model="port.hostPort"/>
+                                                &nbsp;:&nbsp;
+                                                <input class="uk-form-width-medium" type="number"
+                                                       placeholder="e.g. 80 on container" v-model="port.containerPort"/>
+                                                &nbsp;/&nbsp;
+                                                <c-switch :bind="`createParams.port.ports[`+index+`].protocol`"
+                                                          :switch='{"TCP":"tcp","UDP":"udp"}' theme="uk-button-success"></c-switch>
+                                            </div>
+                                            <div class="uk-width-1-10">
+                                                <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.port.remove(index)">
+                                                    <span class="uk-icon-remove"></span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
                         </td>
-                        </tr>
-                        <tr>
+                    </tr>
+                    <tr>
                         <td class="dialogField">Volume:</td>
                         <td>
-                        <div class="uk-panel  uk-width-10-10">
-                        <ul class="uk-list uk-list-line ">
-                        <li>
-                        <a href="#" class="uk-button uk-button-primary" @click="createParams.volume.add()">
-                        <i class="uk-icon-plus-square"></i> Add volume</a>
-                        </li>
-                        <li v-for="(volume,index) in createParams.volume.volumes">
-                        <div class="uk-grid">
-                        <div class="uk-text-bold uk-text- uk-width-9-10">
-                        <select class="uk-form-width-medium" v-model="volume.volumeSource">
-                        <option value="">Nothing</option>
-                        <option v-for="volume in volumeList"
-                        :value="volume.name">{{volume.name}}
-                        </option>
-                        </select>
-                        &nbsp;:&nbsp;
-                        <input class="uk-form-width-medium uk-text-center" type="text"
-                        placeholder="e.g. /temp" v-model="volume.volumeTarget"/>
-                        </div>
-                        <div class="uk-width-1-10">
-                        <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.volume.remove(index)">
-                        <span class="uk-icon-remove"></span>
-                        </a>
-                        </div>
-                        </div>
-                        </li>
+                            <div class="uk-panel  uk-width-10-10">
+                                <ul class="uk-list uk-list-line ">
+                                    <li>
+                                        <a href="#" class="uk-button uk-button-primary" @click="createParams.volume.add()">
+                                            <i class="uk-icon-plus-square"></i> Add volume</a>
+                                    </li>
+                                    <li v-for="(volume,index) in createParams.volume.volumes">
+                                        <div class="uk-grid">
+                                            <div class="uk-text-bold uk-text- uk-width-9-10">
+                                                <select class="uk-form-width-medium" v-model="volume.volumeSource">
+                                                    <option value="">Nothing</option>
+                                                    <option v-for="volume in volumeList"
+                                                            :value="volume.name">{{volume.name}}
+                                                    </option>
+                                                </select>
+                                                &nbsp;:&nbsp;
+                                                <input class="uk-form-width-medium uk-text-center" type="text"
+                                                       placeholder="e.g. /temp" v-model="volume.volumeTarget"/>
+                                            </div>
+                                            <div class="uk-width-1-10">
+                                                <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.volume.remove(index)">
+                                                    <span class="uk-icon-remove"></span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
 
-                        </ul>
-                        </div>
+                                </ul>
+                            </div>
                         </td>
-                        </tr>
-                        <tr>
+                    </tr>
+                    <tr>
                         <td class="dialogField" colspan="2">
-                        <a href="#" class="uk-button uk-button-primary"  @click="create()">Create</a>
+                            <a href="#" class="uk-button uk-button-primary"  @click="create()">Create</a>
                         </td>
-                        </tr>
-                        </table>
-                        </div>
+                    </tr>
+                </table>
+            </div>
     </div>
     <div class="uk-width-6-6">
         <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">

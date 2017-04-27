@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="../../css/uikit/uikit.css"/>
 <script src="../../js/common/jquery.min.js"></script>
 <script src="../../js/common/vue.min.js"></script>
+<script src="../../js/component/switch.js"></script>
 <script src="../../js/common/uikit.js"></script>
 <script src="../../js/common/xterm.js"></script>
 <link rel="stylesheet" href="../../css/main.css"/>
@@ -236,14 +237,7 @@
                 <tr>
                     <td class="dialogField">Privileged:</td>
                     <td>
-                        <input id="privilegedOn"  type="radio" v-model="createParams.privileged" value="true" class="uk-hidden"></input>
-                        <input id="privilegedOff"  type="radio" v-model="createParams.privileged" value="false" class="uk-hidden"></input>
-                        <div data-uk-button-radio class="uk-button-group">
-                            <a href="#" class="uk-button uk-button-success" :class="{'uk-active': (createParams.privileged)}"
-                               onclick="$('#privilegedOn').click()">On</a>
-                            <a href="#" class="uk-button uk-button-success" :class="{'uk-active': (!createParams.privileged)}"
-                               onclick="$('#privilegedOff').click()">Off</a>
-                        </div>
+                       <c-switch bind="createParams.privileged" :switch='{"ON":true,"OFF":false}' theme="uk-button-success"></c-switch>
                     </td>
                 </tr>
                 <tr>
@@ -285,14 +279,8 @@
                                             <input class="uk-form-width-medium" type="number"
                                                    placeholder="e.g. 80 on container" v-model="port.containerPort"/>
                                             &nbsp;/&nbsp;
-                                            <input :id="'tcps'+index"  type="radio" v-model="port.protocol" value="tcp" class="uk-hidden"></input>
-                                            <input :id="'udps'+index"  type="radio" v-model="port.protocol" value="udp" class="uk-hidden"></input>
-                                            <div data-uk-button-radio class="uk-button-group">
-                                                <a href="#" class="uk-button uk-button-success" :class="{'uk-active': (port.protocol=='tcp')}"
-                                                   :onclick="'$(\'#tcps'+index+'\').click()'">TCP</a>
-                                                <a href="#" class="uk-button uk-button-success" :class="{'uk-active': (port.protocol=='udp')}"
-                                                   :onclick="'$(\'#udps'+index+'\').click()'">UDP</a>
-                                            </div>
+                                            <c-switch :bind="`createParams.port.ports[`+index+`].protocol`"
+                                                      :switch='{"TCP":"tcp","UDP":"udp"}' theme="uk-button-success"></c-switch>
                                         </div>
                                         <div class="uk-width-1-10">
                                             <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.port.remove(index)">
