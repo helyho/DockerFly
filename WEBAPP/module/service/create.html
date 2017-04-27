@@ -269,7 +269,7 @@
                                     </li>
                                     <li v-for="(port,index) in createParams.port.ports">
                                         <div class="uk-grid">
-                                            <div class="uk-text-bold uk-text- uk-width-9-10">
+                                            <div class="uk-text- uk-width-9-10">
                                                 <input class="uk-form-width-medium" type="number"
                                                        placeholder="e.g. 80 on host" v-model="port.hostPort"/>
                                                 &nbsp;:&nbsp;
@@ -301,7 +301,7 @@
                                     </li>
                                     <li v-for="(volume,index) in createParams.volume.volumes">
                                         <div class="uk-grid">
-                                            <div class="uk-text-bold uk-text- uk-width-9-10">
+                                            <div class="uk-text- uk-width-9-10">
                                                 <select class="uk-form-width-medium" v-model="volume.volumeSource">
                                                     <option value="">Nothing</option>
                                                     <option v-for="volume in volumeList"
