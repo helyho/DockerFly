@@ -242,7 +242,7 @@
                             this.execInfo.terminal.on("data", function(data){
                                 if(data.length==1) {
                                     if(viewerVue.execInfo.cmdObject!=null) {
-                                        viewerVue.execInfo.cmdObject.send(data);
+                                        viewerVue.execInfo.cmdObject.sendData(data);
                                     }
                                 }
                             })
@@ -254,9 +254,10 @@
                                 var execData = null;
                                 try {
                                     var execData = cmdExecStart.loadStream();
-                                    if (execData != null) {
+                                    if (execData != null && execData!="") {
                                         viewerVue.execInfo.terminal.write(execData);
-                                    } else {
+                                    }
+                                    if(execData == null){
                                         viewerVue.execStop();
                                     }
                                 }catch (e){

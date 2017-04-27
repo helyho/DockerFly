@@ -9,6 +9,7 @@
       "classControl": [
         "org.voovan.docker.command.*"
       ],
+      debug:true,
       "alias":{
         "ovdc":"org\.voovan\.docker\.command"
       }
