@@ -17,6 +17,9 @@
 <script lang="javascript">
     doImport("org.voovan.docker.command.Service.CmdServiceList")
     doImport("org.voovan.docker.command.Network.CmdNetworkList")
+    doImport("org.voovan.docker.command.Task.CmdTaskList")
+    doImport("org.voovan.docker.command.Container.CmdContainerList")
+    doImport("org.voovan.docker.command.Node.CmdNodeList")
 
     function init() {
         viewerVue = new Vue({
@@ -45,6 +48,57 @@
                         } catch (e) {
                             alertError(e)
                         }
+                    },
+                    taskList: function () {
+                        try {
+                            var cmdTaskList = new CmdTaskList();
+                            connect(cmdTaskList);
+                            var serviceId = getQueryString("id");
+                            cmdTaskList.service(serviceId);
+                            var taskList = cmdTaskList.send().sortBy("name");
+                            cmdTaskList.close();
+                            cmdTaskList.release();
+                            return taskList;
+                        } catch (e) {
+                            alertError(e)
+                        }
+                    },
+                    containers: function(){
+                        try {
+                            var containers = [];
+                            var cmdContainerList = new CmdContainerList();
+                            connect(cmdContainerList);
+                            cmdContainerList.all(true)
+
+                            //cmdContainerList.label("author","helyho");
+                            var containerList = cmdContainerList.send().sortBy("id", true);
+                            for(var i=0;i<containerList.length;i++){
+                                var container = containerList[i];
+                                containers[container.id] = container.names[0];
+                            }
+                            cmdContainerList.close();
+                            cmdContainerList.release();
+                            return containers;
+                        } catch (e) {
+                            alertError(e)
+                        }
+                    },
+                    nodes: function(){
+                        var nodes = [];
+                        var cmdNodeList = new CmdNodeList();
+                        connect(cmdNodeList);
+                        //cmdContainerList.label("author","helyho");
+                        var nodeList = cmdNodeList.send().sortBy("name");
+
+                        for(var i=0;i<nodeList.length;i++){
+                            var node = nodeList[i];
+                            nodes[node.id] = {};
+                            nodes[node.id].name =node.spec.name;
+                            nodes[node.id].hostname = node.description.hostname;
+                        }
+                        cmdNodeList.close();
+                        cmdNodeList.release();
+                        return nodes;
                     },
                     networks: function(){
                         try {
@@ -80,6 +134,7 @@
         <ul class="uk-tab" data-uk-switcher="{connect:'#Viewers'}">
             <li><a href="#"><span class="uk-icon-sliders"></span> Summery</a></li>
             <li><a href="#"><span class="uk-icon-database"></span> Resource</a></li>
+            <li><a href="#"><span class="icon uk-icon-tasks"></span> Task</a></li>
         </ul>
         <div id="Viewers" class="uk-switcher">
             <div>
@@ -114,8 +169,6 @@
                                 </span>
                             </td>
                         </tr>
-
-
                         <tr>
                             <th class="uk-width-1-10 uk-text-right summeryField">Scheduling </th>
                             <td class="">{{viewService.spec.mode.type}}</td>
@@ -150,7 +203,7 @@
                         <th class="uk-width-1-10 uk-text-right summeryField">Memory </th>
                         <td class="uk-text-primary">{{viewService.spec.taskTemplate.resources.limits.memoryBytes/1024/1024}} MB</td>
                     </tr>
-                    <tr>
+                    <tr v-if="viewService.spec.endpointSpec.ports.length!=0">
                         <th class="uk-width-1-10 uk-text-right summeryField">Ports </th>
                         <td class="uk-text-muted">
                             <div v-for="port in viewService.spec.endpointSpec.ports">
@@ -199,10 +252,53 @@
                     </thead>
                     <tbody>
                     <tr v-for="mount in viewService.spec.taskTemplate.containerSpec.mounts">
-                        <td class="uk-text-primary">{{mount.type}}</td>
-                        <td class="uk-text-success">{{mount.source}}</td>
-                        <td class="uk-text-danger">{{mount.target}}</td>
+                        <td class="uk-text-primary uk-text-success">{{mount.type}}</td>
+                        <td class="uk-text-success">
+                            <a :href="'../volume/viewer.html?id='+mount.source" v-if="mount.type=='volume'">{{mount.source}}</a>
+                            <span v-else>{{mount.source}}</span>
+                        </td>
+                        <td class="uk-text-danger uk-text-bold">{{mount.target}}</td>
                         <td><span class="uk-text-warning" :class="{'uk-icon-check-square':mount.readOnly,'uk-icon-check-square-o':!mount.readOnly}"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- 任务信息 -->
+            <div style="height: 400px;">
+                <table id="taskList" class="uk-table uk-overflow-container uk-panel-box">
+                    <thead>
+                    <tr>
+                        <th class="uk-width-1-10 uk-text-center">ID</th>
+                        <th class="uk-width-1-10 uk-text-center">Slot</th>
+                        <th class="uk-width-2-10">Name ( node / host ) </th>
+                        <th class="uk-width-2-10">Container</th>
+                        <th class="uk-width-1-10 uk-text-center">State</th>
+                        <th class="uk-width-2-10 uk-text-center">Create</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr v-for="(task,index) in taskList">
+                        <td class=" uk-text-middle uk-text-bold uk-text-primary uk-text-center">{{task.id | shortDockerId(12)}}</td>
+                        <td class=" uk-text-middle uk-text-center">{{task.slot}}</td>
+                        <td class=" uk-text-middle uk-text-bold ">
+                            <a class="uk-text-success" :href="'../node/list.html?id='+task.nodeId">
+                                <span class="uk-text-warning">{{nodes[task.nodeId].name}}</span> /
+                                <span class="uk-text-success">{{nodes[task.nodeId].hostname}}</span>
+                            </a>
+                        </td>
+                        <td class=" uk-text-middle uk-text-bold ">
+                            <a class="uk-text-danger" :href="'/module/container/viewer.html?id='+task.status.containerStatus.containerId"
+                               target="viewer"
+                               v-if="containers[task.status.containerStatus.containerId]!=null">
+                                <span class="uk-text-success running"></span> {{containers[task.status.containerStatus.containerId]|delFirestChar|shortDockerId(18)}}
+                            </a>
+                            <span class="uk-text-danger" v-else>
+                                <span class="uk-text-primary stop"></span> {{task.status.containerStatus.containerId|shortDockerId(12)}}
+                            </span>
+                        </td>
+                        <td class=" uk-text-middle uk-text-bold uk-text-center">{{task.status.state}}</td>
+                        <td class=" uk-text-middle uk-text-small uk-text-center">{{task.createdAt|strToDate}}</td>
                     </tr>
                     </tbody>
                 </table>

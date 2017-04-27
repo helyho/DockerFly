@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <title>DockerFly</title>
 </head>
-<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
-<link rel="stylesheet" href="css/uikit/uikit.css"/>
-<script src="js/common/jquery.min.js"></script>
-<script src="js/common/vue.min.js"></script>
-<script src="js/common/uikit.js"></script>
+<link rel="shortcut icon" type="image/x-icon" href="../../img/favicon.ico"/>
+<link rel="stylesheet" href="../../css/uikit/uikit.css"/>
+<script src="../../js/common/jquery.min.js"></script>
+<script src="../../js/common/vue.min.js"></script>
+<script src="../../js/common/uikit.js"></script>
 
-<link rel="stylesheet" href="css/main.css"/>
-<script lang="javascript" src="js/utils.js"></script>
+<link rel="stylesheet" href="../../css/main.css"/>
+<script lang="javascript" src="../../js/utils.js"></script>
 <script lang="javascript">
     doImport("org.voovan.docker.command.Node.CmdNodeList")
     doImport("org.voovan.docker.command.Node.CmdNodeRemove")
@@ -157,13 +157,13 @@
             <thead>
             <tr>
                 <th class="uk-text-center table_colume_index">NO.</th>
-                <th class="uk-width-2-10">ID</th>
-                <th class="uk-width-1-10">Name</th>
+                <th class="uk-width-1-10">ID</th>
+                <th class="uk-width-2-10">Name ( node / host ) </th>
                 <th class="uk-width-1-10">Role</th>
                 <th class="uk-width-1-10">Status</th>
                 <th class="uk-width-1-10">Availability</th>
-                <th class="uk-width-1-10">Resource</th>
-                <th class="uk-width-2-10">Platform</th>
+                <th class="uk-width-1-10" style="width: 100px">Resource</th>
+                <th class="uk-width-1-10">Platform</th>
                 <th class="uk-text-center uk-width-1-10">Opertaion</th>
             </tr>
             </thead>
@@ -171,18 +171,18 @@
             <tbody>
             <tr v-for="(node,index) in nodeList" :class='{ created: node.managerStatus.leader=="true" }'>
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
-                <td class="uk-text-middle uk-text-bold uk-text-primary">
+                <td class="uk-text-middle uk-text-bold uk-text-primary uk-text-small">
                     <span v-if='node.managerStatus.leader=="true"' class="uk-text-danger uk-icon-leaf" title="Leader"></span>
                     {{node.id|shortDockerId(12)}}
                 </td>
-                <td class="uk-text-middle uk-text-success">
-
-                    <span v-if="node.spec.name==null">
-                        <a href='#' class="uk-button uk-button-success uk-button-mini" @click='updateName(node)'>Set name</a>
+                <td class="uk-text-middle ">
+                    <span class="uk-text-warning">
+                        <a href='#' class="uk-button uk-button-success uk-button-mini"
+                           v-if="node.spec.name==null" @click='updateName(node)'>set node name</a>
+                        <span v-else>{{node.spec.name}}</span>
                     </span>
-                    <span v-else>
-                        {{node.spec.name}}
-                    </span>
+                    /
+                    <span class="uk-text-success">{{node.description.hostname}}</span>
                 </td>
                 <td class="uk-text-middle uk-text-warning">{{node.spec.role}}</td>
                 <td class="uk-text-middle">{{node.status.state}}</td>
@@ -191,9 +191,10 @@
                 </td>
                 <td class="uk-text-small uk-text-middle uk-text-danger">
                     <span class="uk-text-primary">CPU: {{node.description.resources.nanoCPUs/1000000000}}</span><br>
-                    <span class="uk-text-success">MEM: {{(node.description.resources.memoryBytes/1024/1024).toFixed(0)}}MB</span>
+                    <span class="uk-text-success">MEM: {{(node.description.resources.memoryBytes/1024/1024).toFixed(0)}}MB</span><br>
+                    <span class="uk-text-warning">IP: {{node.status.addr}}</span>
                 </td>
-                <td class="uk-text-middle uk-width-1-10">{{node.description.hostname}} ( {{node.description.platform.os}}-{{node.description.platform.architecture}} )</td>
+                <td class="uk-text-middle uk-width-1-10">{{node.description.platform.os}}-{{node.description.platform.architecture}}</td>
                 <td class="uk-text-center uk-text-middle">
                     <div class="uk-button-group">
                         <a href="#" class="uk-button uk-button-primary uk-button-small" @click="openUpdateDialog(node)">
@@ -222,11 +223,6 @@
             <div class="uk-form">
                 <table class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
-                        <td class="dialogField">Name:</td>
-                        <td><input class="uk-form-width-medium" type="text"
-                                   placeholder="node name" v-model="updateParams.name"/></td>
-                    </tr>
-                    <tr>
                         <td class="dialogField">Driver:</td>
                         <td>
                             <select class="uk-form-width-medium" v-model="updateParams.role">
@@ -246,6 +242,11 @@
                         </td>
                     </tr>
                     <tr>
+                        <td class="dialogField">Node name:</td>
+                        <td><input class="uk-form-width-medium" type="text"
+                                   placeholder="node name" v-model="updateParams.name"/></td>
+                    </tr>
+                    <tr>
                         <td class="uk-text-right" colspan="2">
                             <a class="uk-button uk-button-primary" @click="update()">Update</a>
                         </td>
@@ -256,7 +257,7 @@
     </div>
     <div class="uk-width-6-6">
         <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
-            <div><img height="27" width="120" src="img/logo.png"/></div>
+            <div><img height="27" width="120" src="../../img/logo.png"/></div>
             <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
             <div>Powered by Voovan open source framework.</div>
             <div></div>

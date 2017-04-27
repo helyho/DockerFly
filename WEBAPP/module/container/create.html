@@ -16,6 +16,8 @@
 
 <script lang="javascript" src="../../js/utils.js"></script>
 <script lang="javascript">
+
+    doImport("org.voovan.docker.command.Container.CmdContainerList")
     doImport("org.voovan.docker.command.Container.CmdContainerCreate")
 
     doImport("org.voovan.docker.command.Image.CmdImageList")
@@ -76,6 +78,22 @@
                         }
                     }
                 }
+            },
+            computed:{
+              containerList: function(){
+                  try {
+                      var cmdContainerList = new CmdContainerList();
+                      connect(cmdContainerList);
+                      cmdContainerList.all(true)
+
+                      var containerList = cmdContainerList.send().sortBy("id", true);
+                      cmdContainerList.close();
+                      cmdContainerList.release();
+                      return containerList;
+                  } catch (e) {
+                      alertError(e)
+                  }
+              }
             },
             methods: {
                 //为创建容器准备参数
@@ -313,7 +331,7 @@
                                             </select>
                                             &nbsp;:&nbsp;
                                             <input class="uk-form-width-medium uk-text-center" type="text"
-                                                   placeholder="e.g. /temp" v-model="volume.volumeTarget"/>
+                                                   placeholder="e.g. temp" v-model="volume.volumeTarget"/>
                                         </div>
                                         <div class="uk-width-1-10">
                                             <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.volume.remove(index)">

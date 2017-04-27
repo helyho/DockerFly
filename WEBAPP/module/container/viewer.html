@@ -429,17 +429,18 @@
                         </caption>
                         <thead class="uk-text-center">
                         <th class="uk-width-1-10 uk-text-center">Type</th>
-                        <th class="uk-width-1-10 uk-text-center">Driver</th>
-                        <th class="uk-width-2-10 ">Destination</th>
                         <th class="uk-width-2-10 ">Source</th>
+                        <th class="uk-width-2-10 ">Destination</th>
                         <th class="uk-width-1-10 uk-text-center">RW</th>
                         </thead>
                         <tbody>
                         <tr v-for=" mount in viewContainer.mounts">
                             <td class="uk-text-center uk-text-success">{{mount.type}}</td>
-                            <td class="uk-text-center">{{mount.driver==null?"none":mount.driver}}</td>
+                            <td class="uk-text-primary">
+                                <a :href="'../volume/viewer.html?id='+mount.name" v-if="mount.type=='volume'">{{mount.source}}</a>
+                                <span v-else>{{mount.source}}</span>
+                            </td>
                             <td class="uk-text-danger uk-text-bold">{{mount.destination}}</td>
-                            <td class="uk-text-primary">{{mount.source}}</td>
                             <td class="uk-text-center">
                                 <span class="uk-text-warning" :class="{'uk-icon-check-square':mount.rw,'uk-icon-check-square-o':!mount.rw}"></span>
                             </td>

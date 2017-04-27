@@ -18,6 +18,7 @@
     doImport("org.voovan.docker.command.Service.CmdServiceRemove")
     doImport("org.voovan.docker.command.Service.CmdServiceUpdate")
 
+    doImport("org.voovan.docker.command.Task.CmdTaskList")
     doImport("org.voovan.docker.command.Image.CmdImageList")
     doImport("org.voovan.docker.command.Network.CmdNetworkList")
     doImport("org.voovan.docker.command.Volume.CmdVolumeList")
@@ -30,49 +31,11 @@
                 networkList: null,
                 volumeList: null,
                 imageList: null,
+                servicdTaskCountList:{},
                 queryParams:{
                     name:"",
                     id:"",
                     status:"All"
-                },
-                createParams:{
-                    cpuPeriod:100000,
-                    name:"",
-                    image:"",
-                    command:"",
-                    env:"",
-                    mode:"replicated",
-                    cpuLimit:1,
-                    memoryLimit:64,
-                    cpuReservation:0,
-                    memoryReservation:0,
-                    network:"",
-                    port: {
-                        ports:[],
-                        add: function(){
-                            var port = {};
-                            port.hostPort = null;
-                            port.containerPort = null;
-                            port.protocol = "tcp";
-                            this.ports.push(port);
-                        },
-                        remove: function(index){
-                            this.ports.remove(index)
-                        }
-                    },
-                    volume:{
-                        volumes:[],
-                        add: function(){
-                            var volume = {};
-                            volume.volumeSource = null;
-                            volume.volumeTarget = null;
-                            this.volumes.push(volume);
-                        },
-                        remove: function(index){
-                            this.volumes.remove(index)
-                        }
-                    },
-                    replicate:1
                 }
             },
             methods: {
@@ -97,8 +60,30 @@
                     } catch (e) {
                         alertError(e)
                     }
-                },
 
+                    //读取并统计任务数
+                    try {
+                        var cmdTaskList = new CmdTaskList();
+                        connect(cmdTaskList);
+                        var taskList = cmdTaskList.send().sortBy("name");
+                        cmdTaskList.close();
+                        cmdTaskList.release();
+                        var servicdTaskCountList = {};
+
+                        for(var i=0;i<taskList.length;i++) {
+                            task = taskList[i];
+                            if(servicdTaskCountList[task.serviceId]==undefined){
+                                servicdTaskCountList[task.serviceId] = 1;
+                            }else{
+                                servicdTaskCountList[task.serviceId] = servicdTaskCountList[task.serviceId] +1;
+                            }
+                        }
+
+                        this.servicdTaskCountList = servicdTaskCountList;
+                    } catch (e) {
+                        alertError(e)
+                    }
+                },
                 //移除方法
                 remove: function (service) {
                     try{
@@ -137,127 +122,7 @@
                             alertError(e)
                         }
                     });
-                },
-
-                openCreateDialog: function () {
-                    try{
-                        serviceListVue.getImageList();
-                        serviceListVue.getNetworkList();
-                        serviceListVue.getVolumeList();
-                    } catch (e) {
-                        alertError(e)
-                    }
-                    createServiceDialog = UIkit.modal("#createServiceDialog");
-                    createServiceDialog.show();
-                },
-                getImageList: function () {
-                    try{
-                        var cmdImageList = new CmdImageList();
-                        connect(cmdImageList);
-
-                        this.imageList = cmdImageList.send().sortBy("Created");
-                        cmdImageList.close();
-                        cmdImageList.release();
-                    } catch (e) {
-                        alertError(e)
-                    }
-                },
-                getNetworkList: function () {
-                    try{
-                        var cmdNetworkList = new CmdNetworkList();
-                        connect(cmdNetworkList);
-                        //cmdNetworkList.type("custom");
-                        this.networkList = cmdNetworkList.send().sortBy("name");
-                        cmdNetworkList.close();
-                        cmdNetworkList.release();
-                    } catch (e) {
-                        alertError(e)
-                    }
-                },
-                getVolumeList: function () {
-                    try{
-                        var cmdVolumeList = new CmdVolumeList();
-                        connect(cmdVolumeList);
-                        this.volumeList = cmdVolumeList.send().sortBy("name");
-                        cmdVolumeList.close();
-                        cmdVolumeList.release();
-                    } catch (e) {
-                        alertError(e)
-                    }
-                },
-                create: function () {
-                    try {
-
-                        var cmdServiceCreate = new CmdServiceCreate();
-                        connect(cmdServiceCreate);
-
-                        if(this.createParams.name!=""){
-                            cmdServiceCreate.name(this.createParams.name);
-                        }
-
-                        if (this.createParams.image != "") {
-                            cmdServiceCreate.image(this.createParams.image);
-                        }
-
-                        if (this.createParams.command != "") {
-                            cmdServiceCreate.cmd(this.createParams.command.split(" "));
-                        }
-
-                        if (this.createParams.env != "") {
-                            cmdServiceCreate.env(this.createParams.env.split(","));
-                        }
-
-                        if (this.createParams.cpuLimit != "") {
-                            cmdServiceCreate.cpuLimit(this.createParams.cpuLimit);
-                        }
-
-                        if (this.createParams.memoryLimit != "") {
-                            cmdServiceCreate.memoryLimit(this.createParams.memoryLimit);
-                        }
-
-                        if (this.createParams.cpuReservation != "") {
-                            cmdServiceCreate.cpuReservation(this.createParams.cpuReservation);
-                        }
-
-                        if (this.createParams.memoryReservation != "") {
-                            cmdServiceCreate.memoryReservation(this.createParams.memoryReservation);
-                        }
-
-                        if (this.createParams.network != "") {
-                            cmdServiceCreate.network(this.createParams.network);
-                        }
-
-                        if (this.createParams.port.ports.length > 0) {
-                            for(var i = 0; i<this.createParams.port.ports.length; i++) {
-                                var port = this.createParams.port.ports[i];
-                                cmdServiceCreate.port(port.protocol, port.containerPort, port.hostPort);
-                            }
-                        }
-                        if (this.createParams.volume.volumes.length > 0) {
-                            var volumes = new Array();
-                            for(var i = 0; i<this.createParams.volume.volumes.length; i++) {
-                                var volume = this.createParams.volume.volumes[i];
-                                if (volume.linkName != "") {
-                                    cmdServiceCreate.mount( "volume", volume.volumeSource , "/"+volume.volumeTarget, false);
-                                } else {
-                                    cmdServiceCreate.mount("volume", volume.volumeSource , "/"+volume.volumeSource, false);
-                                }
-                            }
-                        }
-
-                        if (this.createParams.replicate != "") {
-                            cmdServiceCreate.replicate(this.createParams.replicate);
-                        }
-
-                        cmdServiceCreate.send();
-                        cmdServiceCreate.close();
-                        createServiceDialog.hide();
-                        alert("Create service success.");
-                        serviceListVue.query();
-                    } catch (e) {
-                        alertError(e);
-                    }
-                },
+                }
             }
         });
         var urlId = getQueryString("id");
@@ -298,7 +163,7 @@
                 <th>Name</th>
                 <th>Image</th>
                 <th>IP</th>
-                <th>Replicas</th>
+                <th class="uk-text-center">Replicas</th>
                 <th class="uk-text-center">Created</th>
                 <th class="uk-text-center">Updated</th>
                 <th class="uk-text-center">Operation</th>
@@ -322,7 +187,7 @@
                         <code>{{virtualIP.addr}}</code>
                     </div>
                 </td>
-                <td class="uk-text-middle uk-text-bold uk-text-success uk-text-center">{{service.spec.mode.replicated.replicas}}</td>
+                <td class="uk-text-middle uk-text-bold uk-text-success uk-text-center">{{servicdTaskCountList[service.id]}} / {{service.spec.mode.replicated.replicas}}</td>
                 <td class="uk-text-middle uk-text-center">
                    {{service.createdAt|strToDate}}
                 </td>
@@ -354,158 +219,6 @@
             </tr>
             </tbody>
         </table>
-    </div>
-    <div id="createServiceDialog" class="uk-modal">
-        <div class="uk-modal-dialog uk-modal-dialog-large uk-overflow-service">
-            <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
-            <div class="uk-modal-header"><h3 class="uk-text-bold uk-text-primary"><span class="icon uk-icon-gears"></span>&nbsp;&nbsp;Create a new service</h32></div>
-            <div class="uk-form">
-                <table class="uk-table uk-overflow-service uk-panel-box">
-                    <tr>
-                        <td class="dialogField">Name:</td>
-                        <td><input class="uk-form-width-medium" type="text"
-                                   placeholder="e.g. myService" v-model="createParams.name"/></td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">Image:</td>
-                        <td>
-                            <select class="uk-form-width-medium" v-model="createParams.image" autocomplete="off">
-                                <option v-for="(image,index) in imageList"
-                                        :value="image.repoTags[0]"
-                                v-if="image.repoTags.length!=0">{{image.repoTags[0]}}
-                                </option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">Mode:</td>
-                        <td class="uk-form">
-                            <input id="global"      type="radio" v-model="createParams.mode" value="global" class="uk-hidden"></input>
-                            <input id="replicated"  type="radio" v-model="createParams.mode" value="replicated" class="uk-hidden"></input>
-                            <div data-uk-button-radio class="uk-button-group">
-                                <a href="#" class="uk-button uk-button-primary" :class="{'uk-active': (createParams.mode=='global')}"
-                                   onclick="$('#global').click()">Global</a>
-                                <a href="#" class="uk-button uk-button-primary" :class="{'uk-active': (createParams.mode=='replicated')}"
-                                   onclick="$('#replicated').click()">Replicated</a>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-if="createParams.mode=='replicated'">
-                        <td class="dialogField">Replicate:</td>
-                        <td><input class="uk-form-width-small uk-text-center" type="number"
-                                   placeholder="replicate count" v-model="createParams.replicate"/></td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">Command:</td>
-                        <td><input class="uk-form-width-large" type="text"
-                                   placeholder="e.g. /usr/bin/nginx -t -c /mynginx.conf" v-model="createParams.command"/></td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">Env:</td>
-                        <td><input class="uk-form-width-large" type="text"
-                                   placeholder="e.g. author=dockerfly,host=linux" v-model="createParams.env"/></td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">CPU:</td>
-                        <td><input type="number" class="uk-form-width-small uk-text-center"
-                                   placeholder="cpu core count" v-model="createParams.cpuLimit"/></td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">Memory:</td>
-                        <td><input type="number" class="uk-form-width-small uk-text-center"
-                                   placeholder="memory size (Mb)" v-model="createParams.memoryLimit"/></td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">Network:</td>
-                        <td>
-                            <select class="uk-form-width-medium" v-model="createParams.network">
-                                <option value="">Nothing</option>
-                                <option v-for="network in networkList" v-if="network.driver=='overlay'"
-                                        :value="network.id">{{network.name}}
-                                </option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">Port:</td>
-                        <td>
-                            <div class="uk-panel  uk-width-10-10">
-                                <ul class="uk-list uk-list-line ">
-                                    <li>
-                                        <a href="#" class="uk-button uk-button-primary" @click="createParams.port.add()">
-                                            <i class="uk-icon-plus-square"></i> Add export port</a>
-                                    </li>
-                                    <li v-for="(port,index) in createParams.port.ports">
-                                        <div class="uk-grid">
-                                            <div class="uk-text-bold uk-text- uk-width-9-10">
-                                                <input class="uk-form-width-medium" type="number"
-                                                       placeholder="e.g. 80 on host" v-model="port.hostPort"/>
-                                                &nbsp;:&nbsp;
-                                                <input class="uk-form-width-medium" type="number"
-                                                       placeholder="e.g. 80 on container" v-model="port.containerPort"/>
-                                                &nbsp;/&nbsp;
-                                                <input :id="'tcps'+index"  type="radio" v-model="port.protocol" value="tcp" class="uk-hidden"></input>
-                                                <input :id="'udps'+index"  type="radio" v-model="port.protocol" value="udp" class="uk-hidden"></input>
-                                                <div data-uk-button-radio class="uk-button-group">
-                                                    <a href="#" class="uk-button uk-button-success" :class="{'uk-active': (port.protocol=='tcp')}"
-                                                       :onclick="'$(\'#tcps'+index+'\').click()'">TCP</a>
-                                                    <a href="#" class="uk-button uk-button-success" :class="{'uk-active': (port.protocol=='udp')}"
-                                                       :onclick="'$(\'#udps'+index+'\').click()'">UDP</a>
-                                                </div>
-                                            </div>
-                                            <div class="uk-width-1-10">
-                                                <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.port.remove(index)">
-                                                    <span class="uk-icon-remove"></span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">Volume:</td>
-                        <td>
-                            <div class="uk-panel  uk-width-10-10">
-                                <ul class="uk-list uk-list-line ">
-                                    <li>
-                                        <a href="#" class="uk-button uk-button-primary" @click="createParams.volume.add()">
-                                            <i class="uk-icon-plus-square"></i> Add volume</a>
-                                    </li>
-                                    <li v-for="(volume,index) in createParams.volume.volumes">
-                                        <div class="uk-grid">
-                                            <div class="uk-text-bold uk-text- uk-width-9-10">
-                                                <select class="uk-form-width-medium" v-model="volume.volumeSource">
-                                                    <option value="">Nothing</option>
-                                                    <option v-for="volume in volumeList"
-                                                            :value="volume.name">{{volume.name}}
-                                                    </option>
-                                                </select>
-                                                &nbsp;:&nbsp;
-                                                <input class="uk-form-width-medium uk-text-center" type="text"
-                                                       placeholder="e.g. /temp" v-model="volume.volumeTarget"/>
-                                            </div>
-                                            <div class="uk-width-1-10">
-                                                <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.volume.remove(index)">
-                                                    <span class="uk-icon-remove"></span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </li>
-
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField" colspan="2">
-                            <a href="#" class="uk-button uk-button-primary"  @click="create()">Create</a>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
     </div>
     <div class="uk-width-6-6">
         <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
