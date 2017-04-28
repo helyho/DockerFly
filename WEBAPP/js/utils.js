@@ -64,7 +64,9 @@
             } else if(e.name == "NetworkError"){
                 errMsg = "Network has some problem, check it."
             }
-        }else {
+        } else if(typeof(e)=="string"){
+            errMsg = errMsg + e;
+        } else {
             errMsg = errMsg + "[" + e.name+ "] "+ e.message;
         }
         errMsg = errMsg+"</div>"

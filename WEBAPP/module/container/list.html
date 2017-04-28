@@ -96,7 +96,7 @@
                             cmdContainerStop.release();
                             containerListVue.query()
                         }, function(){
-                            throw new Error("Stop container "+delFirestChar(container.names[0])+"failed");
+                            alertError("Stop container "+delFirestChar(container.names[0])+" failed");
                             cmdContainerStop.close();
                             cmdContainerStop.release();
                         });

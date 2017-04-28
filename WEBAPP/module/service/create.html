@@ -178,7 +178,7 @@
                             cmdServiceCreate.release();
                             serviceListVue.query()
                         }, function(){
-                            throw new Error("Create service "+this.createParams.name+" failed");
+                            alertError("Create service "+this.createParams.name+" failed");
                             cmdServiceCreate.close();
                             cmdServiceCreate.release();
                         });

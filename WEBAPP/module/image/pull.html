@@ -46,7 +46,7 @@
                             cmdHubImageInfo.close();
                             cmdHubImageInfo.release();
                         }, function(){
-                            throw new Error("Search image "+imageListVue.searchParams.name+"failed");
+                            alertError("Search image "+imageListVue.searchParams.name+" failed");
                             cmdHubImageInfo.close();
                             cmdHubImageInfo.release();
                         })
@@ -71,7 +71,7 @@
                                 cmdImageCreate.close();
                                 cmdImageCreate.release();
                             }, function(){
-                                throw new Error("Pull image failed");
+                                alertError("Pull image failed");
                                 cmdImageCreate.close();
                                 cmdImageCreate.release();
                             });
