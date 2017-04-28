@@ -24,14 +24,8 @@
             el: '#imageApp',
             data: {
                 imageList: null,
-                hubImageList: null,
-                pullTag:"latest",
                 queryParams:{
                     name:""
-                },
-                searchParams:{
-                    name:"",
-                    limit:5
                 }
             },
             methods: {
@@ -77,8 +71,6 @@
                             alertError(e)
                         }
                     });
-
-
                 },
                 //重命名
                 tag: function (image) {
@@ -101,51 +93,6 @@
                             alertError(e)
                         }
                     });
-
-
-                },
-                search: function () {
-                    try {
-                        if (this.searchParams.name == "") {
-                            return
-                        }
-                        var cmdHubImageInfo = new CmdHubImageInfo();
-                        connect(cmdHubImageInfo);
-                        cmdHubImageInfo.term(this.searchParams.name);
-                        cmdHubImageInfo.limit(this.searchParams.limit);
-                        this.hubImageList = cmdHubImageInfo.send().sortBy("star_count", true);
-                        cmdHubImageInfo.close();
-                        cmdHubImageInfo.release();
-                    } catch (e) {
-                        alertError(e)
-                    }
-                },
-                openPullDialog: function(){
-                    pullImageDialog = UIkit.modal("#pullImageDialog");
-                    pullImageDialog.show();
-                },
-                pull: function (hubImage) {
-                    try {
-                        this.pullTag = "latest";
-                        UIkit.modal.prompt("Pull an image with tag:", this.pullTag, function(newvalue) {
-                            this.pullTag = newvalue;
-                            var cmdImageCreate = new CmdImageCreate();
-                            connect(cmdImageCreate);
-                            cmdImageCreate.fromImage(hubImage.name);
-                            cmdImageCreate.tag(this.pullTag);
-
-                            cmdImageCreate.send();
-                            cmdImageCreate.close();
-
-                            hubImageList.hide();
-                            alert("Image " + hubImage.name + " already pulled.");
-                            imageListVue.query();
-                        })
-
-                    } catch (e) {
-                        alertError(e)
-                    }
-
                 }
             }
         });
@@ -157,7 +104,17 @@
 <div id="imageApp" class="uk-grid" style="display: none" v-show="this.imageList!=null">
     <div class="uk-width-6-6">
         <div class="uk-panel"></div>
-        <h3 class="uk-text-middle"><span class="icon uk-icon-object-group"></span> Image manager</h3>
+        <h3></h3>
+        <div class="uk-grid uk-margin">
+            <div class="uk-width-1-2">
+                <h3 class="uk-text-middle">
+                    <span class="icon uk-icon-object-group"></span> Image manager
+                </h3>
+            </div>
+            <div class="uk-width-1-2 uk-text-right">
+                <a href="list.html"><span class="uk-icon-refresh"></span></a>
+            </div>
+        </div>
         <div class="uk-panel uk-panel-box uk-text-bold">
             <div class="uk-grid">
                 <div class="uk-width-5-6 uk-form">
@@ -167,8 +124,9 @@
                     <a class="uk-button uk-button-small" @click="query()"><i class="uk-icon-search"></i></a>
                 </div>
                 <div class="uk-width-1-6 uk-text-right">
-                    <a class="uk-button uk-button-small uk-button-primary"
-                       @click="openPullDialog"><i class="uk-icon-plus-square"></i> </a>
+                    <a href="pull.html"  class="uk-button uk-button-small uk-button-primary">
+                        <i class="uk-icon-plus-square"></i>
+                    </a>
                 </div>
             </div>
         </div>
@@ -225,65 +183,9 @@
             </tr>
             </tbody>
         </table>
-
-    </div>
-
-    <div id="pullImageDialog" class="uk-modal">
-        <div class="uk-modal-dialog uk-modal-dialog-large uk-overflow-container">
-            <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
-            <h3 class="uk-text-bold uk-text-primary"><span class="icon uk-icon-object-group"></span>&nbsp;Pull image</h3>
-            <div class="uk-panel uk-panel-box uk-text-bold">
-                <div class="uk-grid">
-                    <div class="uk-width-5-6 uk-form">
-                        <span class="mr5">Name:</span>
-                        <input class="uk-form-width-medium"
-                               type="text" placeholder="image's name" v-model="searchParams.name"/>
-                        <select v-model="searchParams.limit">
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="30">30</option>
-                            <option value="40">40</option>
-                            <option value="50">50</option>
-                        </select>
-                        <a class="uk-button uk-button-small" @click="search()"><i class="uk-icon-search"></i></a>
-                    </div>
-                </div>
-            </div>
-
-            <table id="hubImageList" class="uk-table uk-overflow-container uk-panel-box"
-                    v-if="hubImageList!=null">
-                <caption>Image list</caption>
-                <thead>
-                <tr>
-                    <th class="uk-text-center table_colume_index">NO.</th>
-                    <th class="uk-width-1-10">Name</th>
-                    <th class="uk-width-1-10">Star</th>
-                    <th class="uk-text-center uk-width-1-10">Official</th>
-                    <th class="uk-width-4-10">Description</th>
-                    <th class="uk-text-center">Operation</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="(hubImage,index) in hubImageList " :key='hubImage.star_count'>
-                    <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
-                    <td class="uk-text-bold uk-text-middle uk-text-primary">
-                        {{hubImage.name}}
-                    </td>
-                    <td class="uk-text-bold uk-text-middle uk-text-success">{{hubImage.star_count}}</td>
-                    <td class="uk-text-center">{{hubImage.is_official}}</td>
-                    <td>{{hubImage.description}}</td>
-                    <td class="uk-text-center uk-text-middle">
-                        <input class="uk-button uk-button-small uk-button-primary" type="button" value="Pull"
-                               @click="pull(hubImage)"/>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
     </div>
     <div class="uk-width-6-6">
-        <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
+        <div style="min-height:40px;" class="uk-text-center uk-margin-bottom">
             <div><img height="27" width="120" src="../../img/logo.png"/></div>
             <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
             <div>Powered by Voovan open source framework.</div>

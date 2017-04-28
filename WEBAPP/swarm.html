@@ -144,7 +144,9 @@
 <body onload="init()" class="frameBody">
 <div id="dockerApp" class="uk-grid">
     <div class="uk-width-6-6">
-        <div style="margin-top:25px; display: none" v-if="swarmInfo!=null" v-show="swarmInfo!=null" >
+        <div class="uk-panel"></div>
+        <h3></h3>
+        <div style="display: none" v-if="swarmInfo!=null" v-show="swarmInfo!=null" >
             <h3 class="uk-text-middle"><span class="icon uk-icon-connectdevelop"></span> Swarm info</h3>
             <table class="uk-table uk-overflow-container uk-panel-box">
                 <tbody>
@@ -286,7 +288,7 @@
         </div>
     </div>
     <div class="uk-width-6-6">
-        <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
+        <div style="min-height:40px;" class="uk-text-center uk-margin-bottom">
             <div><img height="27" width="120" src="img/logo.png"/></div>
             <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
             <div>Powered by Voovan open source framework.</div>

@@ -172,8 +172,16 @@
                             cmdServiceCreate.replicate(this.createParams.replicate);
                         }
 
-                        cmdServiceCreate.send();
-                        cmdServiceCreate.close();
+                        cmdServiceCreate.send(function(){
+                            alert("<span class='uk-text-large uk-text-primary'>Service "+this.createParams.name+" created.</span>")
+                            cmdServiceCreate.close();
+                            cmdServiceCreate.release();
+                            serviceListVue.query()
+                        }, function(){
+                            throw new Error("Create service "+this.createParams.name+" failed");
+                            cmdServiceCreate.close();
+                            cmdServiceCreate.release();
+                        });
                         alert("Create service success.");
                     } catch (e) {
                         alertError(e);
@@ -333,7 +341,7 @@
             </div>
     </div>
     <div class="uk-width-6-6">
-        <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
+        <div style="min-height:40px;" class="uk-text-center uk-margin-bottom">
             <div><img height="27" width="120" src="../../img/logo.png"/></div>
             <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
             <div>Powered by Voovan open source framework.</div>

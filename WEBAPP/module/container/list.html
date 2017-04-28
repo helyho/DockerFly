@@ -90,13 +90,19 @@
                         var cmdContainerStop = new CmdContainerStop(container.id);
                         connect(cmdContainerStop);
                         cmdContainerStop.waitForKill(3);
-                        cmdContainerStop.send();
-                        cmdContainerStop.close();
-                        cmdContainerStop.release();
+                        cmdContainerStop.send(function(){
+                            alert("<span class='uk-text-large uk-text-primary'>Container <span class='uk-text-large uk-text-danger'>"+delFirestChar(container.names[0])+"</span> stoped.</span>")
+                            cmdContainerStop.close();
+                            cmdContainerStop.release();
+                            containerListVue.query()
+                        }, function(){
+                            throw new Error("Stop container "+delFirestChar(container.names[0])+"failed");
+                            cmdContainerStop.close();
+                            cmdContainerStop.release();
+                        });
                     } catch (e) {
                         alertError(e)
                     }
-                    this.query()
                 },
 
                 //移除方法
@@ -149,7 +155,17 @@
 <div id="ContainerApp" class="uk-grid" style="display: none" v-show="this.containerList!=null">
     <div class="uk-width-6-6">
         <div class="uk-panel"></div>
-        <h3 class="uk-text-middle"><span class="icon uk-icon-desktop"></span> Container manager</h3>
+        <h3></h3>
+        <div class="uk-grid uk-margin">
+            <div class="uk-width-1-2">
+                <h3 class="uk-text-middle">
+                    <span class="icon uk-icon-desktop"></span> Container manager
+                </h3>
+            </div>
+            <div class="uk-width-1-2 uk-text-right">
+                <a href="list.html"><span class="uk-icon-refresh"></span></a>
+            </div>
+        </div>
         <div id="query" class="uk-panel uk-panel-box uk-text-bold">
             <div class="uk-grid">
                 <div class="uk-width-5-6 uk-form">
@@ -258,7 +274,7 @@
         </table>
     </div>
     <div class="uk-width-6-6">
-        <div style="min-height:40px; margin-bottom:10px" class="uk-text-center">
+        <div style="min-height:40px;" class="uk-text-center uk-margin-bottom">
             <div><img height="27" width="120" src="../../img/logo.png"/></div>
             <div>CopyRight <span class="uk-icon-copyright"></span> Voovan Vsetful</div>
             <div>Powered by Voovan open source framework.</div>
