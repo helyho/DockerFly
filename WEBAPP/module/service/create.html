@@ -48,7 +48,6 @@
                     memoryLimit:64,
                     cpuReservation:0,
                     memoryReservation:0,
-                    network:"",
                     env:{
                         envs:[],
                         add: function(key, value, canRemove){
@@ -60,6 +59,15 @@
                         },
                         remove: function(index){
                             this.envs.remove(index)
+                        }
+                    },
+                    network: {
+                        networks:[],
+                        add: function(network){
+                            this.networks.push(network);
+                        },
+                        remove: function(index){
+                            this.networks.remove(index)
                         }
                     },
                     port: {
@@ -235,8 +243,8 @@
                             cmdServiceCreate.memoryReservation(this.createParams.memoryReservation);
                         }
 
-                        if (this.createParams.network != "") {
-                            cmdServiceCreate.network(this.createParams.network);
+                        if (this.createParams.network.length > 0) {
+                            cmdServiceCreate.network(this.createParams.network.networks);
                         }
 
                         if (this.createParams.port.ports.length > 0) {
@@ -410,12 +418,31 @@
                             <tr>
                                 <td class="dialogField">Network:</td>
                                 <td>
-                                    <select class="uk-form-width-medium" v-model="createParams.network">
-                                        <option value="">Nothing</option>
-                                        <option v-for="network in networkList" v-if="network.driver=='overlay'"
-                                                :value="network.id">{{network.name}}
-                                        </option>
-                                    </select>
+                                    <div class="uk-panel  uk-width-10-10">
+                                        <ul class="uk-list uk-list-line ">
+                                            <li>
+                                                <button class="uk-button uk-button-primary uk-button-small" @click="createParams.network.add()">
+                                                    <i class="uk-icon-plus-square"></i> Add network</button>
+                                            </li>
+                                            <li v-for="(networkItem,index) in createParams.network.networks">
+                                                <div class="uk-grid">
+                                                    <div class="uk-width-9-10">
+                                                        <select class="uk-form-width-medium" v-model="createParams.network.networks[index]">
+                                                            <option value="">Nothing</option>
+                                                            <option v-for="network in networkList" v-if="network.driver=='overlay'"
+                                                                    :value="network.id">{{network.name}}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="uk-width-1-10">
+                                                        <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.network.remove(index)">
+                                                            <span class="uk-icon-trash"></span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </td>
                             </tr>
                         </table>
