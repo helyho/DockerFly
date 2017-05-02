@@ -43,6 +43,7 @@
                     user:"",
                     entrypoint: "",
                     mode:"replicated",
+                    replicate:1,
                     cpuLimit:1,
                     memoryLimit:64,
                     cpuReservation:0,
@@ -88,8 +89,7 @@
                         remove: function(index){
                             this.volumes.remove(index)
                         }
-                    },
-                    replicate:1
+                    }
                 }
             },
             watch:{
@@ -248,17 +248,20 @@
                             }
                         }
                         if (this.createParams.volume.volumes.length > 0) {
-                            var volumes = new Array();
                             for(var i = 0; i<this.createParams.volume.volumes.length; i++) {
                                 var volume = this.createParams.volume.volumes[i];
-                                if (volume.containerPort!=null && volume.volumeSource != "") {
+                                if (volume.volumeSource!=null && volume.volumeSource != "") {
                                     cmdServiceCreate.mount(volume.type, volume.volumeSource , "/"+volume.volumeTarget, false);
                                 }
                             }
                         }
 
-                        if (this.createParams.replicate != "") {
-                            cmdServiceCreate.replicate(this.createParams.replicate);
+
+                        if (this.createParams.mode != "") {
+                            cmdServiceCreate.mode(this.createParams.mode)
+                            if(this.createParams.mode=="replicated" && this.createParams.replicate!="") {
+                                cmdServiceCreate.replicate(this.createParams.replicate);
+                            }
                         }
 
                         cmdServiceCreate.send(function(){
@@ -273,7 +276,6 @@
                             cmdServiceCreate.close();
                             cmdServiceCreate.release();
                         });
-                        alert("Create service success.");
                     } catch (e) {
                         alertError(e);
                     }
@@ -298,7 +300,7 @@
             <div class="uk-form">
                 <table class="uk-table uk-overflow-service uk-panel-box">
                     <tr>
-                        <td class="dialogField">Name:</td>
+                        <td class="dialogField uk-width-1-10">Name:</td>
                         <td><input class="uk-form-width-medium" type="text"
                                    placeholder="e.g. myService" v-model="createParams.name"/></td>
                     </tr>
@@ -308,7 +310,7 @@
                             <select class="uk-form-width-medium" v-model="createParams.image" autocomplete="off">
                                 <option v-for="(image,index) in imageList"
                                         :value="image.repoTags[0]"
-                                v-if="image.repoTags.length!=0">{{image.repoTags[0]}}
+                                        v-if="image.repoTags.length!=0">{{image.repoTags[0]}}
                                 </option>
                             </select>
                         </td>
@@ -326,156 +328,189 @@
                         <td><input class="uk-form-width-small uk-text-center" type="number"
                                    placeholder="replicate count" v-model="createParams.replicate"/></td>
                     </tr>
-                    <tr>
-                        <td class="dialogField">Command:</td>
-                        <td><input class="uk-form-width-large" type="text"
-                                   placeholder="e.g. /usr/bin/nginx -t -c /mynginx.conf" v-model="createParams.command"/></td>
-                    </tr>
-                    <tr v-if="createParams.entrypoint!=''">
-                        <td class="dialogField">Entry point:</td>
-                        <td><span class="uk-text-bold uk-text-primary">{{createParams.entrypoint}}</span></td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">Env:</td>
-                        <td>
-                            <div class="uk-panel  uk-width-10-10">
-                                <ul class="uk-list uk-list-line ">
-                                    <li>
-                                        <button class="uk-button uk-button-primary uk-button-small" @click="createParams.env.add()">
-                                            <i class="uk-icon-plus-square"></i> Add Env</button>
-                                    </li>
-                                    <li v-for="(env,index) in createParams.env.envs">
-                                        <div class="uk-grid">
-                                            <div class="uk-text- uk-width-9-10">
-                                                <input class="uk-form-width-medium uk-text-center" type="text"
-                                                       :disabled="!env.canRemove"
-                                                       placeholder="e.g. HOME" v-model="env.key"/>
-                                                &nbsp;=&nbsp;
-                                                <input class="uk-form-width-large uk-text-center" type="text"
-                                                       :disabled="!env.canRemove"
-                                                       placeholder="e.g. /root" v-model="env.value"/>
-                                            </div>
-                                            <div class="uk-width-1-10" v-if="env.canRemove">
-                                                <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.env.remove(index)">
-                                                    <span class="uk-icon-trash"></span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">WorkDir:</td>
-                        <td><input class="uk-form-width-large"
-                                   placeholder="e.g. /myapp" v-model="createParams.workDir"/></td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">User:</td>
-                        <td><input class="uk-form-width-large"
-                                   placeholder="e.g. nginx" v-model="createParams.user"/></td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">CPU:</td>
-                        <td><input type="number" class="uk-form-width-small uk-text-center"
-                                   placeholder="cpu core count" v-model="createParams.cpuLimit"/></td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">Memory:</td>
-                        <td><input type="number" class="uk-form-width-small uk-text-center"
-                                   placeholder="memory size (Mb)" v-model="createParams.memoryLimit"/></td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">Network:</td>
-                        <td>
-                            <select class="uk-form-width-medium" v-model="createParams.network">
-                                <option value="">Nothing</option>
-                                <option v-for="network in networkList" v-if="network.driver=='overlay'"
-                                        :value="network.id">{{network.name}}
-                                </option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">Port:</td>
-                        <td>
-                            <div class="uk-panel  uk-width-10-10">
-                                <ul class="uk-list uk-list-line ">
-                                    <li>
-                                        <button class="uk-button uk-button-primary uk-button-small" @click="createParams.port.add()">
-                                            <i class="uk-icon-plus-square"></i> Add export port</button>
-                                    </li>
-                                    <li v-for="(port,index) in createParams.port.ports">
-                                        <div class="uk-grid">
-                                            <div class="uk-text- uk-width-9-10">
-                                                <c-switch :bind="`createParams.port.ports[`+index+`].protocol`"
-                                                          :switch='{"TCP":"tcp","UDP":"udp"}'
-                                                          theme="uk-button-success  uk-button-mini"></c-switch>
-                                                &nbsp;&nbsp;
-                                                <input class="uk-form-width-medium" type="number"
-                                                       :disabled="!port.canRemove"
-                                                       placeholder="e.g. 80 on host" v-model="port.hostPort"/>
-                                                &nbsp;:&nbsp;
-                                                <input class="uk-form-width-medium" type="number"
-                                                       placeholder="e.g. 80 on container" v-model="port.containerPort"/>
-                                            </div>
-                                            <div class="uk-width-1-10" v-if="port.canRemove">
-                                                <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.port.remove(index)">
-                                                    <span class="uk-icon-trash"></span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="dialogField">Volume:</td>
-                        <td>
-                            <div class="uk-panel  uk-width-10-10">
-                                <ul class="uk-list uk-list-line ">
-                                    <li>
-                                        <button class="uk-button uk-button-primary uk-button-small" @click="createParams.volume.add()">
-                                            <i class="uk-icon-plus-square"></i> Add volume</button>
-                                    </li>
-                                    <li v-for="(volume,index) in createParams.volume.volumes">
-                                        <div class="uk-grid">
-                                            <div class="uk-text- uk-width-9-10">
-                                                <c-switch :bind="`createParams.volume.volumes[`+index+`].type`"
-                                                          :switch='{"Volume":"volume","Bind":"bind"}'
-                                                          theme="uk-button-success uk-button-mini"
-                                                          @click="volume.volumeSource=''"></c-switch>
-                                                &nbsp;&nbsp;
-                                                <select class="uk-form-width-medium"
-                                                        v-if="volume.type=='volume'"
-                                                        v-model="volume.volumeSource">
-                                                    <option value="">Nothing</option>
-                                                    <option v-for="volume in volumeList"
-                                                            :value="volume.name">{{volume.name}}
-                                                    </option>
-                                                </select>
-                                                <input class="uk-form-width-medium uk-text-center" type="text"
-                                                       v-if="volume.type=='bind'"
-                                                       placeholder="e.g. /root" v-model="volume.volumeSource"/>
-                                                &nbsp;:&nbsp;
-                                                <input class="uk-form-width-medium uk-text-center" type="text"
-                                                       :disabled="!volume.canRemove"
-                                                       placeholder="e.g. temp" v-model="volume.volumeTarget"/>
-                                            </div>
-                                            <div class="uk-width-1-10" v-if="volume.canRemove">
-                                                <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.volume.remove(index)">
-                                                    <span class="uk-icon-trash"></span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </li>
+                </table>
+                <hr>
+                <ul class="uk-tab" data-uk-tab="{connect:'#tab-content'}">
+                    <li><a href="#"><span class="icon uk-icon-list-alt"></span>Runtime</a></li>
+                    <li><a href="#"><span class="uk-icon-database"></span> Resource</a></li>
+                    <li><a href="#"><span class="uk-icon-sitemap"></span> Expose port</a></li>
+                    <li><a href="#"><span class="icon uk-icon-clone"></span>Volume</a></li>
+                </ul>
+                <ul id="tab-content" class="uk-switcher">
+                    <!-- Runtime -->
+                    <li>
+                        <table class="uk-table uk-overflow-service uk-panel-box">
+                            <tr>
+                                <td class="dialogField uk-width-1-10">User:</td>
+                                <td><input class="uk-form-width-large"
+                                           placeholder="e.g. nginx" v-model="createParams.user"/></td>
+                            </tr>
+                            <tr>
+                                <td class="dialogField">WorkDir:</td>
+                                <td><input class="uk-form-width-large"
+                                           placeholder="e.g. /myapp" v-model="createParams.workDir"/></td>
+                            </tr>
+                            <tr>
+                                <td class="dialogField">Command:</td>
+                                <td><input class="uk-form-width-large" type="text"
+                                           placeholder="e.g. /usr/bin/nginx -t -c /mynginx.conf" v-model="createParams.command"/></td>
+                            </tr>
+                            <tr v-if="createParams.entrypoint!=''">
+                                <td class="dialogField">Entry point:</td>
+                                <td><span class="uk-text-bold uk-text-primary">{{createParams.entrypoint}}</span></td>
+                            </tr>
+                            <tr>
+                                <td class="dialogField">Env:</td>
+                                <td>
+                                    <div class="uk-panel  uk-width-10-10">
+                                        <ul class="uk-list uk-list-line ">
+                                            <li>
+                                                <button class="uk-button uk-button-primary uk-button-small" @click="createParams.env.add()">
+                                                    <i class="uk-icon-plus-square"></i> Add Env</button>
+                                            </li>
+                                            <li v-for="(env,index) in createParams.env.envs">
+                                                <div class="uk-grid">
+                                                    <div class="uk-text- uk-width-9-10">
+                                                        <input class="uk-form-width-medium uk-text-center" type="text"
+                                                               :disabled="!env.canRemove"
+                                                               placeholder="e.g. HOME" v-model="env.key"/>
+                                                        &nbsp;=&nbsp;
+                                                        <input class="uk-form-width-large uk-text-center" type="text"
+                                                               :disabled="!env.canRemove"
+                                                               placeholder="e.g. /root" v-model="env.value"/>
+                                                    </div>
+                                                    <div class="uk-width-1-10" v-if="env.canRemove">
+                                                        <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.env.remove(index)">
+                                                            <span class="uk-icon-trash"></span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
 
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
+                        </table>
+                    </li>
+
+                    <!-- Resource -->
+                    <li>
+                        <table class="uk-table uk-overflow-service uk-panel-box">
+                            <tr>
+                                <td class="dialogField uk-width-1-10">CPU:</td>
+                                <td><input type="number" class="uk-form-width-small uk-text-center"
+                                           placeholder="cpu core count" v-model="createParams.cpuLimit"/></td>
+                            </tr>
+                            <tr>
+                                <td class="dialogField">Memory:</td>
+                                <td><input type="number" class="uk-form-width-small uk-text-center"
+                                           placeholder="memory size (Mb)" v-model="createParams.memoryLimit"/></td>
+                            </tr>
+                            <tr>
+                                <td class="dialogField">Network:</td>
+                                <td>
+                                    <select class="uk-form-width-medium" v-model="createParams.network">
+                                        <option value="">Nothing</option>
+                                        <option v-for="network in networkList" v-if="network.driver=='overlay'"
+                                                :value="network.id">{{network.name}}
+                                        </option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+
+                    <!-- Port -->
+                    <li>
+                        <table class="uk-table uk-overflow-service uk-panel-box">
+                            <tr>
+                                <td>
+                                    <div class="uk-panel  uk-width-10-10">
+                                        <ul class="uk-list uk-list-line ">
+                                            <li>
+                                                <button class="uk-button uk-button-primary uk-button-small" @click="createParams.port.add()">
+                                                    <i class="uk-icon-plus-square"></i> Add export port</button>
+                                            </li>
+                                            <li v-for="(port,index) in createParams.port.ports">
+                                                <div class="uk-grid">
+                                                    <div class="uk-text- uk-width-9-10">
+                                                        <c-switch :bind="`createParams.port.ports[`+index+`].protocol`"
+                                                                  :switch='{"TCP":"tcp","UDP":"udp"}'
+                                                                  theme="uk-button-success  uk-button-mini"></c-switch>
+                                                        &nbsp;&nbsp;
+                                                        <input class="uk-form-width-medium" type="number"
+                                                               :disabled="!port.canRemove"
+                                                               placeholder="e.g. 80 on host" v-model="port.hostPort"/>
+                                                        &nbsp;:&nbsp;
+                                                        <input class="uk-form-width-medium" type="number"
+                                                               placeholder="e.g. 80 on container" v-model="port.containerPort"/>
+                                                    </div>
+                                                    <div class="uk-width-1-10" v-if="port.canRemove">
+                                                        <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.port.remove(index)">
+                                                            <span class="uk-icon-trash"></span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+
+                    <!-- Volume -->
+                    <li>
+                        <table class="uk-table uk-overflow-service uk-panel-box">
+                            <tr>
+                                <td>
+                                    <div class="uk-panel uk-width-10-10">
+                                        <ul class="uk-list uk-list-line ">
+                                            <li>
+                                                <button class="uk-button uk-button-primary uk-button-small" @click="createParams.volume.add()">
+                                                    <i class="uk-icon-plus-square"></i> Add volume</button>
+                                            </li>
+                                            <li v-for="(volume,index) in createParams.volume.volumes">
+                                                <div class="uk-grid">
+                                                    <div class="uk-text- uk-width-9-10">
+                                                        <c-switch :bind="`createParams.volume.volumes[`+index+`].type`"
+                                                                  :switch='{"Volume":"volume","Bind":"bind"}'
+                                                                  theme="uk-button-success uk-button-mini"
+                                                                  @click="volume.volumeSource=''"></c-switch>
+                                                        &nbsp;&nbsp;
+                                                        <select class="uk-form-width-medium"
+                                                                v-if="volume.type=='volume'"
+                                                                v-model="volume.volumeSource">
+                                                            <option value="">Nothing</option>
+                                                            <option v-for="volume in volumeList"
+                                                                    :value="volume.name">{{volume.name}}
+                                                            </option>
+                                                        </select>
+                                                        <input class="uk-form-width-medium uk-text-center" type="text"
+                                                               v-if="volume.type=='bind'"
+                                                               placeholder="e.g. /root" v-model="volume.volumeSource"/>
+                                                        &nbsp;:&nbsp;
+                                                        <input class="uk-form-width-medium uk-text-center" type="text"
+                                                               :disabled="!volume.canRemove"
+                                                               placeholder="e.g. temp" v-model="volume.volumeTarget"/>
+                                                    </div>
+                                                    <div class="uk-width-1-10" v-if="volume.canRemove">
+                                                        <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.volume.remove(index)">
+                                                            <span class="uk-icon-trash"></span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                </ul>
+                <table class="uk-table uk-overflow-service uk-panel-box">
                     <tr>
                         <td class="dialogField" colspan="2">
                             <a href="#" class="uk-button uk-button-primary"  @click="create()">Create</a>
