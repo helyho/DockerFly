@@ -39,6 +39,8 @@
                     name:"",
                     image:"",
                     command:"",
+                    workDir:"",
+                    user:"",
                     entrypoint: "",
                     mode:"replicated",
                     cpuLimit:1,
@@ -77,6 +79,7 @@
                         volumes:[],
                         add: function(target,canRemove){
                             var volume = {};
+                            volume.type="volume";
                             volume.volumeSource = null;
                             volume.volumeTarget = target;
                             volume.canRemove = canRemove==null?true:canRemove;;
@@ -197,6 +200,14 @@
                             cmdServiceCreate.cmd(this.createParams.command.split(" "));
                         }
 
+                        if (this.createParams.workDir!= "") {
+                            cmdServiceCreate.dir(this.createParams.workDir);
+                        }
+
+                        if (this.createParams.user != "") {
+                            cmdServiceCreate.user(this.createParams.user);
+                        }
+
                         if (this.createParams.env != "") {
                             var envArr = [];
                             for(var index in this.createParams.env.envs){
@@ -231,17 +242,17 @@
                         if (this.createParams.port.ports.length > 0) {
                             for(var i = 0; i<this.createParams.port.ports.length; i++) {
                                 var port = this.createParams.port.ports[i];
-                                cmdServiceCreate.port(port.protocol, port.containerPort, port.hostPort);
+                                if(port.containerPort!=null && port.containerPort!="") {
+                                    cmdServiceCreate.port(port.protocol, port.containerPort, port.hostPort);
+                                }
                             }
                         }
                         if (this.createParams.volume.volumes.length > 0) {
                             var volumes = new Array();
                             for(var i = 0; i<this.createParams.volume.volumes.length; i++) {
                                 var volume = this.createParams.volume.volumes[i];
-                                if (volume.linkName != "") {
-                                    cmdServiceCreate.mount( "volume", volume.volumeSource , "/"+volume.volumeTarget, false);
-                                } else {
-                                    cmdServiceCreate.mount("volume", volume.volumeSource , "/"+volume.volumeSource, false);
+                                if (volume.containerPort!=null && volume.volumeSource != "") {
+                                    cmdServiceCreate.mount(volume.type, volume.volumeSource , "/"+volume.volumeTarget, false);
                                 }
                             }
                         }
@@ -251,7 +262,9 @@
                         }
 
                         cmdServiceCreate.send(function(){
-                            alert("<span class='uk-text-large uk-text-primary'>Service "+this.createParams.name+" created.</span>")
+                            alert("<span class='uk-text-large uk-text-primary'>Service <span class='uk-text-bold uk-text-danger'>" +
+                                serviceListVue.createParams.name +
+                                "</span> created.</span>")
                             cmdServiceCreate.close();
                             cmdServiceCreate.release();
                             serviceListVue.query()
@@ -305,7 +318,7 @@
                         <td class="uk-form">
                             <c-switch bind="createParams.mode"
                                       :switch='{"Global":"global","Replicated":"replicated"}'
-                                      theme="uk-button-success"></c-switch>
+                                      theme="uk-button-primary uk-button-small"></c-switch>
                         </td>
                     </tr>
                     <tr v-if="createParams.mode=='replicated'">
@@ -328,8 +341,8 @@
                             <div class="uk-panel  uk-width-10-10">
                                 <ul class="uk-list uk-list-line ">
                                     <li>
-                                        <a href="#" class="uk-button uk-button-primary" @click="createParams.env.add()">
-                                            <i class="uk-icon-plus-square"></i> Add Env</a>
+                                        <button class="uk-button uk-button-primary uk-button-small" @click="createParams.env.add()">
+                                            <i class="uk-icon-plus-square"></i> Add Env</button>
                                     </li>
                                     <li v-for="(env,index) in createParams.env.envs">
                                         <div class="uk-grid">
@@ -352,6 +365,16 @@
                                 </ul>
                             </div>
                         </td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">WorkDir:</td>
+                        <td><input class="uk-form-width-large"
+                                   placeholder="e.g. /myapp" v-model="createParams.workDir"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">User:</td>
+                        <td><input class="uk-form-width-large"
+                                   placeholder="e.g. nginx" v-model="createParams.user"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">CPU:</td>
@@ -380,21 +403,22 @@
                             <div class="uk-panel  uk-width-10-10">
                                 <ul class="uk-list uk-list-line ">
                                     <li>
-                                        <a href="#" class="uk-button uk-button-primary" @click="createParams.port.add()">
-                                            <i class="uk-icon-plus-square"></i> Add export port</a>
+                                        <button class="uk-button uk-button-primary uk-button-small" @click="createParams.port.add()">
+                                            <i class="uk-icon-plus-square"></i> Add export port</button>
                                     </li>
                                     <li v-for="(port,index) in createParams.port.ports">
                                         <div class="uk-grid">
                                             <div class="uk-text- uk-width-9-10">
+                                                <c-switch :bind="`createParams.port.ports[`+index+`].protocol`"
+                                                          :switch='{"TCP":"tcp","UDP":"udp"}'
+                                                          theme="uk-button-success  uk-button-mini"></c-switch>
+                                                &nbsp;&nbsp;
                                                 <input class="uk-form-width-medium" type="number"
                                                        :disabled="!port.canRemove"
                                                        placeholder="e.g. 80 on host" v-model="port.hostPort"/>
                                                 &nbsp;:&nbsp;
                                                 <input class="uk-form-width-medium" type="number"
                                                        placeholder="e.g. 80 on container" v-model="port.containerPort"/>
-                                                &nbsp;/&nbsp;
-                                                <c-switch :bind="`createParams.port.ports[`+index+`].protocol`"
-                                                          :switch='{"TCP":"tcp","UDP":"udp"}' theme="uk-button-success"></c-switch>
                                             </div>
                                             <div class="uk-width-1-10" v-if="port.canRemove">
                                                 <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.port.remove(index)">
@@ -413,18 +437,28 @@
                             <div class="uk-panel  uk-width-10-10">
                                 <ul class="uk-list uk-list-line ">
                                     <li>
-                                        <a href="#" class="uk-button uk-button-primary" @click="createParams.volume.add()">
-                                            <i class="uk-icon-plus-square"></i> Add volume</a>
+                                        <button class="uk-button uk-button-primary uk-button-small" @click="createParams.volume.add()">
+                                            <i class="uk-icon-plus-square"></i> Add volume</button>
                                     </li>
                                     <li v-for="(volume,index) in createParams.volume.volumes">
                                         <div class="uk-grid">
                                             <div class="uk-text- uk-width-9-10">
-                                                <select class="uk-form-width-medium" v-model="volume.volumeSource">
+                                                <c-switch :bind="`createParams.volume.volumes[`+index+`].type`"
+                                                          :switch='{"Volume":"volume","Bind":"bind"}'
+                                                          theme="uk-button-success uk-button-mini"
+                                                          @click="volume.volumeSource=''"></c-switch>
+                                                &nbsp;&nbsp;
+                                                <select class="uk-form-width-medium"
+                                                        v-if="volume.type=='volume'"
+                                                        v-model="volume.volumeSource">
                                                     <option value="">Nothing</option>
                                                     <option v-for="volume in volumeList"
                                                             :value="volume.name">{{volume.name}}
                                                     </option>
                                                 </select>
+                                                <input class="uk-form-width-medium uk-text-center" type="text"
+                                                       v-if="volume.type=='bind'"
+                                                       placeholder="e.g. /root" v-model="volume.volumeSource"/>
                                                 &nbsp;:&nbsp;
                                                 <input class="uk-form-width-medium uk-text-center" type="text"
                                                        :disabled="!volume.canRemove"

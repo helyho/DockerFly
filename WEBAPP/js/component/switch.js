@@ -26,6 +26,7 @@ Vue.component('c-switch', {
                 result = "\"" + result + "\"";
             }
             eval("this.$parent." + this.bind + "=" + result);
+            this.$emit('click')
         }
     }
 })
