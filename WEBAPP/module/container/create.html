@@ -23,6 +23,7 @@
     doImport("org.voovan.docker.command.Image.CmdImageList")
     doImport("org.voovan.docker.command.Network.CmdNetworkList")
     doImport("org.voovan.docker.command.Volume.CmdVolumeList")
+    doImport("org.voovan.docker.command.Image.CmdImageDetail")
 
     function init() {
         containerCreateVue = new Vue({
@@ -35,33 +36,49 @@
                     name: "",
                     image: "",
                     command: "",
+                    entrypoint: "",
                     env: "",
                     privileged: false,
                     cpu: 1,
                     memory: 64,
                     network: "",
+                    env:{
+                        envs:[],
+                        add: function(key, value, canRemove){
+                            var env={};
+                            env.key = key;
+                            env.value = value;
+                            env.canRemove = canRemove==null?true:canRemove;
+                            this.envs.push(env)
+                        },
+                        remove: function(index){
+                            this.envs.remove(index)
+                        }
+                    },
                     port: {
-                        ports: [],
-                        add: function () {
+                        ports:[],
+                        add: function(hostPort,protocol,canRemove){
                             var port = {};
-                            port.hostPort = null;
+                            port.hostPort = hostPort;
                             port.containerPort = null;
                             port.protocol = "tcp";
+                            port.canRemove = canRemove==null?true:canRemove;;
                             this.ports.push(port);
                         },
-                        remove: function (index) {
+                        remove: function(index){
                             this.ports.remove(index)
                         }
                     },
-                    volume: {
-                        volumes: [],
-                        add: function () {
+                    volume:{
+                        volumes:[],
+                        add: function(target,canRemove){
                             var volume = {};
                             volume.volumeSource = null;
-                            volume.volumeTarget = null;
+                            volume.volumeTarget = target;
+                            volume.canRemove = canRemove==null?true:canRemove;;
                             this.volumes.push(volume);
                         },
-                        remove: function (index) {
+                        remove: function(index){
                             this.volumes.remove(index)
                         }
                     },
@@ -95,6 +112,43 @@
                   }
               }
             },
+            watch:{
+                "createParams.image" : function(newVal, oldVal){
+                    var imageDetail = this.getImageDetail(newVal);
+
+                    //处理 EntryPoint
+                    this.createParams.entrypoint = "";
+                    for(var index in imageDetail.config.entrypoint) {
+                        var entry = imageDetail.config.entrypoint[index];
+                        if(typeof(entry) == "string") {
+                            this.createParams.entrypoint = this.createParams.entrypoint + entry +" ";
+                        }
+                    }
+
+                    //处理环境变量
+                    this.createParams.env.envs = [];
+                    for(var index in imageDetail.config.env){
+                        if(typeof(imageDetail.config.env[index])=="string") {
+                            var envItem = imageDetail.config.env[index].split("=");
+                            this.createParams.env.add(envItem[0], envItem[1], false);
+                        }
+                    }
+
+                    //处理端口
+                    this.createParams.port.ports = [];
+                    for(var exposedPort in imageDetail.config.exposedPorts){
+                        var portConfig = exposedPort.split("/");
+                        this.createParams.port.add(portConfig[0], portConfig[1], false)
+                    }
+
+                    //处理卷
+                    this.createParams.volume.volumes = [];
+                    for(var target in imageDetail.config.volumes){
+                        this.createParams.volume.add(target, false)
+                    }
+                    console.log(imageDetail.config)
+                }
+            },
             methods: {
                 //为创建容器准备参数
                 getImageList: function () {
@@ -104,6 +158,23 @@
                         this.imageList = cmdImageList.send().sortBy("Created");
                         cmdImageList.close();
                         cmdImageList.release();
+                    } catch (e) {
+                        alertError(e)
+                    }
+                },
+                getImageDetail: function (image) {
+                    try {
+                        var cmdImageDetail = new CmdImageDetail(image)
+                        connect(cmdImageDetail)
+                        var viewImage = cmdImageDetail.send();
+                        cmdImageDetail.close();
+                        cmdImageDetail.release();
+
+                        if (viewImage != null) {
+                            return viewImage;
+                        } else {
+                            return null;
+                        }
                     } catch (e) {
                         alertError(e)
                     }
@@ -146,7 +217,14 @@
                         }
 
                         if (this.createParams.env != "") {
-                            cmdContainerCreate.env(this.createParams.env.split(","));
+                            var envArr = [];
+                            for(var index in this.createParams.env.envs){
+                                var env = this.createParams.env.envs[index]
+                                if(typeof(env)!="function") {
+                                    envArr.push(env.key + "=" + env.value);
+                                }
+                            }
+                            cmdContainerCreate.env(envArr);
                         }
 
                         if (this.createParams.privileged != "") {
@@ -247,10 +325,40 @@
                     <td><input class="uk-form-width-large" type="text"
                                placeholder="e.g. /usr/bin/nginx -t -c /mynginx.conf" v-model="createParams.command"/></td>
                 </tr>
+                <tr v-if="createParams.entrypoint!=''">
+                    <td class="dialogField">Entry point:</td>
+                    <td><span class="uk-text-bold uk-text-primary">{{createParams.entrypoint}}</span></td>
+                </tr>
                 <tr>
                     <td class="dialogField">Env:</td>
-                    <td><input class="uk-form-width-large" type="text"
-                               placeholder="e.g. author=dockerfly,host=linux" v-model="createParams.env"/></td>
+                    <td>
+                        <div class="uk-panel  uk-width-10-10">
+                            <ul class="uk-list uk-list-line ">
+                                <li>
+                                    <a href="#" class="uk-button uk-button-primary" @click="createParams.env.add()">
+                                        <i class="uk-icon-plus-square"></i> Add Env</a>
+                                </li>
+                                <li v-for="(env,index) in createParams.env.envs">
+                                    <div class="uk-grid">
+                                        <div class="uk-text- uk-width-9-10">
+                                            <input class="uk-form-width-medium uk-text-center" type="text"
+                                                   :disabled="!env.canRemove"
+                                                   placeholder="e.g. HOME" v-model="env.key"/>
+                                            &nbsp;=&nbsp;
+                                            <input class="uk-form-width-large uk-text-center" type="text"
+                                                   :disabled="!env.canRemove"
+                                                   placeholder="e.g. /root" v-model="env.value"/>
+                                        </div>
+                                        <div class="uk-width-1-10" v-if="env.canRemove">
+                                            <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.env.remove(index)">
+                                                <span class="uk-icon-trash"></span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
                 </tr>
                 <tr>
                     <td class="dialogField">Privileged:</td>
@@ -292,6 +400,7 @@
                                     <div class="uk-grid">
                                         <div class="uk-text- uk-width-9-10">
                                             <input class="uk-form-width-medium" type="number"
+                                                   :disabled="!port.canRemove"
                                                    placeholder="e.g. 80 on host" v-model="port.hostPort"/>
                                             &nbsp;:&nbsp;
                                             <input class="uk-form-width-medium" type="number"
@@ -300,7 +409,7 @@
                                             <c-switch :bind="`createParams.port.ports[`+index+`].protocol`"
                                                       :switch='{"TCP":"tcp","UDP":"udp"}' theme="uk-button-success"></c-switch>
                                         </div>
-                                        <div class="uk-width-1-10">
+                                        <div class="uk-width-1-10" v-if="port.canRemove">
                                             <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.port.remove(index)">
                                                 <span class="uk-icon-trash"></span>
                                             </a>
@@ -331,9 +440,10 @@
                                             </select>
                                             &nbsp;:&nbsp;
                                             <input class="uk-form-width-medium uk-text-center" type="text"
+                                                   :disabled="!volume.canRemove"
                                                    placeholder="e.g. temp" v-model="volume.volumeTarget"/>
                                         </div>
-                                        <div class="uk-width-1-10">
+                                        <div class="uk-width-1-10" v-if="volume.canRemove">
                                             <a href="#" class="uk-button uk-button-mini uk-button-danger" @click="createParams.volume.remove(index)">
                                                 <span class="uk-icon-trash"></span>
                                             </a>
@@ -379,7 +489,6 @@
                         </div>
                     </td>
                 </tr>
-
                 <tr>
                     <td class="dialogField" colspan="2">
                         <a href="#"  class="uk-button uk-button-primary" @click="create()">Create</a>
@@ -398,4 +507,4 @@
 </div>
 
 </body>
-</html
+</html>
