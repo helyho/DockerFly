@@ -419,7 +419,7 @@
                         <tbody>
                         <tr class="uk-text-center" v-for=" (value, key) in viewContainer.networkSettings.networks">
                             <td class="uk-text-success uk-text-bold">
-                                <a :href="'../network/viewer.html?id='+value.networkID">{{value.networkID | shortDockerId(12)}}</a>
+                                <a :href="'../network/viewer.html?id='+value.networkId">{{value.networkId | shortDockerId(12)}}</a>
                             </td>
                             <td>{{key}}</td>
                             <td>{{value.gateway}}</td>

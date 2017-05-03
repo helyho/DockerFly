@@ -199,7 +199,7 @@
                     var selector = '<span class="uk-form">' +
                                         '<select class="uk-form uk-form-width-medium" id="networkToDisconnect">';
                     for(var network in container.networkSettings.networks) {
-                        selector = selector + '<option value="'+container.networkSettings.networks[network].networkID+'">'+network+'</option>';
+                        selector = selector + '<option value="'+container.networkSettings.networks[network].networkId+'">'+network+'</option>';
                     }
                     selector = selector + '</select></span>';
                     try {
@@ -305,7 +305,7 @@
                 <td class="uk-text-middle">
                     <div v-for="(network,networkName) in container.networkSettings.networks">
                         <code>
-                            <a :href="'../network/viewer.html?id='+network.networkID"
+                            <a :href="'../network/viewer.html?id='+network.networkId"
                             target="view">
                                 {{networkName}}{{network.ipAddress==""?"":":"}}{{network.ipAddress}}
                             </a>

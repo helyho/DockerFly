@@ -231,8 +231,8 @@
                     </thead>
                     <tbody>
                     <tr v-for="virtualIP in viewService.endpoint.virtualIPs">
-                        <td><a :href="'../network/viewer.html?id='+virtualIP.networkID" class="uk-text-bold">{{networks[virtualIP.networkID]}}</a>
-                            <span class="uk-text-muted">[{{virtualIP.networkID}}]</span></td>
+                        <td><a :href="'../network/viewer.html?id='+virtualIP.networkId" class="uk-text-bold">{{networks[virtualIP.networkId]}}</a>
+                            <span class="uk-text-muted">[{{virtualIP.networkId}}]</span></td>
                         <td class="uk-text-danger">{{virtualIP.addr}}</td>
                     </tr>
                     </tbody>
