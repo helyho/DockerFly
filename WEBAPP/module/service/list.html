@@ -108,7 +108,6 @@
                 },
 
                 scale: function(service){
-
                     UIkit.modal.prompt("<span class='uk-text-large uk-text-primary '>Replicas:</span>", service.spec.mode.replicated.replicas, function(newvalue){
                         try {
                             var cmdServiceUpdate = new CmdServiceUpdate(service);
