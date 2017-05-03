@@ -294,6 +294,11 @@
                                 if (volume.volumeSource !=null && volume.volumeSource != "") {
                                     cmdContainerCreate.mount(volume.type, volume.volumeSource , "/"+volume.volumeTarget, false);
                                 }
+
+                                //tmpfs挂载
+                                if (volume.volumeSource==null && volume.type == "tmpfs") {
+                                    cmdServiceCreate.mount(volume.type, null, "/"+volume.volumeTarget, false);
+                                }
                             }
                         }
 
@@ -530,7 +535,7 @@
                                             <div class="uk-grid">
                                                 <div class="uk-text- uk-width-9-10">
                                                     <c-switch :bind="`createParams.volume.volumes[`+index+`].type`"
-                                                              :switch='{"Volume":"volume","Bind":"bind"}'
+                                                              :switch='{"Volume":"volume","Bind":"bind","TMPFS":"tmpfs"}'
                                                               theme="uk-button-success uk-button-mini"
                                                               @click="volume.volumeSource=''"></c-switch>
                                                     &nbsp;&nbsp;
@@ -545,6 +550,9 @@
                                                     <input class="uk-form-width-medium uk-text-center" type="text"
                                                            v-if="volume.type=='bind'"
                                                            placeholder="e.g. /root" v-model="volume.volumeSource"/>
+                                                    <input class="uk-form-width-medium uk-text-center" type="text"
+                                                           v-if="volume.type=='tmpfs'" disabled
+                                                           value="/tmp"/>
                                                     &nbsp;:&nbsp;
                                                     <input class="uk-form-width-medium uk-text-center" type="text"
                                                            :disabled="!volume.canRemove"
