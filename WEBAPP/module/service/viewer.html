@@ -147,20 +147,20 @@
                         </caption>
                         <tbody>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">ID </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">ID </td>
                             <td class="uk-text-bold">{{viewService.id |shortDockerId(12)}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Name </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Name </td>
                             <td class="uk-text-primary">{{viewService.spec.name}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Image </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Image </td>
                             <td class="uk-text-success">{{viewService.spec.taskTemplate.containerSpec.image}}</td>
                         </tr>
 
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Cmd </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Cmd </td>
                             <td class="uk-text-warning">
                                 <span class="uk-text-warning">
                                     <span v-for="argItem in viewService.spec.taskTemplate.containerSpec.args">
@@ -170,15 +170,15 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Scheduling </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Scheduling </td>
                             <td class="uk-text-bold">{{viewService.spec.mode.replicated==null?"Global":"Replicate"}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Updated </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Updated </td>
                             <td class="">{{viewService.updatedAt | strToDate}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Created </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Created </td>
                             <td class="">{{viewService.createdAt | strToDate}}</td>
                         </tr>
                         </tbody>
@@ -196,15 +196,15 @@
                     </caption>
                     <tbody>
                     <tr>
-                        <th class="uk-width-1-10 uk-text-right summeryField">CPU </th>
+                        <td class="uk-width-1-10 uk-text-right summeryField">CPU </td>
                         <td class="uk-text-primary">{{viewService.spec.taskTemplate.resources.limits.nanoCPUs/1000000000}}</td>
                     </tr>
                     <tr>
-                        <th class="uk-width-1-10 uk-text-right summeryField">Memory </th>
+                        <td class="uk-width-1-10 uk-text-right summeryField">Memory </td>
                         <td class="uk-text-primary">{{viewService.spec.taskTemplate.resources.limits.memoryBytes/1024/1024}} MB</td>
                     </tr>
                     <tr v-if="viewService.spec.endpointSpec.ports.length!=0">
-                        <th class="uk-width-1-10 uk-text-right summeryField">Ports </th>
+                        <td class="uk-width-1-10 uk-text-right summeryField">Ports </td>
                         <td class="uk-text-muted">
                             <div v-for="port in viewService.spec.endpointSpec.ports">
                                 <h4 class="uk-margin-bottom-remove">

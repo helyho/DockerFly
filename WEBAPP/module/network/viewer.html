@@ -70,35 +70,35 @@
                         </caption>
                         <tbody>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">ID </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">ID </td>
                             <td class="uk-text-bold">{{viewNetwork.id |shortDockerId(12)}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Name </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Name </td>
                             <td class="uk-text-primary">{{viewNetwork.name}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Scope </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Scope </td>
                             <td class="uk-text-success">{{viewNetwork.scope}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Driver </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Driver </td>
                             <td class="uk-text-warning">{{viewNetwork.driver}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">EnableIPv6 </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">EnableIPv6 </td>
                             <td class="uk-text-muted">{{viewNetwork.enableIPv6}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">internal </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Internal </td>
                             <td class="uk-text-muted">{{viewNetwork.internal}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">attachable </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Attachable </td>
                             <td class="uk-text-muted">{{viewNetwork.attachable}}</td>
                         </tr>
                         <tr v-if="viewNetwork.ipam.config.length!=0">
-                            <th class="uk-width-1-10 uk-text-right summeryField">IP </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">IP </td>
                             <td class="uk-text-bold">
                                 <div v-for="ipConfig in viewNetwork.ipam.config">
                                     <span class="uk-badge">Subnet</span><code>{{ipConfig.subnet}}</code>
@@ -107,7 +107,7 @@
                             </td>
                         </tr>
                         <tr v-if="JSON.stringify(viewNetwork.options)!='{}'">
-                            <th class="uk-width-1-10 uk-text-right summeryField">Options </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Options </td>
                             <td class="uk-text-bold">
                                 <div v-for="(value, key) in viewNetwork.options">
                                     <code>{{key}}<span class="uk-text-primary uk-text-bold" > = </span><span class="uk-text-success">{{value}}</span></code>
@@ -115,7 +115,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Created </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Created </td>
                             <td class="">{{viewNetwork.created | strToDate}}</td>
                         </tr>
                         </tbody>
@@ -132,8 +132,8 @@
                         </thead>
                         <tbody>
                         <tr v-for="peer in viewNetwork.peers">
-                            <td>{{peer.name}}</td>
-                            <td>{{peer.ip}}</td>
+                            <td class="uk-text-bold uk-text-primary">{{peer.name}}</td>
+                            <td><code>{{peer.ip}}</code></td>
                         </tr>
                         </tbody>
                     </table>

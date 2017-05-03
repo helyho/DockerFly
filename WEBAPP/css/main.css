@@ -56,6 +56,9 @@ th{
 .summeryField {
     font-weight: bolder;
     border: 1px solid #ddd;
+    color:#000;
+    background: #fafafa;
+    background-image: linear-gradient(to bottom, #fcfcfc, #eaeaea)
 }
 
 .dialogField{

@@ -321,27 +321,27 @@
                         </caption>
                         <tbody>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">ID </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">ID </td>
                             <td class="uk-text-bold">{{viewContainer.id |shortDockerId(12)}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Name </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Name </td>
                             <td class="uk-text-primary">{{viewContainer.name | delFirestChar}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Image </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Image </td>
                             <td class="uk-text-success">{{viewContainer.image |shortDockerId(12)}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">CPU </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">CPU </td>
                             <td class="uk-text-primary">{{viewContainer.hostConfig.cpu==0?"unlimited":viewContainer.hostConfig.cpu}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Memory </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Memory </td>
                             <td class="uk-text-primary">{{viewContainer.hostConfig.memory==0?"unlimited":viewContainer.hostConfig.memory/1024/1024+"MB"}}</td>
                         </tr>
                         <tr v-if="viewContainer.config.workingDir!=''">
-                            <th class="uk-width-1-10 uk-text-right summeryField">WorkingDir </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">WorkingDir </td>
                             <td>
                                 <span class="">
                                     {{viewContainer.config.workingDir}}
@@ -349,15 +349,15 @@
                             </td>
                         </tr>
                         <tr v-if="viewContainer.config.user!=''">
-                            <th class="uk-width-1-10 uk-text-right summeryField">User </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">User </td>
                             <td>
                                 <span class="">
-                                    {{viewContainer.config.user}}
+                                    {{viewContainer.config.User}}
                                 </span>
                             </td>
                         </tr>
                         <tr v-if="viewContainer.config.cmd!=null">
-                            <th class="uk-width-1-10 uk-text-right summeryField">Command </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Command </td>
                             <td><span class="uk-text-danger uk-text-bold">
                                 <span v-for="cmdItem in viewContainer.config.cmd">
                                     {{cmdItem}}
@@ -366,7 +366,7 @@
                             </td>
                         </tr>
                         <tr v-if="viewContainer.config.entrypoint!=null && viewContainer.config.entrypoint.length != 0">
-                            <th class="uk-width-1-10 uk-text-right summeryField">Entrypoint </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Entrypoint </td>
                             <td><span class="uk-text-danger uk-text-bold">
                                 <span v-for="entrypointItem in viewContainer.config.entrypoint">
                                     {{entrypointItem+" "}}
@@ -375,7 +375,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Env </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Env </td>
                             <td><span class="uk-text-warning">
                                 <div v-for="envItem in viewContainer.config.env">
                                     {{envItem}}
@@ -384,7 +384,7 @@
                             </td>
                         </tr>
                         <tr v-if="JSON.stringify(viewContainer.hostConfig.portBindings) != '{}'">
-                            <th class="uk-width-1-10 uk-text-right summeryField">Export port </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Export port </td>
                             <td class="uk-text-middle">
                                 <div v-for="(guest,host) in viewContainer.hostConfig.portBindings">
                                    <h4 class="uk-margin-bottom-remove">
@@ -396,7 +396,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Created </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Created </td>
                             <td class="">{{viewContainer.created|strToDate}}</td>
                         </tr>
                         </tbody>
@@ -415,7 +415,7 @@
                         <th class="uk-width-2-10 uk-text-center">Gateway</th>
                         <th class="uk-width-2-10 uk-text-center">IP Address</th>
                         <th class="uk-width-2-10 uk-text-center">Mac Address</th>
-                        </thead>
+                        </tdead>
                         <tbody>
                         <tr class="uk-text-center" v-for=" (value, key) in viewContainer.networkSettings.networks">
                             <td class="uk-text-success uk-text-bold">
@@ -441,7 +441,7 @@
                         <th class="uk-width-2-10 ">Source</th>
                         <th class="uk-width-2-10 ">Destination</th>
                         <th class="uk-width-1-10 uk-text-center">RW</th>
-                        </thead>
+                        </tdead>
                         <tbody>
                         <tr v-for=" mount in viewContainer.mounts">
                             <td class="uk-text-center uk-text-success">{{mount.type}}</td>
@@ -475,7 +475,7 @@
                         <th class="uk-width-1-4 uk-text-center">Memory (Usage/Limit)</th>
                         <th class="uk-width-1-4 uk-text-center">IO (Read/Send/Total)</th>
                         <th class="uk-width-1-4 uk-text-center">Net (Rx/Tx)</th>
-                        </thead>
+                        </tdead>
                         <tbody>
                         <tr v-if="stats!=null">
                             <td class="uk-text-center">
@@ -516,7 +516,7 @@
                         <th class="uk-width-1-10">User</th>
                         <th class="uk-width-1-10">Time</th>
                         <th class="uk-width-6-10">Command</th>
-                        </thead>
+                        </tdead>
                         <tbody>
                             <tr v-for="(proecess,index) in processes">
                                 <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>

@@ -70,47 +70,47 @@
                         </caption>
                         <tbody>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">ID </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">ID </td>
                             <td class="uk-text-bold">{{viewImage.id |shortDockerId(12)}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">RepoTags </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">RepoTags </td>
                             <td class="uk-text-primary">
                                 <div v-for="repoTag in viewImage.repoTags">{{repoTag}}</div>
                             </td>
                         </tr>
                         <tr v-if="viewImage.parent != ''">
-                            <th class="uk-width-1-10 uk-text-right summeryField">Parent </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Parent </td>
                             <td class="uk-text-success">{{viewImage.parent |shortDockerId(12)}}</td>
                         </tr>
                         <tr v-if="viewImage.author != ''">
-                            <th class="uk-width-1-10 uk-text-right summeryField">Author </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Author </td>
                             <td class="uk-text-warning">{{viewImage.author}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Architecture </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Architecture </td>
                             <td class="uk-text-muted">{{viewImage.architecture}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Os </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Os </td>
                             <td class="uk-text-muted">{{viewImage.os}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Size </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Size </td>
                             <td class="uk-text-bold uk-text-warning">{{(viewImage.size/1024/1024).toFixed(0)}}MB</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">GraphDriver </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">GraphDriver </td>
                             <td class="uk-text-muted">{{viewImage.graphDriver.name}}</td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">RootFS type</th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">RootFS type</td>
                             <td class="uk-text-bold">
                                 {{viewImage.rootFS.type}}
                             </td>
                         </tr>
                         <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Created </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Created </td>
                             <td class="">{{viewImage.created | strToDate}}</td>
                         </tr>
                         </tbody>
@@ -127,13 +127,14 @@
                             </div>
                         </caption>
                         <tbody>
+
                         <tr v-if="viewImage.config.user!=''">
-                            <th class="uk-width-1-10 uk-text-right summeryField">User </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">User </td>
                             <td class="uk-text-primary">{{viewImage.config.user}}</td>
                         </tr>
 
                         <tr v-if="viewImage.config.workingDir!=''">
-                            <th class="uk-width-1-10 uk-text-right summeryField">WorkingDir </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Directory</td>
                             <td>
                                 <span class="">
                                     {{viewImage.config.workingDir}}
@@ -141,7 +142,7 @@
                             </td>
                         </tr>
                         <tr v-if="viewImage.config.cmd!=null">
-                            <th class="uk-width-1-10 uk-text-right summeryField">Command </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Command </td>
                             <td><span class="uk-text-danger uk-text-bold">
                                 <span v-for="cmdItem in viewImage.config.cmd">
                                     {{cmdItem}}
@@ -150,7 +151,7 @@
                             </td>
                         </tr>
                         <tr v-if="viewImage.config.entrypoint!=null && viewImage.config.entrypoint.length != 0">
-                            <th class="uk-width-1-10 uk-text-right summeryField">Entrypoint </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Entrypoint </td>
                             <td><span class="uk-text-danger uk-text-bold">
                                 <span v-for="entrypointItem in viewImage.config.entrypoint">
                                     {{entrypointItem+" "}}
@@ -158,17 +159,8 @@
                                 </span>
                             </td>
                         </tr>
-                        <tr>
-                            <th class="uk-width-1-10 uk-text-right summeryField">Env </th>
-                            <td><span class="uk-text-warning">
-                                <div v-for="envItem in viewImage.config.env">
-                                    {{envItem}}
-                                </div>
-                                </span>
-                            </td>
-                        </tr>
                         <tr v-if="viewImage.config.exposedPorts != null">
-                            <th class="uk-width-1-10 uk-text-right summeryField">Export port </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Export port </td>
                             <td class="uk-text-middle">
                                 <div v-for="(guest,host) in viewImage.config.exposedPorts">
                                     <h4 class="uk-margin-bottom-remove">
@@ -179,11 +171,20 @@
                             </td>
                         </tr>
                         <tr v-if="viewImage.config.volumes!=null && viewImage.config.volumes.length != 0">
-                            <th class="uk-width-1-10 uk-text-right summeryField">Volumes </th>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Volumes </td>
                             <td class="">
                                 <div v-for="(value,key) in viewImage.config.volumes" class="uk-text-primary uk-text-bold">
                                     {{key}}
                                 </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Env </td>
+                            <td><span class="uk-text-warning">
+                                <div v-for="envItem in viewImage.config.env">
+                                    {{envItem}}
+                                </div>
+                                </span>
                             </td>
                         </tr>
                         </tbody>
