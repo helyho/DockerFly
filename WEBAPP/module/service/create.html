@@ -48,6 +48,12 @@
                     memoryLimit:64,
                     cpuReservation:0,
                     memoryReservation:0,
+                    restartPolicy:{
+                        "condition":"none",
+                        "delay":0,
+                        "maxAttempts":0,
+                        "window":0
+                    },
                     env:{
                         envs:[],
                         add: function(key, value, canRemove){
@@ -247,6 +253,13 @@
                             cmdServiceCreate.network(this.createParams.network.networks);
                         }
 
+                        if (this.createParams.restartPolicy.condition != "") {
+                            cmdServiceCreate.restartPolicy(this.createParams.restartPolicy.condition,
+                                this.createParams.restartPolicy.delay,
+                            this.createParams.restartPolicy.maxAttempts,
+                            this.createParams.restartPolicy.window);
+                        }
+
                         if (this.createParams.port.ports.length > 0) {
                             for(var i = 0; i<this.createParams.port.ports.length; i++) {
                                 var port = this.createParams.port.ports[i];
@@ -263,7 +276,6 @@
                                 }
                             }
                         }
-
 
                         if (this.createParams.mode != "") {
                             cmdServiceCreate.mode(this.createParams.mode)
@@ -343,6 +355,7 @@
                     <li><a href="#"><span class="uk-icon-database"></span> Resource</a></li>
                     <li><a href="#"><span class="uk-icon-sitemap"></span> Expose port</a></li>
                     <li><a href="#"><span class="icon uk-icon-clone"></span>Volume</a></li>
+                    <li><a href="#"><span class="icon uk-icon-refresh"></span>Restart Policy</a></li>
                 </ul>
                 <ul id="tab-content" class="uk-switcher">
                     <!-- Runtime -->
@@ -532,6 +545,40 @@
 
                                         </ul>
                                     </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                    <!-- Restart policy -->
+                    <li>
+                        <table class="uk-table uk-overflow-container uk-panel-box">
+                            <tr>
+                                <td class="uk-width-1-10 dialogField">Restart policy: </td>
+                                <td>
+                                    <c-switch bind="createParams.restartPolicy.condition"
+                                              :switch='{"None":"none","Any":"any","OnFailure":"on-failure"}'
+                                              theme="uk-button-primary uk-button-small"></c-switch>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="dialogField">Retry count: </td>
+                                <td>
+                                    <input type="number" class="uk-form-width-small"
+                                           v-model="createParams.restartPolicy.maxAttempts" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="dialogField">Delay: </td>
+                                <td>
+                                    <input type="number" class="uk-form-width-small"
+                                           v-model="createParams.restartPolicy.delay" /> seconds
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="dialogField">Window: </td>
+                                <td>
+                                    <input type="number" class="uk-form-width-small"
+                                           v-model="createParams.restartPolicy.window" />
                                 </td>
                             </tr>
                         </table>

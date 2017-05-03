@@ -36,6 +36,8 @@
                     name: "",
                     image: "",
                     command: "",
+                    tty: false,
+                    openStdin: false,
                     workDir:"",
                     user:"",
                     entrypoint: "",
@@ -45,6 +47,10 @@
                     memory: 64,
                     network: "",
                     networkDisable: false,
+                    restartPolicy:{
+                        "name":"no",
+                        "maximumRetryCount":0
+                    },
                     env:{
                         envs:[],
                         add: function(key, value, canRemove){
@@ -150,7 +156,6 @@
                     for(var target in imageDetail.config.volumes){
                         this.createParams.volume.add(target, false)
                     }
-                    console.log(imageDetail.config)
                 }
             },
             methods: {
@@ -212,6 +217,8 @@
                         cmdContainerCreate = new CmdContainerCreate(this.createParams.name);
                         connect(cmdContainerCreate);
 
+                        var entity = cmdContainerCreate.getEntity("OBJECT");
+
                         if (this.createParams.image != "") {
                             cmdContainerCreate.image(this.createParams.image);
                         }
@@ -243,6 +250,18 @@
                             cmdContainerCreate.privileged(this.createParams.privileged);
                         }
 
+                        if (this.createParams.tty != "") {
+                            cmdContainerCreate.tty(this.createParams.tty);
+                        }
+
+                        if (this.createParams.openStdin != "") {
+                            cmdContainerCreate.openStdin(this.createParams.openStdin);
+                        }
+
+                        if (this.createParams.restartPolicy.name != "") {
+                            cmdContainerCreate.restartPolicy(this.createParams.restartPolicy.name, this.createParams.restartPolicy.maximumRetryCount);
+                        }
+
                         if (this.createParams.cpu != "") {
                             cmdContainerCreate.cpu(this.createParams.cpu);
                         }
@@ -267,6 +286,7 @@
                                 }
                             }
                         }
+
                         if (this.createParams.volume.volumes.length >= 0) {
                             var volumes = new Array();
                             for(var i = 0; i<this.createParams.volume.volumes.length; i++) {
@@ -291,6 +311,8 @@
                             }
                             cmdContainerCreate.link(links);
                         }
+
+                        entity.release();
                         cmdContainerCreate.send();
                         cmdContainerCreate.close();
                         cmdContainerCreate.release();
@@ -333,7 +355,6 @@
                         </select>
                     </td>
                 </tr>
-
                 <tr>
                     <td class="dialogField">Privileged:</td>
                     <td>
@@ -349,6 +370,7 @@
                 <li><a href="#"><span class="uk-icon-sitemap"></span> Expose port</a></li>
                 <li><a href="#"><span class="icon uk-icon-clone"></span>Volume</a></li>
                 <li><a href="#"><span class="icon uk-icon-link"></span>Link</a></li>
+                <li><a href="#"><span class="icon uk-icon-refresh"></span>Restart Policy</a></li>
             </ul>
             <ul id="tab-content" class="uk-switcher">
                 <!-- Runtime -->
@@ -372,6 +394,20 @@
                         <tr v-if="createParams.entrypoint!=''">
                             <td class="dialogField">Entry point:</td>
                             <td><span class="uk-text-bold uk-text-primary">{{createParams.entrypoint}}</span></td>
+                        </tr>
+                        <tr>
+                            <td class="dialogField">Tty:</td>
+                            <td>
+                                <c-switch bind="createParams.tty" :switch='{"ON":true,"OFF":false}'
+                                          theme="uk-button-success uk-button-small"></c-switch>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="dialogField">Interactive:</td>
+                            <td>
+                                <c-switch bind="createParams.openStdin" :switch='{"ON":true,"OFF":false}'
+                                          theme="uk-button-success uk-button-small"></c-switch>
+                            </td>
                         </tr>
                         <tr>
                             <td class="dialogField">Env:</td>
@@ -521,7 +557,6 @@
                                                 </div>
                                             </div>
                                         </li>
-
                                     </ul>
                                 </div>
                             </td>
@@ -563,6 +598,26 @@
                                         </li>
                                     </ul>
                                 </div>
+                            </td>
+                        </tr>
+                    </table>
+                </li>
+                <!-- Restart policy -->
+                <li>
+                    <table class="uk-table uk-overflow-container uk-panel-box">
+                        <tr>
+                            <td class="uk-width-1-10 dialogField">Restart policy: </td>
+                            <td>
+                                    <c-switch bind="createParams.restartPolicy.name"
+                                              :switch='{"No":"no","Always":"always","UnlessStopped":"unless-stopped","OnFailure":"on-failure"}'
+                                              theme="uk-button-primary uk-button-small"></c-switch>
+                            </td>
+                        </tr>
+                        <tr v-if="createParams.restartPolicy.name=='on-failure'">
+                            <td class="dialogField">Retry count: </td>
+                            <td>
+                                <input type="number" class="uk-form-width-small"
+                                       v-model="createParams.restartPolicy.maximumRetryCount" />
                             </td>
                         </tr>
                     </table>
