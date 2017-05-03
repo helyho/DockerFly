@@ -16,6 +16,7 @@
 <script lang="javascript" src="../../js/utils.js"></script>
 <script lang="javascript">
     doImport("org.voovan.docker.command.Network.CmdNetworkDetail")
+    doImport("org.voovan.docker.command.Network.CmdNetworkDisConnect")
 
     function init() {
         viewerVue = new Vue({
@@ -41,9 +42,25 @@
                             alertError(e)
                         }
                     }
+                },
+                methods:{
+                    disconnect:function(containerId){
+                        try {
+                            var networkId = getQueryString("id");
+                            var cmdNetworkDisConnect = new CmdNetworkDisConnect(networkId)
+                            connect(cmdNetworkDisConnect)
+                            cmdNetworkDisConnect.container(containerId)
+                            cmdNetworkDisConnect.send();
+                            cmdNetworkDisConnect.close();
+                            cmdNetworkDisConnect.release();
+                            location.reload()
+                        } catch (e) {
+                            alertError(e)
+                        }
+                    }
                 }
             }
-            );
+        );
     }
 </script>
 <body onload="init()" class="frameBody">
@@ -152,8 +169,8 @@
                         <th class="uk-width-1-5 uk-text-center">ID</th>
                         <th class="uk-width-1-5">Name</th>
                         <th class="uk-width-1-5 uk-text-center">IPv4Address</th>
-                        <th class="uk-width-1-5 uk-text-center">IPv6Address</th>
                         <th class="uk-width-1-5 uk-text-center">MacAddress</th>
+                        <th class="uk-width-1-5 uk-text-center">Disconnect</th>
                         </thead>
                         <tbody>
                         <tr v-for="(value, id) in viewNetwork.containers">
@@ -167,10 +184,12 @@
                                 <span class="uk-text-danger">{{value.ipv4Address}}</span>
                             </td>
                             <td class="uk-text-center">
-                                <span class="uk-text-warning">{{value.ipv6Address}}</span>
+                                <span class="uk-text-warning">{{value.macAddress}}</span>
                             </td>
                             <td class="uk-text-center">
-                                <span class="uk-text-primary">{{value.macAddress}}</span>
+                                <span class="uk-text-primary">
+                                    <button class="uk-button uk-button-danger uk-button-small" @click="disconnect(id)">Disconnect</button>
+                                </span>
                             </td>
                         </tr>
                         </tbody>

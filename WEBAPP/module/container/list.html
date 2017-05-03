@@ -21,16 +21,35 @@
     doImport("org.voovan.docker.command.Container.CmdContainerUnPause")
     doImport("org.voovan.docker.command.Container.CmdContainerUnPause")
 
+    doImport("org.voovan.docker.command.Network.CmdNetworkList")
+    doImport("org.voovan.docker.command.Network.CmdNetworkConnect")
+    doImport("org.voovan.docker.command.Network.CmdNetworkDisConnect")
+
 
     function init() {
         containerListVue = new Vue({
             el: '#ContainerApp',
             data: {
                 containerList: null,
+                networkToConnect: null,
                 queryParams:{
                     name:"",
                     id:"",
                     status:"All"
+                }
+            },
+            computed:{
+                networkList: function(){
+                    try {
+                        var cmdNetworkList = new CmdNetworkList();
+                        connect(cmdNetworkList);
+                        var networkList = cmdNetworkList.send().sortBy("name");
+                        cmdNetworkList.close();
+                        cmdNetworkList.release();
+                        return networkList;
+                    } catch (e) {
+                        alertError(e)
+                    }
                 }
             },
             methods: {
@@ -141,6 +160,70 @@
                     }
                     this.query()
                 },
+                //连接到网络
+                connect: function(container){
+
+                    var selector = '<span class="uk-form">' +
+                        '<select class="uk-form uk-form-width-medium" id="networkToConnect">';
+                    selector = selector + '<option value="">Nothing</option>';
+                    for(var index in this.networkList) {
+                        var network = this.networkList[index]
+                        if(typeof(network)!="function")
+                        selector = selector + '<option value="'+network.id+'">'+network.name+'</option>';
+                    }
+                    selector = selector + '</select></span>';
+                    try {
+                        UIkit.modal.confirm("<span class='uk-text-large uk-text-primary'>Choice which network to connect ?&nbsp;&nbsp;</span><hr/>"+selector, function () {
+                            try {
+                                var cmdNetworkConnect = new CmdNetworkConnect($('#networkToConnect').val());
+                                connect(cmdNetworkConnect);
+                                cmdNetworkConnect.container(container.id)
+                                cmdNetworkConnect.send();
+                                cmdNetworkConnect.close();
+                                cmdNetworkConnect.release();
+                                containerListVue.query();
+                            } catch (e) {
+                                alertError(e)
+                            }
+                        });
+
+
+                    } catch (e) {
+                        alertError(e)
+                    }
+                    this.query()
+                },
+                //连接到网络
+                disconnect: function(container){
+
+                    var selector = '<span class="uk-form">' +
+                        '<select class="uk-form uk-form-width-medium" id="networkToDisconnect">';
+                    for(var network in container.networkSettings.networks) {
+                        selector = selector + '<option value="'+container.networkSettings.networks[network].networkID+'">'+network+'</option>';
+                    }
+                    selector = selector + '</select></span>';
+                    try {
+                        UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Choice which network to disconnect  &nbsp;&nbsp;</span><hr/>"+selector, function () {
+                            try {
+                                var cmdNetworkDisConnect = new CmdNetworkDisConnect($('#networkToDisconnect').val());
+                                connect(cmdNetworkDisConnect);
+                                cmdNetworkDisConnect.container(container.id)
+                                cmdNetworkDisConnect.send();
+                                cmdNetworkDisConnect.close();
+                                cmdNetworkDisConnect.release();
+                                containerListVue.query();
+                            } catch (e) {
+                                alertError(e)
+                            }
+                        });
+
+
+                    } catch (e) {
+                        alertError(e)
+                    }
+                    this.query()
+                }
+
             }
         });
         var urlId = getQueryString("id");
@@ -263,6 +346,15 @@
                                            @click="pause(container)"><span class="uk-icon-pause"></span> Pause</a></li>
                                     <li><a href="#" @click="remove(container)"
                                            class=" uk-text-danger"><span class="uk-icon-trash"></span> Remove</a></li>
+                                    <li class="uk-nav-divider"></li>
+                                    <li v-if="container.state=='running'">
+                                        <a href="#"
+                                           class=" uk-text-primary"
+                                           @click="connect(container)"><span class="uk-icon-link"></span> Connect</a></li>
+                                    <li v-if="container.state=='running'">
+                                        <a href="#"
+                                           class=" uk-text-warning"
+                                           @click="disconnect(container)"><span class="uk-icon-chain-broken"></span> Disconnect</a></li>
                                 </ul>
                             </div>
 

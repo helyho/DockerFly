@@ -49,11 +49,13 @@
                 },
                 //移除方法
                 remove: function (image) {
-                    var repoTags = "<option value='image'>This image</option>";
+                    var selector = "<span class='uk-form'><select id='imageRepoTag' class='uk-form-width-medium'>";
+                    selector =selector + "<option value='image'>This image</option>";
                     for(var i=0;i<image.repoTags.length;i++){
-                        repoTags = repoTags + "<option value='"+image.repoTags[i]+"'>Tag: "+image.repoTags[i]+"</option>";
+                        selector = selector + "<option value='"+image.repoTags[i]+"'>Tag: "+image.repoTags[i]+"</option>";
                     }
-                    UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Choice which one you want to remove? </span><br><select id='imageRepoTag' class='uk-form-width-medium'>" + repoTags + "</select>", function () {
+                    selector = selector + "</select></span>";
+                    UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Choice which one you want to remove? </span><hr/>" + selector + "", function () {
                         try {
                             var imageRepoTag = $('#imageRepoTag').val();
 
@@ -169,7 +171,7 @@
                             <div class="uk-dropdown uk-dropdown-small">
                                 <ul class="uk-nav uk-nav-dropdown uk-text-left">
                                     <li><a href="#" @click="tag(image)"
-                                           class=" uk-text-primary"><span class="uk-icon-trash"></span> Tag</a></li>
+                                           class=" uk-text-primary"><span class="uk-icon-tags"></span> Tag</a></li>
                                 </ul>
                                 <ul class="uk-nav uk-nav-dropdown uk-text-left">
                                     <li><a href="#" @click="remove(image)"
