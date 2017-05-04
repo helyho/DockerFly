@@ -67,8 +67,7 @@
                     });
                 },
                 openCreateDialog: function () {
-                    createVolumeDialog = UIkit.modal("#createVolumeDialog");
-                    createVolumeDialog.show();
+                    openDialog("createVolumeDialog")
                 },
                 create: function () {
                     try {
@@ -78,8 +77,8 @@
                         cmdVolumeCreate.driver(this.createParams.driver);
                         cmdVolumeCreate.send();
                         cmdVolumeCreate.close();
-                        createVolumeDialog.hide();
                         alert("Create volume success.");
+                        closeDialog("createVolumeDialog")
                         volumeListVue.query();
                     } catch (e) {
                         alertError(e);

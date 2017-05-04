@@ -79,8 +79,7 @@
                     this.updateParams.name = node.spec.name;
                     this.updateParams.role = node.spec.role;
                     this.updateParams.availability = node.spec.availability;
-                    updateNodeDialog = UIkit.modal("#updateNodeDialog");
-                    updateNodeDialog.show();
+                    openDialog("updateNodeDialog");
                 },
                 update: function () {
                     try {
@@ -98,8 +97,8 @@
                         }
                         cmdNodeUpdate.send();
                         cmdNodeUpdate.close();
-                        updateNodeDialog.hide();
                         alert("Update node success.");
+                        closeDialog("updateNodeDialog")
                         nodeListVue.query();
                     } catch (e) {
                         alertError(e);

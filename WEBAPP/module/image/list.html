@@ -50,7 +50,7 @@
                 //移除方法
                 remove: function (image) {
                     var selector = "<span class='uk-form'><select id='imageRepoTag' class='uk-form-width-medium'>";
-                    selector =selector + "<option value='image'>This image</option>";
+                    selector =selector + "<option value='image'>this image</option>";
                     for(var i=0;i<image.repoTags.length;i++){
                         selector = selector + "<option value='"+image.repoTags[i]+"'>Tag: "+image.repoTags[i]+"</option>";
                     }

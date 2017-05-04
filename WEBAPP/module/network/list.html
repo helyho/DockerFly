@@ -83,8 +83,7 @@
 
                 },
                 openCreateDialog: function () {
-                    createNetworkDialog = UIkit.modal("#createNetworkDialog");
-                    createNetworkDialog.show();
+                    openDialog("createNetworkDialog")
                 },
                 create: function () {
                     try {
@@ -110,8 +109,8 @@
 
                         cmdNetworkCreate.send();
                         cmdNetworkCreate.close();
-                        createNetworkDialog.hide();
                         alert("Create network success.");
+                        closeDialog("createNetworkDialog")
                         networkListVue.query();
                     } catch (e) {
                         alertError(e);

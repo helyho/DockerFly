@@ -49,17 +49,6 @@
                 }
             },
             methods : {
-                openInitDialog : function () {
-                    initSwarmDialog = UIkit.modal("#initSwarmDialog");
-                    initSwarmDialog.show();
-                },
-                openJoinDialog : function () {
-                    joinSwarmDialog = UIkit.modal("#joinSwarmDialog");
-                    joinSwarmDialog.show();
-                },
-                openUpdateDialog : function () {
-                    alert("update")
-                },
                 init: function(){
                     try {
                         var cmdSwarmInit = new CmdSwarmInit();
@@ -78,7 +67,8 @@
                         cmdSwarmInit.send();
                         cmdSwarmInit.close();
                         cmdSwarmInit.release();
-                        UIkit.modal("#initSwarmDialog").hide();
+                        alert("Init swarm success.");
+                        closeDialog("initSwarmDialog")
                         location.reload()
                     } catch (e) {
                         alertError(e)
@@ -108,10 +98,10 @@
                         cmdSwarmJoin.send();
                         cmdSwarmJoin.close();
                         cmdSwarmJoin.release();
-                        UIkit.modal("#joinSwarmDialog").hide();
+                        alert("Join to swarm manager success.");
+                        closeDialog("joinSwarmDialog")
                         location.reload()
                     } catch (e) {
-                        UIkit.modal("#joinSwarmDialog").hide();
                         alertError(e)
                         return null;
                     }
@@ -198,8 +188,8 @@
                 </div>
                 <div class="uk-form uk-text-right uk-width-2-5 uk-text-middle">
                     <div class="uk-button-group">
-                        <a v-if="swarmInfo==null" class="uk-button  uk-button-primary" @click="openInitDialog">Init</a>
-                        <a v-if="swarmInfo==null" class="uk-button  uk-button-success" @click="openJoinDialog">Join</a>
+                        <a v-if="swarmInfo==null" class="uk-button  uk-button-primary" onclick="openDialog('initSwarmDialog')">Init</a>
+                        <a v-if="swarmInfo==null" class="uk-button  uk-button-success" onclick="UIkit.openDialog('joinSwarmDialog')">Join</a>
                         <a v-if="swarmInfo!=null" class="uk-button  uk-button-danger" @click="leave">Leave</a>
                     </div>
                     <a class="uk-button  uk-button-link" data-uk-modal="{target:'#helpDialog'}"><span class="uk-icon-question-circle"></span></a>

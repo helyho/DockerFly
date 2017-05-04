@@ -86,6 +86,14 @@
         //term.write('Hello from \033[1;3;31mxterm.js\033[0m $ ')
     }
 
+    function openDialog(dialogId){
+        UIkit.modal('#'+dialogId).show()
+    }
+
+    function closeDialog(dialogId){
+        UIkit.modal('#'+dialogId).hide()
+    }
+
 /**
  * =======================vuejs 过滤器函数=======================
  */

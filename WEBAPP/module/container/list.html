@@ -9,6 +9,7 @@
 <script src="../../js/common/jquery.min.js"></script>
 <script src="../../js/common/vue.min.js"></script>
 <script src="../../js/common/uikit.js"></script>
+<script src="../../js/component/switch.js"></script>
 
 <link rel="stylesheet" href="../../css/main.css"/>
 <script lang="javascript" src="../../js/utils.js"></script>
@@ -20,6 +21,7 @@
     doImport("org.voovan.docker.command.Container.CmdContainerPause")
     doImport("org.voovan.docker.command.Container.CmdContainerUnPause")
     doImport("org.voovan.docker.command.Container.CmdContainerUnPause")
+    doImport("org.voovan.docker.command.Container.CmdContainerCommit")
 
     doImport("org.voovan.docker.command.Network.CmdNetworkList")
     doImport("org.voovan.docker.command.Network.CmdNetworkConnect")
@@ -36,6 +38,13 @@
                     name:"",
                     id:"",
                     status:"All"
+                },
+                commitParams:{
+                    container:null,
+                    tag:"",
+                    comment:"",
+                    author:"",
+                    pause:true
                 }
             },
             computed:{
@@ -222,6 +231,36 @@
                         alertError(e)
                     }
                     this.query()
+                },
+                openCommitDialog:function(container){
+                    this.commitParams.container = container;
+                    openDialog("commitDialog")
+                },
+                commit: function(){
+                    try{
+                        if(this.commitParams.tag==""){
+                            return;
+                        }
+
+                        var cmdContainerCommit = new CmdContainerCommit(this.commitParams.container.id);
+                        var tagArr = this.commitParams.tag.split(":");
+                        if(tagArr.length == 1){
+                            tagArr.push("latest");
+                        }
+                        cmdContainerCommit.repo(tagArr[0]);
+                        cmdContainerCommit.tag(tagArr[1]);
+                        cmdContainerCommit.comment(this.commitParams.comment);
+                        cmdContainerCommit.author(this.commitParams.author);
+                        cmdContainerCommit.pause(this.commitParams.pause);
+                        connect(cmdContainerCommit);
+                        cmdContainerCommit.send();
+                        cmdContainerCommit.close();
+                        cmdContainerCommit.release();
+                        alert("Commit contianer success.");
+                        closeDialog("commitDialog");
+                    } catch (e) {
+                        alertError(e)
+                    }
                 }
 
             }
@@ -333,28 +372,27 @@
                             <div class="uk-dropdown uk-dropdown-small">
                                 <ul class="uk-nav uk-nav-dropdown uk-text-left">
                                     <li v-if="container.state!='running' || container.state=='paused'">
-                                        <a href="#"
-                                           class=" uk-text-primary"
+                                        <a href="#" class=" uk-text-primary"
                                            @click="start(container)"><span class="uk-icon-play"></span> Start</a></li>
                                     <li v-if="container.state=='running'">
-                                        <a href="#"
-                                           class=" uk-text-warning"
+                                        <a href="#" class=" uk-text-warning"
                                            @click="stop(container)"><span class="uk-icon-stop"></span> Stop</a></li>
                                     <li v-if="container.state=='running'">
-                                        <a href="#"
-                                           class=" uk-text-success"
+                                        <a href="#" class=" uk-text-success"
                                            @click="pause(container)"><span class="uk-icon-pause"></span> Pause</a></li>
                                     <li><a href="#" @click="remove(container)"
                                            class=" uk-text-danger"><span class="uk-icon-trash"></span> Remove</a></li>
                                     <li class="uk-nav-divider"></li>
                                     <li v-if="container.state=='running'">
-                                        <a href="#"
-                                           class=" uk-text-primary"
+                                        <a href="#" class=" uk-text-primary"
                                            @click="connect(container)"><span class="uk-icon-link"></span> Connect</a></li>
                                     <li v-if="container.state=='running'">
-                                        <a href="#"
-                                           class=" uk-text-warning"
+                                        <a href="#" class=" uk-text-warning"
                                            @click="disconnect(container)"><span class="uk-icon-chain-broken"></span> Disconnect</a></li>
+                                    <li class="uk-nav-divider"></li>
+                                    <li>
+                                        <a href="#" class=" uk-text-primary"
+                                           @click="openCommitDialog(container)"><span class="uk-icon-ticket"></span> Commit</a></li>
                                 </ul>
                             </div>
 
@@ -364,6 +402,42 @@
             </tr>
             </tbody>
         </table>
+    </div>
+    <div id="commitDialog" class="uk-modal">
+        <div class="uk-modal-dialog uk-overflow-container">
+            <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
+            <div class="uk-modal-header"><h2 class="uk-text-success">Commit container </h2></div>
+            <div class="uk-form">
+                <table class="uk-table uk-overflow-container uk-panel-box">
+                    <tr>
+                        <td class="dialogField"> Tag:</td>
+                        <td><input class="uk-form-width-medium" type="text"
+                                   placeholder="e.g. dockerfly:latest" v-model="commitParams.tag"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Pause:</td>
+                        <td><c-switch :bind="'commitParams.pause'"
+                                      :switch='{"ON":true,"OFF":false}'
+                                      theme="uk-button-primary"></c-switch></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Author:</td>
+                        <td><input class="uk-form-width-medium" type="text"
+                                   placeholder="e.g. voovan" v-model="commitParams.author"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Comment:</td>
+                        <td><textarea style="width:300px;height: 80px" placeholder="e.g. something to introduce"
+                                      v-model="commitParams.comment"></textarea></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField" colspan="2">
+                            <a class="uk-button uk-button-primary" @click="commit()">Commit</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
     <div class="uk-width-6-6">
         <div style="min-height:40px;" class="uk-text-center uk-margin-bottom">

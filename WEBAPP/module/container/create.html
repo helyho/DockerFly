@@ -47,6 +47,8 @@
                     memory: 64,
                     network: "",
                     networkDisable: false,
+                    hostname:"",
+                    domainName:"",
                     restartPolicy:{
                         "name":"no",
                         "maximumRetryCount":0
@@ -373,7 +375,7 @@
                 <li><a href="#"><span class="icon uk-icon-list-alt"></span>Runtime</a></li>
                 <li><a href="#"><span class="uk-icon-database"></span> Resource</a></li>
                 <li><a href="#"><span class="uk-icon-sitemap"></span> Expose port</a></li>
-                <li><a href="#"><span class="icon uk-icon-clone"></span>Volume</a></li>
+                <li><a href="#"><span class="icon uk-icon-clone"></span>Mount</a></li>
                 <li><a href="#"><span class="icon uk-icon-link"></span>Link</a></li>
                 <li><a href="#"><span class="icon uk-icon-refresh"></span>Restart Policy</a></li>
             </ul>
@@ -494,7 +496,7 @@
                                         <li v-for="(port,index) in createParams.port.ports">
                                             <div class="uk-grid">
                                                 <div class="uk-text- uk-width-9-10">
-                                                    <c-switch :bind="`createParams.port.ports[`+index+`].protocol`"
+                                                    <c-switch :bind="'createParams.port.ports['+index+'].protocol'"
                                                               :switch='{"TCP":"tcp","UDP":"udp"}'
                                                               theme="uk-button-success uk-button-mini"></c-switch>
                                                     &nbsp;&nbsp;
@@ -529,13 +531,13 @@
                                     <ul class="uk-list uk-list-line ">
                                         <li>
                                             <button class="uk-button uk-button-primary uk-button-small" @click="createParams.volume.add()">
-                                                <i class="uk-icon-plus-square"></i> Add volume</button>
+                                                <i class="uk-icon-plus-square"></i> Add mount</button>
                                         </li>
                                         <li v-for="(volume,index) in createParams.volume.volumes">
                                             <div class="uk-grid">
                                                 <div class="uk-text- uk-width-9-10">
-                                                    <c-switch :bind="`createParams.volume.volumes[`+index+`].type`"
-                                                              :switch='{"Volume":"volume","Bind":"bind","TMPFS":"tmpfs"}'
+                                                    <c-switch :bind="'createParams.volume.volumes['+index+'].type'"
+                                                              :switch='{"Volume":"volume","Bind":"bind","Tmpfs":"tmpfs"}'
                                                               theme="uk-button-success uk-button-mini"
                                                               @click="volume.volumeSource=''"></c-switch>
                                                     &nbsp;&nbsp;
