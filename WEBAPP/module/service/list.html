@@ -187,7 +187,7 @@
                     {{service.spec.name}}
                 </td>
                 <td class="uk-text-bold uk-text-middle uk-text-warning">
-                    {{service.spec.taskTemplate.containerSpec.image.split("@")[0] | shortDockerId(12) }}
+                    {{service.spec.taskTemplate.containerSpec.image.split("@")[0] | shortDockerId(18) }}
                 </td>
                 <td class="uk-text-middle">
                     <div v-for="virtualIP in service.endpoint.virtualIPs">
@@ -198,7 +198,7 @@
                     </div>
                 </td>
                 <td class="uk-text-middle uk-text-bold uk-text-success uk-text-center">
-                    {{servicdTaskCountList[service.id]==null?"0":servicdTaskCountList[service.id]==null}} / {{service.spec.mode.replicated.replicas}}
+                    {{servicdTaskCountList[service.id]==null?"0":servicdTaskCountList[service.id]}} / {{service.spec.mode.replicated.replicas}}
                 </td>
                 <td class="uk-text-middle uk-text-center">
                    {{service.createdAt|strToDate}}
