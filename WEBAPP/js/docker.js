@@ -226,8 +226,6 @@ function getNetworksIdAndName(){
             var network = networkList[i];
             networks[network.id] = network.name;
         }
-        cmdNetworkList.close();
-        cmdNetworkList.release();
         return networks;
     } catch (e) {
         alertError(e)

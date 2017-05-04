@@ -343,8 +343,9 @@
                     </div>
                 </td>
                 <td class="uk-text-middle">
-                    <div v-for="port in container.ports">
-                        <span class="uk-icon-external-link uk-text-primary uk-text-small"> </span><code>{{port.type}}/{{port.privatePort}}:{{port.publicPort}}</code>
+                    <div v-for="port in container.ports" v-if="port.publicPort!=null">
+                        <span class="uk-icon-external-link uk-text-primary uk-text-small"></span>
+                        <code>{{port.type}}/{{port.privatePort}}:{{port.publicPort}}</code>
                     </div>
                 </td>
                 <td :class="container.state" class="uk-text-center uk-text-bold uk-text-middle">

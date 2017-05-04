@@ -24,14 +24,20 @@
             el: '#ServiceApp',
             data: {
                 serviceList: null,
-                networkList: null,
-                volumeList: null,
-                imageList: null,
                 servicdTaskCountList:{},
                 queryParams:{
                     name:"",
                     id:"",
                     status:"All"
+                }
+            },
+            computed:{
+                networks: function(){
+                    try {
+                        return getNetworksIdAndName();
+                    } catch (e) {
+                        alertError(e)
+                    }
                 }
             },
             methods: {
@@ -174,21 +180,26 @@
             <tbody>
             <tr v-for="(service,index) in serviceList">
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
-                <td class="uk-text-bold uk-text-middle ">
-                    <a class="uk-text-primary" :href="'task.html?service='+service.id">{{service.id|shortDockerId(12)}}</a>
+                <td class="uk-text-bold uk-text-middle uk-text-primary ">
+                    {{service.id|shortDockerId(12)}}
                 </td>
                 <td class="uk-text-bold uk-text-middle uk-text-danger">
                     {{service.spec.name}}
                 </td>
                 <td class="uk-text-bold uk-text-middle uk-text-warning">
-                    {{service.spec.taskTemplate.containerSpec.image.split("@")[0]}}
+                    {{service.spec.taskTemplate.containerSpec.image.split("@")[0] | shortDockerId(12) }}
                 </td>
                 <td class="uk-text-middle">
                     <div v-for="virtualIP in service.endpoint.virtualIPs">
-                        <code>{{virtualIP.addr}}</code>
+                        <a :href="'../network/viewer.html?id='+virtualIP.networkId"
+                           target="view">
+                        <code>{{networks[virtualIP.networkId]}}:{{virtualIP.addr}}</code>
+                        </a>
                     </div>
                 </td>
-                <td class="uk-text-middle uk-text-bold uk-text-success uk-text-center">{{servicdTaskCountList[service.id]}} / {{service.spec.mode.replicated.replicas}}</td>
+                <td class="uk-text-middle uk-text-bold uk-text-success uk-text-center">
+                    {{servicdTaskCountList[service.id]==null?"0":servicdTaskCountList[service.id]==null}} / {{service.spec.mode.replicated.replicas}}
+                </td>
                 <td class="uk-text-middle uk-text-center">
                    {{service.createdAt|strToDate}}
                 </td>
