@@ -13,22 +13,14 @@
 
 <link rel="stylesheet" href="../../css/main.css"/>
 <script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript" src="../../js/docker.js"></script>
 <script lang="javascript">
     doImport("org.voovan.docker.command.Service.CmdServiceCreate")
-
-    doImport("org.voovan.docker.command.Image.CmdImageList")
-    doImport("org.voovan.docker.command.Network.CmdNetworkList")
-    doImport("org.voovan.docker.command.Volume.CmdVolumeList")
-
-    doImport("org.voovan.docker.command.Image.CmdImageDetail")
 
     function init() {
         serviceListVue = new Vue({
             el: '#ServiceApp',
             data: {
-                networkList: null,
-                volumeList: null,
-                imageList: null,
                 queryParams:{
                     name:"",
                     id:"",
@@ -108,7 +100,7 @@
             },
             watch:{
                 "createParams.image" : function(newVal, oldVal){
-                    var imageDetail = this.getImageDetail(newVal);
+                    var imageDetail = getImageDetail(newVal);
 
                     //处理 EntryPoint
                     this.createParams.entrypoint = "";
@@ -143,59 +135,18 @@
                     console.log(imageDetail.config)
                 }
             },
+            computed:{
+                volumeList: function(){
+                    return getVolumes();
+                },
+                imageList: function () {
+                    return getImages();
+                },
+                networkList: function () {
+                    return getNetworks();
+                },
+            },
             methods: {
-                getImageList: function () {
-                    try{
-                        var cmdImageList = new CmdImageList();
-                        connect(cmdImageList);
-
-                        this.imageList = cmdImageList.send().sortBy("Created");
-                        cmdImageList.close();
-                        cmdImageList.release();
-                    } catch (e) {
-                        alertError(e)
-                    }
-                },
-                getImageDetail: function (image) {
-                    try {
-                        var cmdImageDetail = new CmdImageDetail(image)
-                        connect(cmdImageDetail)
-                        var viewImage = cmdImageDetail.send();
-                        cmdImageDetail.close();
-                        cmdImageDetail.release();
-
-                        if (viewImage != null) {
-                            return viewImage;
-                        } else {
-                            return null;
-                        }
-                    } catch (e) {
-                        alertError(e)
-                    }
-                },
-                getNetworkList: function () {
-                    try{
-                        var cmdNetworkList = new CmdNetworkList();
-                        connect(cmdNetworkList);
-                        //cmdNetworkList.type("custom");
-                        this.networkList = cmdNetworkList.send().sortBy("name");
-                        cmdNetworkList.close();
-                        cmdNetworkList.release();
-                    } catch (e) {
-                        alertError(e)
-                    }
-                },
-                getVolumeList: function () {
-                    try{
-                        var cmdVolumeList = new CmdVolumeList();
-                        connect(cmdVolumeList);
-                        this.volumeList = cmdVolumeList.send().sortBy("name");
-                        cmdVolumeList.close();
-                        cmdVolumeList.release();
-                    } catch (e) {
-                        alertError(e)
-                    }
-                },
                 create: function () {
                     try {
 
@@ -307,14 +258,6 @@
                 },
             }
         });
-
-        try{
-            serviceListVue.getImageList();
-            serviceListVue.getNetworkList();
-            serviceListVue.getVolumeList();
-        } catch (e) {
-            alertError(e)
-        }
     }
 </script>
 <body onload="init()" class="frameBody">
@@ -334,7 +277,7 @@
                         <td>
                             <select class="uk-form-width-medium" v-model="createParams.image" autocomplete="off">
                                 <option v-for="(image,index) in imageList"
-                                        :value="image.repoTags[0]"
+                                        :value="image.id"
                                         v-if="image.repoTags.length!=0"><span class="uk-text-bold">{{image.repoTags[0]}}</span>
                                 </option>
                             </select>
@@ -397,11 +340,11 @@
                                             <li v-for="(env,index) in createParams.env.envs">
                                                 <div class="uk-grid">
                                                     <div class="uk-text- uk-width-9-10">
-                                                        <input class="uk-form-width-medium uk-text-center" type="text"
+                                                        <input class="uk-form-width-medium" type="text"
                                                                :disabled="!env.canRemove"
                                                                placeholder="e.g. HOME" v-model="env.key"/>
                                                         &nbsp;=&nbsp;
-                                                        <input class="uk-form-width-large uk-text-center" type="text"
+                                                        <input class="uk-form-width-large" type="text"
                                                                :disabled="!env.canRemove"
                                                                placeholder="e.g. /root" v-model="env.value"/>
                                                     </div>

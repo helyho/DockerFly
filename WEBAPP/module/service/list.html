@@ -12,16 +12,12 @@
 
 <link rel="stylesheet" href="../../css/main.css"/>
 <script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript" src="../../js/docker.js"></script>
 <script lang="javascript">
     doImport("org.voovan.docker.command.Service.CmdServiceCreate")
     doImport("org.voovan.docker.command.Service.CmdServiceList")
     doImport("org.voovan.docker.command.Service.CmdServiceRemove")
     doImport("org.voovan.docker.command.Service.CmdServiceUpdate")
-
-    doImport("org.voovan.docker.command.Task.CmdTaskList")
-    doImport("org.voovan.docker.command.Image.CmdImageList")
-    doImport("org.voovan.docker.command.Network.CmdNetworkList")
-    doImport("org.voovan.docker.command.Volume.CmdVolumeList")
 
     function init() {
         serviceListVue = new Vue({
@@ -63,11 +59,7 @@
 
                     //读取并统计任务数
                     try {
-                        var cmdTaskList = new CmdTaskList();
-                        connect(cmdTaskList);
-                        var taskList = cmdTaskList.send().sortBy("name");
-                        cmdTaskList.close();
-                        cmdTaskList.release();
+                        var taskList = getTaskList();
                         var servicdTaskCountList = {};
 
                         for(var i=0;i<taskList.length;i++) {

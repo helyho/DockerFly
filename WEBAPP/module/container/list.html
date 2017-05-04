@@ -13,6 +13,7 @@
 
 <link rel="stylesheet" href="../../css/main.css"/>
 <script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript" src="../../js/docker.js"></script>
 <script lang="javascript">
     doImport("org.voovan.docker.command.Container.CmdContainerList")
     doImport("org.voovan.docker.command.Container.CmdContainerStart")
@@ -23,7 +24,6 @@
     doImport("org.voovan.docker.command.Container.CmdContainerUnPause")
     doImport("org.voovan.docker.command.Container.CmdContainerCommit")
 
-    doImport("org.voovan.docker.command.Network.CmdNetworkList")
     doImport("org.voovan.docker.command.Network.CmdNetworkConnect")
     doImport("org.voovan.docker.command.Network.CmdNetworkDisConnect")
 
@@ -49,16 +49,7 @@
             },
             computed:{
                 networkList: function(){
-                    try {
-                        var cmdNetworkList = new CmdNetworkList();
-                        connect(cmdNetworkList);
-                        var networkList = cmdNetworkList.send().sortBy("name");
-                        cmdNetworkList.close();
-                        cmdNetworkList.release();
-                        return networkList;
-                    } catch (e) {
-                        alertError(e)
-                    }
+                   return getNetworks();
                 }
             },
             methods: {

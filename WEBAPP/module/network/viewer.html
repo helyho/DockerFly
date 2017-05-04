@@ -14,8 +14,8 @@
 <link rel="stylesheet" href="../../css/xterm.css"/>
 
 <script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript" src="../../js/docker.js"></script>
 <script lang="javascript">
-    doImport("org.voovan.docker.command.Network.CmdNetworkDetail")
     doImport("org.voovan.docker.command.Network.CmdNetworkDisConnect")
 
     function init() {
@@ -23,23 +23,13 @@
                 el: '#viewerApp',
                 computed: {
                     viewNetwork: function () {
-                        try {
-
-                            var networkId = getQueryString("id");
-                            var cmdNetworkDetail = new CmdNetworkDetail(networkId)
-                            connect(cmdNetworkDetail)
-                            var viewNetwork = cmdNetworkDetail.send();
-                            cmdNetworkDetail.close();
-                            cmdNetworkDetail.release();
-
-                            if (viewNetwork != null) {
-                                document.title = viewNetwork.name + " - Network";
-                                return viewNetwork;
-                            } else {
-                                return null;
-                            }
-                        } catch (e) {
-                            alertError(e)
+                        var networkId = getQueryString("id");
+                        var viewNetwork = getNetworkDetail(networkId);
+                        if (viewNetwork != null) {
+                            document.title = viewNetwork.name + " - Network";
+                            return viewNetwork;
+                        } else {
+                            return null;
                         }
                     }
                 },

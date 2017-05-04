@@ -14,13 +14,8 @@
 <link rel="stylesheet" href="../../css/xterm.css"/>
 
 <script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript" src="../../js/docker.js"></script>
 <script lang="javascript">
-    doImport("org.voovan.docker.command.Service.CmdServiceList")
-    doImport("org.voovan.docker.command.Network.CmdNetworkList")
-    doImport("org.voovan.docker.command.Task.CmdTaskList")
-    doImport("org.voovan.docker.command.Container.CmdContainerList")
-    doImport("org.voovan.docker.command.Node.CmdNodeList")
-
     function init() {
         viewerVue = new Vue({
                 el: '#viewerApp',
@@ -29,14 +24,8 @@
                 computed: {
                     viewService: function () {
                         try {
-
                             var serviceId = getQueryString("id");
-                            var cmdServiceList= new CmdServiceList()
-                            cmdServiceList.id([serviceId])
-                            connect(cmdServiceList)
-                            var viewService= cmdServiceList.send();
-                            cmdServiceList.close();
-                            cmdServiceList.release();
+                            var viewService= getServices(serviceId);
 
                             if (viewService.length == 1) {
                                 viewService = viewService[0]
@@ -51,13 +40,8 @@
                     },
                     taskList: function () {
                         try {
-                            var cmdTaskList = new CmdTaskList();
-                            connect(cmdTaskList);
                             var serviceId = getQueryString("id");
-                            cmdTaskList.service(serviceId);
-                            var taskList = cmdTaskList.send().sortBy("name");
-                            cmdTaskList.close();
-                            cmdTaskList.release();
+                            var taskList = getTaskList(serviceId);
                             return taskList;
                         } catch (e) {
                             alertError(e)
@@ -65,56 +49,17 @@
                     },
                     containers: function(){
                         try {
-                            var containers = [];
-                            var cmdContainerList = new CmdContainerList();
-                            connect(cmdContainerList);
-                            cmdContainerList.all(true)
-
-                            //cmdContainerList.label("author","helyho");
-                            var containerList = cmdContainerList.send().sortBy("id", true);
-                            for(var i=0;i<containerList.length;i++){
-                                var container = containerList[i];
-                                containers[container.id] = container.names[0];
-                            }
-                            cmdContainerList.close();
-                            cmdContainerList.release();
-                            return containers;
+                            return getContainersIdAndName();
                         } catch (e) {
                             alertError(e)
                         }
                     },
                     nodes: function(){
-                        var nodes = [];
-                        var cmdNodeList = new CmdNodeList();
-                        connect(cmdNodeList);
-                        //cmdContainerList.label("author","helyho");
-                        var nodeList = cmdNodeList.send().sortBy("name");
-
-                        for(var i=0;i<nodeList.length;i++){
-                            var node = nodeList[i];
-                            nodes[node.id] = {};
-                            nodes[node.id].name =node.spec.name;
-                            nodes[node.id].hostname = node.description.hostname;
-                        }
-                        cmdNodeList.close();
-                        cmdNodeList.release();
-                        return nodes;
+                        return getNodesIdAndName();
                     },
                     networks: function(){
                         try {
-                            var networks = [];
-                            var cmdNetworkList = new CmdNetworkList();
-                            connect(cmdNetworkList);
-
-                            //cmdContainerList.label("author","helyho");
-                            var networkList = cmdNetworkList.send().sortBy("id", true);
-                            for(var i=0;i<networkList.length;i++){
-                                var network = networkList[i];
-                                networks[network.id] = network.name;
-                            }
-                            cmdNetworkList.close();
-                            cmdNetworkList.release();
-                            return networks;
+                            return getNodesIdAndName();
                         } catch (e) {
                             alertError(e)
                         }

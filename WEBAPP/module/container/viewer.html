@@ -14,8 +14,9 @@
 <link rel="stylesheet" href="../../css/xterm.css"/>
 
 <script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript" src="../../js/docker.js"></script>
+
 <script lang="javascript">
-    doImport("org.voovan.docker.command.Container.CmdContainerDetail")
     doImport("org.voovan.docker.command.Container.CmdContainerLogs")
     doImport("org.voovan.docker.command.Container.CmdContainerTop")
     doImport("org.voovan.docker.command.Container.CmdContainerAttach")
@@ -46,29 +47,14 @@
             },
             computed: {
                 viewContainer: function () {
-                    try {
-
-                        var containerId = getQueryString("id");
-                        var cmdContainerDetail = new CmdContainerDetail(containerId)
-                        connect(cmdContainerDetail)
-                        var viewContainer = cmdContainerDetail.send();
-                        cmdContainerDetail.close();
-                        cmdContainerDetail.release();
-                        if(viewContainer.hostConfig.cpuPeriod!=0) {
-                            viewContainer.hostConfig.cpu = viewContainer.hostConfig.cpuQuota / viewContainer.hostConfig.cpuPeriod
-                        }else{
-                            viewContainer.hostConfig.cpu = 0;
-                        }
-
-                        if(cmdContainerDetail != null){
-                            document.title = delFirestChar(viewContainer.name) +
-                                " - Container";
-                            return viewContainer;
-                        }else {
-                            return null;
-                        }
-                    } catch (e) {
-                        alertError(e)
+                    var containerId = getQueryString("id");
+                    var viewContainer = getContainerDetail(containerId);
+                    if(viewContainer != null){
+                        document.title = delFirestChar(viewContainer.name) +
+                            " - Container";
+                        return viewContainer;
+                    }else {
+                        return null;
                     }
                 }
             },

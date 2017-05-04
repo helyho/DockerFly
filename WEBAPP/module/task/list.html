@@ -12,11 +12,11 @@
 
 <link rel="stylesheet" href="../../css/main.css"/>
 <script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript" src="../../js/docker.js"></script>
+<script src="../../js/docker.js"></script>
+
 <script lang="javascript">
     doImport("org.voovan.docker.command.Task.CmdTaskList")
-    doImport("org.voovan.docker.command.Container.CmdContainerList")
-    doImport("org.voovan.docker.command.Service.CmdServiceList")
-    doImport("org.voovan.docker.command.Node.CmdNodeList")
 
     function init() {
         taskListVue = new Vue({
@@ -32,57 +32,13 @@
             },
             computed: {
                 containers: function(){
-                    try {
-                        var containers = [];
-                        var cmdContainerList = new CmdContainerList();
-                        connect(cmdContainerList);
-                        cmdContainerList.all(true)
-
-                        //cmdContainerList.label("author","helyho");
-                        var containerList = cmdContainerList.send().sortBy("id", true);
-                        for(var i=0;i<containerList.length;i++){
-                            var container = containerList[i];
-                            containers[container.id] = container.names[0];
-                        }
-                        cmdContainerList.close();
-                        cmdContainerList.release();
-                        return containers;
-                    } catch (e) {
-                        alertError(e)
-                    }
+                    return getContainersIdAndName();
                 },
                 services: function(){
-                    try {
-                        var services = [];
-                        var cmdServiceList = new CmdServiceList();
-                        connect(cmdServiceList);
-                        //cmdServiceList.label("author","helyho");
-                        var serviceList = cmdServiceList.send().sortBy("id", true);
-                        for(var i=0;i<serviceList.length;i++){
-                            var service = serviceList[i];
-                            services[service.id] = service.spec.name;
-                        }
-                        cmdServiceList.close();
-                        cmdServiceList.release();
-                        return services;
-                    } catch (e) {
-                        alertError(e)
-                    }
+                    return getServicesIdAndName();
                 },
                 nodes: function(){
-                    var nodes = [];
-                    var cmdNodeList = new CmdNodeList();
-                    connect(cmdNodeList);
-                    //cmdContainerList.label("author","helyho");
-                    var nodeList = cmdNodeList.send().sortBy("name");
-
-                    for(var i=0;i<nodeList.length;i++){
-                        var node = nodeList[i];
-                        nodes[node.id] = (node.spec.name==null?node.description.hostname:node.spec.name);
-                    }
-                    cmdNodeList.close();
-                    cmdNodeList.release();
-                    return nodes;
+                    return getNodesIdAndName();
                 }
             },
             methods: {
@@ -107,7 +63,6 @@
                             cmdTaskList.desiredState([this.queryParams.desiredState]);
                         }
 
-                        //cmdContainerList.label("author","helyho");
 
                         this.taskList = cmdTaskList.send().sortBy("name");
                         cmdTaskList.close();
@@ -173,13 +128,12 @@
             <tr>
                 <th class="uk-text-center table_colume_index"> NO.</th>
                 <th class="uk-width-1-10">ID</th>
-                <th class="uk-width-1-10">Node</th>
+                <th class="uk-width-2-10">Node</th>
                 <th class="uk-width-1-10">Service</th>
                 <th class="uk-width-1-10">Container</th>
                 <th class="uk-width-1-10 uk-text-center">State</th>
                 <th class="uk-width-1-10 uk-text-center">DesiredState</th>
                 <th class="uk-width-2-10 uk-text-center">Create</th>
-                <th class="uk-width-2-10 uk-text-center">Update</th>
             </tr>
             </thead>
 
@@ -188,7 +142,10 @@
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
                 <td class=" uk-text-middle uk-text-bold uk-text-primary">{{task.id | shortDockerId(12)}}</td>
                 <td class=" uk-text-middle uk-text-bold ">
-                    <a class="uk-text-success" :href="'../node/list.html?id='+task.nodeId">{{nodes[task.nodeId]}}</a>
+                    <a class="uk-text-success" :href="'../node/list.html?id='+task.nodeId">
+                        <span class="uk-text-warning">{{nodes[task.nodeId].name}}</span> /
+                        <span class="uk-text-success">{{nodes[task.nodeId].hostname}}</span>
+                    </a>
                 </td>
                 <td class=" uk-text-middle uk-text-bold ">
                     <a class="uk-text-warning" :href="'/module/service/viewer.html?id='+task.serviceId"
@@ -213,7 +170,6 @@
                 <td class=" uk-text-middle uk-text-bold uk-text-center">{{task.status.state}}</td>
                 <td class=" uk-text-middle uk-text-bold uk-text-center">{{task.desiredState}}</td>
                 <td class=" uk-text-middle uk-text-small uk-text-center">{{task.createdAt|strToDate}}</td>
-                <td class=" uk-text-middle uk-text-small uk-text-center">{{task.updatedAt|strToDate}}</td>
             </tr>
             </tbody>
         </table>

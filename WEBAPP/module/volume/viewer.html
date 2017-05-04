@@ -14,8 +14,8 @@
 <link rel="stylesheet" href="../../css/xterm.css"/>
 
 <script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript" src="../../js/docker.js"></script>
 <script lang="javascript">
-    doImport("org.voovan.docker.command.Volume.CmdVolumeDetail")
 
     function init() {
         viewerVue = new Vue({
@@ -23,13 +23,8 @@
                 computed: {
                     viewVolume: function () {
                         try {
-
                             var volumeId = getQueryString("id");
-                            var cmdVolumeDetail = new CmdVolumeDetail(volumeId)
-                            connect(cmdVolumeDetail)
-                            var viewVolume = cmdVolumeDetail.send();
-                            cmdVolumeDetail.close();
-                            cmdVolumeDetail.release();
+                            var viewVolume = getVolumeDetail(volumeId);
 
                             if (viewVolume != null) {
                                 document.title = shortDockerId(viewVolume.name,12) + " - Volume";
@@ -43,7 +38,7 @@
                     }
                 }
             }
-            );
+        );
     }
 </script>
 <body onload="init()" class="frameBody">

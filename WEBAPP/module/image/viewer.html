@@ -14,31 +14,21 @@
 <link rel="stylesheet" href="../../css/xterm.css"/>
 
 <script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript" src="../../js/docker.js"></script>
 <script lang="javascript">
-    doImport("org.voovan.docker.command.Image.CmdImageDetail")
-
     function init() {
         viewerVue = new Vue({
                 el: '#viewerApp',
                 computed: {
                     viewImage: function () {
-                        try {
+                        var imageId = getQueryString("id");
+                        var viewImage = getImageDetail(imageId);
 
-                            var imageId = getQueryString("id");
-                            var cmdImageDetail = new CmdImageDetail(imageId)
-                            connect(cmdImageDetail)
-                            var viewImage = cmdImageDetail.send();
-                            cmdImageDetail.close();
-                            cmdImageDetail.release();
-
-                            if (viewImage != null) {
-                                document.title = viewImage.repoTags[0] + " - Image";
-                                return viewImage;
-                            } else {
-                                return null;
-                            }
-                        } catch (e) {
-                            alertError(e)
+                        if (viewImage != null) {
+                            document.title = viewImage.repoTags[0] + " - Image";
+                            return viewImage;
+                        } else {
+                            return null;
                         }
                     }
                 }
