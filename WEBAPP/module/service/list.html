@@ -187,7 +187,7 @@
                     {{service.spec.name}}
                 </td>
                 <td class="uk-text-bold uk-text-middle uk-text-warning">
-                    {{service.spec.taskTemplate.containerSpec.image.split("@")[0] | shortDockerId(18) }}
+                    {{service.spec.taskTemplate.containerSpec.image | shortDockerId(64)}}
                 </td>
                 <td class="uk-text-middle">
                     <div v-for="virtualIP in service.endpoint.virtualIPs">
