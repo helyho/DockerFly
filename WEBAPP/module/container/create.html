@@ -286,7 +286,7 @@
                     <td>
                         <select class="uk-form-width-medium" v-model="createParams.image">
                             <option v-for="image in imageList"
-                                    :value="image.id"
+                                    :value="image.repoTags[0]"
                                     v-if="image.repoTags.length!=0">{{image.repoTags[0]}}
                             </option>
                         </select>
