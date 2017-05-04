@@ -13,7 +13,6 @@
 <link rel="stylesheet" href="css/main.css"/>
 <script lang="javascript" src="js/utils.js"></script>
 <script lang="javascript">
-    doImport("org.voovan.docker.command.Swarm.CmdSwarmInfo")
     doImport("org.voovan.docker.command.Swarm.CmdSwarmInit")
     doImport("org.voovan.docker.command.Swarm.CmdSwarmJoin")
     doImport("org.voovan.docker.command.Swarm.CmdSwarmLeave")
@@ -35,17 +34,7 @@
             },
             computed:{
                 swarmInfo: function(){
-                    try {
-                        var cmdSwarmInfo = new CmdSwarmInfo();
-                        connect(cmdSwarmInfo);
-                        var swarmInfo= cmdSwarmInfo.send()
-                        cmdSwarmInfo.close();
-                        cmdSwarmInfo.release();
-                        return swarmInfo;
-                    } catch (e) {
-                        console.log(e)
-                        return null;
-                    }
+                   return getSwarmInfo();
                 }
             },
             methods : {

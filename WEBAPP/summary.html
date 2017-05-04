@@ -12,37 +12,19 @@
 
 <link rel="stylesheet" href="css/main.css"/>
 <script lang="javascript" src="js/utils.js"></script>
+<script lang="javascript" src="js/docker.js"></script>
 <script lang="javascript">
-    doImport("org.voovan.docker.command.Info.CmdDockerInfo")
-    doImport("org.voovan.docker.command.CmdDockerFlyConfig")
-    doImport("org.voovan.docker.command.Image.CmdImageList")
-
     function init() {
         dockerInfoVue = new Vue({
             el: '#dockerApp',
             computed: {
                 dockerInfo: function () {
-                    try {
-                        var cmdDockerInfo = new CmdDockerInfo();
-                        connect(cmdDockerInfo);
-                        var dockerInfo = cmdDockerInfo.send()
-                        cmdDockerInfo.close();
-                        cmdDockerInfo.release();
-                        return dockerInfo;
-                    } catch (e) {
-                        alertError(e)
-                    }
+                    return getDockerInfo();
                 },
                 //查询方法
                 imageList : function() {
                     try {
-                        var cmdImageList = new CmdImageList();
-                        connect(cmdImageList);
-
-                        var imageList = cmdImageList.send().sortBy("Created");
-                        cmdImageList.close();
-                        cmdImageList.release();
-                        return imageList;
+                        return getImages();
                     } catch (e) {
                         alertError(e)
                     }
@@ -67,7 +49,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="uk-width-1-10 uk-text-right summeryField">System info:</td>
+                    <td class="uk-width-1-10 uk-text-right summeryField">OS:</td>
                     <td class="uk-width-1-4 uk-text-muted" colspan="3">
                         {{dockerInfo.osType}}({{dockerInfo.architecture}})_{{dockerInfo.operatingSystem}}({{dockerInfo.kernelVersion}})
                     </td>

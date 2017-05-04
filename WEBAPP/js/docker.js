@@ -1,9 +1,110 @@
 /**
  * Created by helyho on 2017/5/4.
  */
+function runCmd(cmdStr){
+    if(typeof(CmdExecCreate)=="undefined") {
+        doImport("org.voovan.docker.command.Exec.CmdExecCreate")
+    }
+    if(typeof(CmdExecStart)=="undefined") {
+        doImport("org.voovan.docker.command.Exec.CmdExecStart")
+    }
+    var cmdExecCreate = new CmdExecCreate(this.viewContainer.id);
+    connect(cmdExecCreate);
+    cmdExecCreate.cmd(cmdStr.split(" "));
+    cmdExecCreate.tty(true);
+    cmdExecCreate.attachStdin(true);
+    var execId = cmdExecCreate.send();
+    cmdExecCreate.close();
+    cmdExecCreate.release();
+
+    var cmdExecStart = new CmdExecStart(eval("k="+execId).Id);
+    cmdExecStart.connect(60);
+    cmdExecStart.tty(true);
+    cmdExecStart.send();
+
+    var result;
+
+    while(true){
+        result = cmdExecStart.loadStream();
+        if(result.length > 0){
+            break;
+        }
+    }
+    cmdExecStart.close();
+    cmdExecStart.release();
+    return result;
+}
+
+function getDockerInfo(){
+    if(typeof(CmdDockerInfo)=="undefined") {
+        doImport("org.voovan.docker.command.Info.CmdDockerInfo")
+    }
+    try {
+        var cmdDockerInfo = new CmdDockerInfo();
+        connect(cmdDockerInfo);
+        var dockerInfo = cmdDockerInfo.send()
+        cmdDockerInfo.close();
+        cmdDockerInfo.release();
+        return dockerInfo;
+    } catch (e) {
+        alertError(e)
+    }
+}
+
+function getDockerFlyConfig(){
+    if(typeof(CmdContainerList)=="undefined") {
+        doImport("org.voovan.docker.command.CmdDockerFlyConfig")
+    }
+    try {
+        var dockerConfig = null;
+        var cmdDockerFlyConfig = new CmdDockerFlyConfig();
+        dockerConfig = cmdDockerFlyConfig.config()
+        cmdDockerFlyConfig.release();
+        return dockerConfig;
+    } catch (e) {
+        alertError(e)
+    }
+}
+
+
+function connectToHost(config){
+    if(typeof(CmdContainerList)=="undefined") {
+        doImport("org.voovan.docker.command.Info.CmdDockerInfo")
+    }
+    try{
+        var cmdDockerFlyConfig = new CmdDockerFlyConfig();
+        if(config.host!="" && config.port!="") {
+            cmdDockerFlyConfig.config(config.host, config.port, config.timeout, config.isDebug)
+        }else{
+            alertError("We need correct data of host and port !")
+        }
+        cmdDockerFlyConfig.release();
+    }catch(e){
+        alertError("Need correct host and port data!")
+    }
+}
+
+function getSwarmInfo(){
+    if(typeof(CmdContainerList)=="undefined") {
+        doImport("org.voovan.docker.command.Swarm.CmdSwarmInfo")
+    }
+    try {
+        var cmdSwarmInfo = new CmdSwarmInfo();
+        connect(cmdSwarmInfo);
+        var swarmInfo= cmdSwarmInfo.send()
+        cmdSwarmInfo.close();
+        cmdSwarmInfo.release();
+        return swarmInfo;
+    } catch (e) {
+        console.log(e)
+        return null;
+    }
+}
 //=================== List ===================
 function getContainers(){
-    doImport("org.voovan.docker.command.Container.CmdContainerList")
+    if(typeof(CmdContainerList)=="undefined") {
+        doImport("org.voovan.docker.command.Container.CmdContainerList")
+    }
     try {
 
         var cmdContainerList = new CmdContainerList();
@@ -19,7 +120,9 @@ function getContainers(){
 }
 
 function getServices(serviceId){
-    doImport("org.voovan.docker.command.Service.CmdServiceList")
+    if(typeof(CmdServiceList)=="undefined") {
+        doImport("org.voovan.docker.command.Service.CmdServiceList")
+    }
     try {
         var cmdServiceList = new CmdServiceList();
         if(serviceId!=null){
@@ -37,7 +140,9 @@ function getServices(serviceId){
 }
 
 function getTaskList(serviceId){
-    doImport("org.voovan.docker.command.Task.CmdTaskList")
+    if(typeof(CmdTaskList)=="undefined") {
+        doImport("org.voovan.docker.command.Task.CmdTaskList")
+    }
     try {
         var cmdTaskList = new CmdTaskList();
         if(serviceId!=null) {
@@ -54,7 +159,9 @@ function getTaskList(serviceId){
 }
 
 function getNodes(){
-    doImport("org.voovan.docker.command.Node.CmdNodeList")
+    if(typeof(CmdNodeList)=="undefined") {
+        doImport("org.voovan.docker.command.Node.CmdNodeList")
+    }
     try {
 
         var cmdNodeList = new CmdNodeList();
@@ -70,7 +177,9 @@ function getNodes(){
 }
 
 function getNetworks(){
-    doImport("org.voovan.docker.command.Network.CmdNetworkList")
+    if(typeof(CmdNetworkList)=="undefined") {
+        doImport("org.voovan.docker.command.Network.CmdNetworkList")
+    }
     try {
         var cmdNetworkList = new CmdNetworkList();
         connect(cmdNetworkList);
@@ -84,7 +193,9 @@ function getNetworks(){
 }
 
 function getImages(){
-    doImport("org.voovan.docker.command.Image.CmdImageList")
+    if(typeof(CmdImageList)=="undefined") {
+        doImport("org.voovan.docker.command.Image.CmdImageList")
+    }
     try {
         var cmdImageList = new CmdImageList();
         connect(cmdImageList);
@@ -98,7 +209,9 @@ function getImages(){
 }
 
 function getVolumes(){
-    doImport("org.voovan.docker.command.Volume.CmdVolumeList")
+    if(typeof(CmdVolumeList)=="undefined") {
+        doImport("org.voovan.docker.command.Volume.CmdVolumeList")
+    }
     try {
         var cmdVolumeList = new CmdVolumeList();
         connect(cmdVolumeList)
@@ -114,7 +227,9 @@ function getVolumes(){
 
 //=================== Detail ===================
 function getImageDetail(idOrName){
-    doImport("org.voovan.docker.command.Image.CmdImageDetail")
+    if(typeof(CmdImageDetail)=="undefined") {
+        doImport("org.voovan.docker.command.Image.CmdImageDetail")
+    }
 
     try {
         var cmdImageDetail = new CmdImageDetail(idOrName)
@@ -134,7 +249,9 @@ function getImageDetail(idOrName){
 }
 
 function getContainerDetail(idOrName){
-    doImport("org.voovan.docker.command.Container.CmdContainerDetail")
+    if(typeof(CmdContainerDetail)=="undefined") {
+        doImport("org.voovan.docker.command.Container.CmdContainerDetail")
+    }
     try {
 
         var cmdContainerDetail = new CmdContainerDetail(idOrName)
@@ -156,7 +273,9 @@ function getContainerDetail(idOrName){
 }
 
 function getNetworkDetail(idOrName){
-    doImport("org.voovan.docker.command.Network.CmdNetworkDetail")
+    if(typeof(CmdNetworkDetail)=="undefined") {
+        doImport("org.voovan.docker.command.Network.CmdNetworkDetail")
+    }
     try {
         var cmdNetworkDetail = new CmdNetworkDetail(idOrName)
         connect(cmdNetworkDetail)
@@ -171,7 +290,9 @@ function getNetworkDetail(idOrName){
 }
 
 function getVolumeDetail(idOrName){
-    doImport("org.voovan.docker.command.Volume.CmdVolumeDetail")
+    if(typeof(CmdVolumeDetail)=="undefined") {
+        doImport("org.voovan.docker.command.Volume.CmdVolumeDetail")
+    }
     try {
         var cmdVolumeDetail = new CmdVolumeDetail(idOrName)
         connect(cmdVolumeDetail)

@@ -160,6 +160,7 @@
                     }
                     this.query()
                 },
+
                 //连接到网络
                 connect: function(container){
 
@@ -193,6 +194,7 @@
                     }
                     this.query()
                 },
+
                 //断开网络
                 disconnect: function(container){
 
@@ -223,10 +225,14 @@
                     }
                     this.query()
                 },
+
+                //打开提交窗口
                 openCommitDialog:function(container){
                     this.commitParams.container = container;
                     openDialog("commitDialog")
                 },
+
+                //提交
                 commit: function(){
                     try{
                         if(this.commitParams.tag==""){

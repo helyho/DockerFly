@@ -12,39 +12,21 @@
 
 <link rel="stylesheet" href="css/main.css"/>
 <script lang="javascript" src="js/utils.js"></script>
+<script lang="javascript" src="js/docker.js"></script>
 <script lang="javascript">
-    doImport("org.voovan.docker.command.Info.CmdDockerInfo")
-    doImport("org.voovan.docker.command.CmdDockerFlyConfig")
 
     function init() {
         dockerSettingVue = new Vue({
             el: '#dockerSetting',
             computed: {
                 config: function () {
-                    try {
-                        var dockerConfig = null;
-                        var cmdDockerFlyConfig = new CmdDockerFlyConfig();
-                        dockerConfig = cmdDockerFlyConfig.config()
-                        cmdDockerFlyConfig.release();
-                        return dockerConfig;
-                    } catch (e) {
-                        alertError(e)
-                    }
+                  return getDockerFlyConfig();
                 }
             },
             methods:{
                 connect: function(){
-                    try{
-                        var cmdDockerFlyConfig = new CmdDockerFlyConfig();
-                        if(this.config.host!="" && this.config.port!="") {
-                            cmdDockerFlyConfig.config(this.config.host, this.config.port, this.config.timeout, this.config.isDebug)
-                        }else{
-                            alertError("We need correct data of host and port !")
-                        }
-                        cmdDockerFlyConfig.release();
-                    }catch(e){
-                        alertError("Need correct host and port data!")
-                    }
+                    connectToHost(this.config)
+                    location = "summary.html"
                 }
             }
         });

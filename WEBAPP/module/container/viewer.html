@@ -59,33 +59,7 @@
                 }
             },
             methods:{
-                runCmd : function(cmdStr){
-                    var cmdExecCreate = new CmdExecCreate(this.viewContainer.id);
-                    connect(cmdExecCreate);
-                    cmdExecCreate.cmd(cmdStr.split(" "));
-                    cmdExecCreate.tty(true);
-                    cmdExecCreate.attachStdin(true);
-                    var execId = cmdExecCreate.send();
-                    cmdExecCreate.close();
-                    cmdExecCreate.release();
 
-                    var cmdExecStart = new CmdExecStart(eval("k="+execId).Id);
-                    cmdExecStart.connect(60);
-                    cmdExecStart.tty(true);
-                    cmdExecStart.send();
-
-                    var result;
-
-                    while(true){
-                        result = cmdExecStart.loadStream();
-                        if(result.length > 0){
-                            break;
-                        }
-                    }
-                    cmdExecStart.close();
-                    cmdExecStart.release();
-                    return result;
-                },
 
                 logView: function(){
                     try{
