@@ -335,8 +335,11 @@
                           class="icon uk-icon-desktop uk-text-success uk-text-small" title="Stander container"></span>
                      {{container.names[0]|delFirestChar}}
                 </td>
-                <td class="uk-text-middle uk-text-warning uk-text-bold uk-text-small">
-                    {{container.image | shortDockerId(64)}}
+                <td class="uk-text-middle ">
+                    <a :href="'../image/viewer.html?id='+container.imageId"
+                    class="uk-text-warning uk-text-bold uk-text-small">
+                        {{container.image | shortDockerId(64)}}
+                    </a>
                 </td>
                 <td class="uk-text-middle">
                     <div v-for="(network,networkName) in container.networkSettings.networks">

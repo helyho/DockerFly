@@ -266,6 +266,7 @@
 
         <ul class="uk-tab" data-uk-switcher="{connect:'#Viewers'}">
             <li><a href="#"><span class="uk-icon-sliders"></span> Summery</a></li>
+            <li><a href="#"><span class="uk-icon-sliders"></span> Resource</a></li>
             <li><a href="#"><span class="uk-icon-line-chart"></span> Status</a></li>
             <li><a href="#"><span class="uk-icon-terminal"></span> Console</a></li>
             <li><a href="#"><span class="uk-icon-file-code-o"></span> Log</a></li>
@@ -291,14 +292,6 @@
                         <tr>
                             <td class="uk-width-1-10 uk-text-right summeryField">Image </td>
                             <td class="uk-text-success">{{viewContainer.image |shortDockerId(12)}}</td>
-                        </tr>
-                        <tr>
-                            <td class="uk-width-1-10 uk-text-right summeryField">CPU </td>
-                            <td class="uk-text-primary">{{viewContainer.hostConfig.cpu==0?"unlimited":viewContainer.hostConfig.cpu}}</td>
-                        </tr>
-                        <tr>
-                            <td class="uk-width-1-10 uk-text-right summeryField">Memory </td>
-                            <td class="uk-text-primary">{{viewContainer.hostConfig.memory==0?"unlimited":viewContainer.hostConfig.memory/1024/1024+"MB"}}</td>
                         </tr>
                         <tr v-if="viewContainer.config.workingDir!=''">
                             <td class="uk-width-1-10 uk-text-right summeryField">WorkingDir </td>
@@ -343,21 +336,44 @@
                                 </span>
                             </td>
                         </tr>
+                        <tr>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Created </td>
+                            <td class="">{{viewContainer.created|strToDate}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 资源信息 -->
+            <div>
+                <div>
+                    <table class="uk-table uk-overflow-container uk-panel-box">
+                        <caption>
+                            <div class="uk-grid">
+                                <div class="uk-width-5-6"><span class="uk-icon-info-circle"></span> Resource infomation</div>
+                            </div>
+                        </caption>
+                        <tbody>
+
+                        <tr>
+                            <td class="uk-width-1-10 uk-text-right summeryField">CPU </td>
+                            <td class="uk-text-primary">{{viewContainer.hostConfig.cpu==0?"unlimited":viewContainer.hostConfig.cpu}}</td>
+                        </tr>
+                        <tr>
+                            <td class="uk-width-1-10 uk-text-right summeryField">Memory </td>
+                            <td class="uk-text-primary">{{viewContainer.hostConfig.memory==0?"unlimited":viewContainer.hostConfig.memory/1024/1024+"MB"}}</td>
+                        </tr>
                         <tr v-if="JSON.stringify(viewContainer.hostConfig.portBindings) != '{}'">
                             <td class="uk-width-1-10 uk-text-right summeryField">Export port </td>
                             <td class="uk-text-middle">
                                 <div v-for="(guest,host) in viewContainer.hostConfig.portBindings">
-                                   <h4 class="uk-margin-bottom-remove">
-                                       <span class="uk-badge uk-badge-danger">{{host.split("/")[1].toUpperCase()}}</span>
-                                       {{host.split("/")[0]}}
-                                       <span class="uk-icon-exchange"></span> {{guest[0].HostIp==""?"0.0.0.0":guest[0].HostIp}}:{{guest[0].HostPort}}
-                                   </h4>
+                                    <h4 class="uk-margin-bottom-remove">
+                                        <span class="uk-badge uk-badge-danger">{{host.split("/")[1].toUpperCase()}}</span>
+                                        {{host.split("/")[0]}}
+                                        <span class="uk-icon-exchange"></span> {{guest[0].HostIp==""?"0.0.0.0":guest[0].HostIp}}:{{guest[0].HostPort}}
+                                    </h4>
                                 </div>
                             </td>
-                        </tr>
-                        <tr>
-                            <td class="uk-width-1-10 uk-text-right summeryField">Created </td>
-                            <td class="">{{viewContainer.created|strToDate}}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -375,7 +391,7 @@
                         <th class="uk-width-2-10 uk-text-center">Gateway</th>
                         <th class="uk-width-2-10 uk-text-center">IP Address</th>
                         <th class="uk-width-2-10 uk-text-center">Mac Address</th>
-                        </tdead>
+                        </thead>
                         <tbody>
                         <tr class="uk-text-center" v-for=" (value, key) in viewContainer.networkSettings.networks">
                             <td class="uk-text-success uk-text-bold">
@@ -401,7 +417,7 @@
                         <th class="uk-width-2-10 ">Source</th>
                         <th class="uk-width-2-10 ">Destination</th>
                         <th class="uk-width-1-10 uk-text-center">RW</th>
-                        </tdead>
+                        </thead>
                         <tbody>
                         <tr v-for=" mount in viewContainer.mounts">
                             <td class="uk-text-center uk-text-success">{{mount.type}}</td>
@@ -418,7 +434,7 @@
                     </table>
                     <hr/>
                     <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box"
-                           v-if="viewContainer.hostConfig.links.length > 0">
+                           v-if="viewContainer.hostConfig.links != null">
                         <caption>
                             <div class="uk-grid" >
                                 <div class="uk-width-5-6"><span class="icon uk-icon-link"></span> Link infomation</div>
