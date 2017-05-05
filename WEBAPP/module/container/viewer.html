@@ -416,6 +416,27 @@
                         </tr>
                         </tbody>
                     </table>
+                    <hr/>
+                    <table class="uk-table uk-table-condensed uk-overflow-container uk-panel-box"
+                           v-if="viewContainer.hostConfig.links.length > 0">
+                        <caption>
+                            <div class="uk-grid" >
+                                <div class="uk-width-5-6"><span class="icon uk-icon-link"></span> Link infomation</div>
+                            </div>
+                        </caption>
+                        <thead class="uk-text-center">
+                        <th class="uk-width-1-2 uk-text-center">Container name</th>
+                        <th class="uk-width-1-2 uk-text-center">Linked name</th>
+                        </tdead>
+                        <tbody>
+                        <tr v-for=" link in viewContainer.hostConfig.links">
+                            <td class="uk-text-center uk-text-success">{{link.split(":")[0] | delFirestChar}}</td>
+                            <td class="uk-text-center uk-text-primary">
+                                {{link.split(":")[1].split("/")[2]}}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <!-- 进程信息 -->
