@@ -258,9 +258,11 @@
 
                         entity.release();
                         cmdContainerCreate.send();
+                        alert("Create container success.");
+                        window.location = "list.html"
                         cmdContainerCreate.close();
                         cmdContainerCreate.release();
-                        alert("Create container success.");
+
                     } catch (e) {
                         alertError(e);
                     }

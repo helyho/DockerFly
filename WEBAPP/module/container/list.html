@@ -109,12 +109,15 @@
                         var cmdContainerStop = new CmdContainerStop(container.id);
                         connect(cmdContainerStop);
                         cmdContainerStop.waitForKill(3);
+                        var blockDialog = block("Stoping Container...");
                         cmdContainerStop.send(function(){
+                            blockDialog.hide();
                             alert("<span class='uk-text-large uk-text-primary'>Container <span class='uk-text-large uk-text-danger'>"+delFirestChar(container.names[0])+"</span> stoped.</span>")
                             cmdContainerStop.close();
                             cmdContainerStop.release();
                             containerListVue.query()
                         }, function(){
+                            blockDialog.hide();
                             alertError("Stop container "+delFirestChar(container.names[0])+" failed");
                             cmdContainerStop.close();
                             cmdContainerStop.release();

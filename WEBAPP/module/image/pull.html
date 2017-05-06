@@ -39,12 +39,14 @@
                         connect(cmdHubImageInfo);
                         cmdHubImageInfo.term(this.searchParams.name);
                         cmdHubImageInfo.limit(this.searchParams.limit);
-
+                        var blockDialog = block("Searching image...");
                         cmdHubImageInfo.send(function(response){
+                            blockDialog.hide()
                             imageListVue.hubImageList = response.sortBy("star_count", true);
                             cmdHubImageInfo.close();
                             cmdHubImageInfo.release();
                         }, function(){
+                            blockDialog.hide()
                             alertError("Search image "+imageListVue.searchParams.name+" failed");
                             cmdHubImageInfo.close();
                             cmdHubImageInfo.release();
@@ -63,13 +65,16 @@
                             cmdImageCreate.fromImage(hubImage.name);
                             cmdImageCreate.tag(this.pullTag);
 
+                            var blockDialog = block("Pulling image...");
                             cmdImageCreate.send(function(){
+                                blockDialog.hide();
                                 alert("<span class='uk-text-large uk-text-primary'>" +
                                     "Pull image " +
                                     "finished.</span>")
                                 cmdImageCreate.close();
                                 cmdImageCreate.release();
                             }, function(){
+                                blockDialog.hide();
                                 alertError("Pull image failed");
                                 cmdImageCreate.close();
                                 cmdImageCreate.release();

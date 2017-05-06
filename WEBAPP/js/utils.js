@@ -33,7 +33,20 @@
     }
 
     function alert(msg){
-        UIkit.modal.alert(msg);
+        if(window.parent!=window) {
+            window.parent.UIkit.modal.alert(msg);
+        }else{
+            UIkit.modal.alert(msg);
+        }
+    }
+
+    function block(msg){
+        var content = "<div class='uk-text-center'> \
+                        <img src='../../img/loading.gif'/><br/><br/> \
+                        <span class='uk-text-primary uk-text-bold uk-text-large'>"
+                        + msg +
+                        "</span></div>";
+        return window.parent.UIkit.modal.blockUI(content);
     }
 
     function connect(cmd) {
