@@ -238,7 +238,8 @@
                                 cmdServiceCreate.replicate(this.createParams.replicate);
                             }
                         }
-                        var blockDialog = block(" Creating service ...");
+
+                        var blockDialog = openBlockDialog(" Creating service ...");
                         cmdServiceCreate.send(function(){
                             blockDialog.hide()
                             alert("<span class='uk-text-large uk-text-primary'>Service <span class='uk-text-bold uk-text-danger'>" +
@@ -250,7 +251,7 @@
                             serviceListVue.query()
                         }, function(){
                             blockDialog.hide()
-                            alertError("Create service "+this.createParams.name+" failed");
+                            alertError("Create service failed");
                             cmdServiceCreate.close();
                             cmdServiceCreate.release();
                         });

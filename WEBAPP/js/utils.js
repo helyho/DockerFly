@@ -40,29 +40,19 @@
         }
     }
 
-    function block(msg){
+    function openBlockDialog(msg){
         var content = "<div class='uk-text-center'> \
                         <img src='../../img/loading.gif'/><br/><br/> \
-                        <span class='uk-text-primary uk-text-bold uk-text-large'>"
+                        <div class='uk-text-warning uk-text-bold uk-text-large' style='margin-top:-80px'>"
                         + msg +
-                        "</span></div>";
+                        "</div></div>";
         return window.parent.UIkit.modal.blockUI(content);
-    }
-
-    function connect(cmd) {
-        host = getQueryString("host");
-        port = getQueryString("port");
-
-        if(host==null || port == null) {
-            cmd.connect();
-        }else{
-            cmd.connect(host, port);
-        }
     }
 
     //展示错误信息
     function alertError(e){
-        var errMsg = "<h3 class='uk-text-danger uk-text-bold'>Ops , We hava an error!</h3><div style='margin: 0px 15px 0px 15px;'>";
+        var errMsg = "<h3 class='uk-text-danger uk-text-bold'>Ops , We hava an error!</h3>" +
+            "<h3 style='margin: 0px 15px 0px 15px;'>";
         if(e instanceof Error) {
             if(e.name == "Error") {
                 var errObj = eval("err_" + currentTimeMills() + " = " + e.message);
@@ -82,8 +72,19 @@
         } else {
             errMsg = errMsg + "[" + e.name+ "] "+ e.message;
         }
-        errMsg = errMsg+"</div>"
+        errMsg = errMsg+"</h3>"
         alert(errMsg);
+    }
+
+    function connect(cmd) {
+        host = getQueryString("host");
+        port = getQueryString("port");
+
+        if(host==null || port == null) {
+            cmd.connect();
+        }else{
+            cmd.connect(host, port);
+        }
     }
 
     //创建终端

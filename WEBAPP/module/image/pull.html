@@ -39,7 +39,8 @@
                         connect(cmdHubImageInfo);
                         cmdHubImageInfo.term(this.searchParams.name);
                         cmdHubImageInfo.limit(this.searchParams.limit);
-                        var blockDialog = block("Searching image...");
+
+                        var blockDialog = openBlockDialog("Searching image...");
                         cmdHubImageInfo.send(function(response){
                             blockDialog.hide()
                             imageListVue.hubImageList = response.sortBy("star_count", true);
@@ -61,11 +62,11 @@
                         UIkit.modal.prompt("Pull an image with tag:", this.pullTag, function(newvalue) {
                             this.pullTag = newvalue;
                             var cmdImageCreate = new CmdImageCreate();
-                            connect(cmdImageCreate);
+                            cmdImageCreate.connect(1800);
                             cmdImageCreate.fromImage(hubImage.name);
                             cmdImageCreate.tag(this.pullTag);
 
-                            var blockDialog = block("Pulling image...");
+                            var blockDialog = openBlockDialog("Pulling image...");
                             cmdImageCreate.send(function(){
                                 blockDialog.hide();
                                 alert("<span class='uk-text-large uk-text-primary'>" +
