@@ -26,7 +26,9 @@ body > .uk-grid {
 
 th{
     background-color: #1d5782;
-    background-image: linear-gradient(to top, #2394d3, #1f83bc);
+    /*background-image: linear-gradient(to top, #2394d3, #1f8ac3);*/
+    background-image: linear-gradient(to top, #696969, #555555, #696969);
+    text-shadow: 0 2px 0 rgba(0, 0, 0, .4);
     color: #fff;
 }
 
