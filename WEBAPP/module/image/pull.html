@@ -98,13 +98,13 @@
                 <a href="list.html"><span class="uk-icon-refresh"></span></a>
             </div>
         </div>
-        <div class="uk-overflow-container">
-            <div class="uk-panel uk-panel-box uk-text-bold">
+        <div class="">
+            <div class="uk-panel uk-panel-box uk-text-bold uk-margin-bottom">
                 <div class="uk-grid">
                     <div class="uk-width-5-6 uk-form">
                         <span class="mr5">Name:</span>
                         <input class="uk-form-width-medium"
-                               type="text" placeholder="image's name" v-model="searchParams.name"/>
+                               type="text" placeholder="e.g. nginx" v-model="searchParams.name"/>
                         <select v-model="searchParams.limit">
                             <option value="5">5</option>
                             <option value="10">10</option>
@@ -117,16 +117,41 @@
                     </div>
                 </div>
             </div>
-
+            <div class="uk-grid uk-text-center">
+                <div class="uk-width-1-3"
+                     v-for="(hubImage,index) in hubImageList " :key='hubImage.star_count'>
+                    <div class="uk-panel uk-panel-box uk-panel-space uk-text-left uk-margin-bottom">
+                        <div class="uk-grid uk-alert"
+                            :class="{'uk-alert-danger':!hubImage.is_official}">
+                            <span class="uk-width-8-10 uk-text-bold">
+                                <span class="uk-icon-clone"></span> {{hubImage.name}}
+                            </span>
+                            <span class="uk-width-2-10 uk-text-small uk-badge uk-badge-notification">
+                                <span class="uk-icon-star"></span> {{hubImage.star_count}}
+                            </span>
+                        </div>
+                        <div class="uk-panel-body" style="height: 70px;">
+                            <div>
+                                {{hubImage.description}}
+                            </div>
+                            <div class="uk-text-right uk-position-bottom-right uk-margin-bottom uk-margin-right">
+                                <a href="#" class="uk-button uk-button-small uk-button-success"
+                                   @click="pull(hubImage)"><span class="uk-icon-cloud-download"></span> Pull </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--
             <table id="hubImageList" class="uk-table uk-overflow-container uk-panel-box">
                 <caption>Hub image list</caption>
                 <thead>
                 <tr>
                     <th class="uk-text-center table_colume_index">NO.</th>
-                    <th class="uk-width-1-10">Name</th>
-                    <th class="uk-width-1-10">Star</th>
-                    <th class="uk-text-center uk-width-1-10">Official</th>
-                    <th class="uk-width-4-10">Description</th>
+                    <th class="uk-width-2-10">Name</th>
+                    <th class="" style="width: 50px">Star</th>
+                    <th class="uk-text-center" style="width: 50px">Official</th>
+                    <th class="">Description</th>
                     <th class="uk-text-center">Operation</th>
                 </tr>
                 </thead>
@@ -136,8 +161,12 @@
                     <td class="uk-text-bold uk-text-middle uk-text-primary">
                         {{hubImage.name}}
                     </td>
-                    <td class="uk-text-bold uk-text-middle uk-text-success">{{hubImage.star_count}}</td>
-                    <td class="uk-text-center">{{hubImage.is_official}}</td>
+                    <td class="uk-text-bold uk-text-middle uk-text-danger">
+                        <span class="uk-icon-star"></span>{{hubImage.star_count}}
+                    </td>
+                    <td class="uk-text-center uk-text-success">
+                        <span :class="{'uk-icon-check-square':hubImage.is_official,'uk-icon-square':!hubImage.is_official}"></span>
+                    </td>
                     <td>{{hubImage.description}}</td>
                     <td class="uk-text-center uk-text-middle">
                         <input class="uk-button uk-button-small uk-button-primary" type="button" value="Pull"
@@ -146,6 +175,7 @@
                 </tr>
                 </tbody>
             </table>
+            -->
         </div>
     </div>
     <div class="uk-width-6-6">

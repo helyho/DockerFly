@@ -26,7 +26,12 @@ body > .uk-grid {
 
 th{
     background-color: #1d5782;
+    background-image: linear-gradient(to top, #2394d3, #1f83bc);
     color: #fff;
+}
+
+table{
+    border-right: 4px;
 }
 
 .frameBody{
@@ -56,9 +61,10 @@ th{
 .summeryField {
     font-weight: bolder;
     border: 1px solid #ddd;
-    color:#000;
+    color:#020202;
     background: #fafafa;
-    background-image: linear-gradient(to bottom, #fcfcfc, #eaeaea)
+    background-image: linear-gradient(to bottom, #f3f3f3, #e7e7e7)
+    /*background-image: linear-gradient(to top, #1f83bc, #2399d8);*/
 }
 
 .dialogField{
