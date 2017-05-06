@@ -53,7 +53,7 @@ strong {
   padding: 0 4px;
   border: 1px solid #e5e5e5;
   border-radius: 3px;
-  background: #fafafa
+  background: #f6f6f6
 }
 
 em {
@@ -249,7 +249,7 @@ blockquote {
 
 pre {
   padding: 10px;
-  background: #fafafa;
+  background: #f6f6f6;
   font: 12px/18px Consolas, monospace, serif;
   color: #666;
   -moz-tab-size: 4;
@@ -1098,7 +1098,7 @@ iframe {
 
 .uk-panel-box {
   padding: 15px;
-  background: #fafafa;
+  background: #f6f6f6;
   color: #666;
   border: 1px solid #e5e5e5;
   border-radius: 4px
@@ -1162,7 +1162,7 @@ iframe {
 }
 
 .uk-panel-hover:hover {
-  background: #fafafa;
+  background: #f6f6f6;
   color: #666;
   border-color: #e5e5e5
 }
@@ -1359,7 +1359,7 @@ iframe {
   padding: 10px;
   border: 1px solid #e5e5e5;
   border-radius: 4px;
-  background: #fafafa
+  background: #f6f6f6
 }
 
 .uk-comment-header:after,
@@ -1747,7 +1747,7 @@ html:not(.uk-touch) .uk-nav-offcanvas ul a:hover {
 }
 
 .uk-navbar-nav>li.uk-active>a {
-  background-color: #fafafa;
+  background-color: #f6f6f6;
   color: #666;
   border-left-color: rgba(0, 0, 0, .1);
   border-right-color: rgba(0, 0, 0, .1);
@@ -1948,7 +1948,7 @@ html:not(.uk-touch) .uk-nav-offcanvas ul a:hover {
 
 .uk-subnav-pill>*>:focus,
 .uk-subnav-pill>*>:hover {
-  background: #fafafa;
+  background: #f6f6f6;
   color: #666;
   text-decoration: none;
   outline: 0;
@@ -2048,7 +2048,7 @@ html:not(.uk-touch) .uk-nav-offcanvas ul a:hover {
 
 .uk-pagination>li>a:focus,
 .uk-pagination>li>a:hover {
-  background-color: #fafafa;
+  background-color: #f6f6f6;
   color: #666;
   outline: 0;
   background-image: none
@@ -2075,7 +2075,7 @@ html:not(.uk-touch) .uk-nav-offcanvas ul a:hover {
 }
 
 .uk-pagination>.uk-disabled>span {
-  background-color: #fafafa;
+  background-color: #f6f6f6;
   color: #999;
   border: 1px solid rgba(0, 0, 0, .2);
   text-shadow: 0 1px 0 #fff
@@ -2139,7 +2139,7 @@ html:not(.uk-touch) .uk-nav-offcanvas ul a:hover {
 .uk-tab>li>a:focus,
 .uk-tab>li>a:hover {
   border-color: #e5e5e5;
-  background: #fafafa;
+  background: #f6f6f6;
   color: #0b5f90;
   outline: 0
 }
@@ -2461,7 +2461,7 @@ html:not(.uk-touch) .uk-nav-offcanvas ul a:hover {
 }
 
 .uk-list-striped>li:nth-of-type(odd) {
-  background: #fafafa
+  background: #f6f6f6
 }
 
 .uk-list-space>li:nth-child(n+2) {
@@ -2553,7 +2553,7 @@ html:not(.uk-touch) .uk-nav-offcanvas ul a:hover {
 }
 
 .uk-table-striped tbody tr:nth-of-type(odd) {
-  background: #fafafa
+  background: #f6f6f6
 }
 
 .uk-table-condensed td {
@@ -2718,7 +2718,7 @@ html:not(.uk-touch) .uk-nav-offcanvas ul a:hover {
 .uk-form select:disabled,
 .uk-form textarea:disabled {
   border-color: #e5e5e5;
-  background-color: #fafafa;
+  background-color: #f6f6f6;
   color: #999
 }
 
@@ -2958,7 +2958,7 @@ select.uk-form-width-mini {
 
 .uk-button:focus,
 .uk-button:hover {
-  background-color: #fafafa;
+  background-color: #f6f6f6;
   color: #666;
   outline: 0;
   text-decoration: none;
@@ -3057,7 +3057,7 @@ select.uk-form-width-mini {
 }
 
 .uk-button:disabled {
-  background-color: #fafafa;
+  background-color: #f6f6f6;
   color: #999;
   border-color: rgba(0, 0, 0, .2);
   background-image: none;
@@ -3247,7 +3247,7 @@ select.uk-form-width-mini {
 
 .uk-icon-button:focus,
 .uk-icon-button:hover {
-  background-color: #fafafa;
+  background-color: #f6f6f6;
   color: #666;
   outline: 0;
   background-image: none
@@ -7200,7 +7200,7 @@ a.uk-thumbnail:hover {
   padding: 20px;
   border-bottom: 1px solid #e5e5e5;
   border-radius: 4px 4px 0 0;
-  background: #fafafa
+  background: #f6f6f6
 }
 
 .uk-modal-footer {
@@ -7209,7 +7209,7 @@ a.uk-thumbnail:hover {
   padding: 20px;
   border-top: 1px solid #e5e5e5;
   border-radius: 0 0 4px 4px;
-  background: #fafafa
+  background: #f6f6f6
 }
 
 .uk-modal-footer>:last-child,
@@ -8720,7 +8720,7 @@ a.uk-thumbnail:hover {
   margin-bottom: 15px;
   padding: 15px;
   border: 1px dashed #e5e5e5;
-  background: #fafafa;
+  background: #f6f6f6;
   color: #666
 }
 
@@ -8972,7 +8972,7 @@ a.uk-datepicker-table-muted {
 
 .uk-datepicker-table a:focus,
 .uk-datepicker-table a:hover {
-  background-color: #fafafa;
+  background-color: #f6f6f6;
   color: #666;
   outline: 0;
   border-color: rgba(0, 0, 0, .2);
@@ -9072,7 +9072,7 @@ a.uk-datepicker-table-muted {
 }
 
 .uk-htmleditor-navbar-nav>li.uk-active>a {
-  background-color: #fafafa;
+  background-color: #f6f6f6;
   color: #666;
   border-left-color: rgba(0, 0, 0, .1);
   border-right-color: rgba(0, 0, 0, .1);
