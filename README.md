@@ -44,7 +44,7 @@ cd DockerFly
 
  - 直接 pull 一个 dockerfly 容器
 ```shell
-    docker pull registry.cn-hangzhou.aliyuncs.com/voovan/dockerfly:<version> 
+    docker pull helyho/dockerfly[:<version>]
     docker run \
             --name dockerfly -d \
             -v /var/run/docker.sock:/var/run/docker.sock \
