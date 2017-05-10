@@ -66,11 +66,18 @@ cd DockerFly
 
 ------------------
 
-####功能概览
-![功能概览](http://git.oschina.net/uploads/images/2017/0227/125457_aa86c71d_116083.gif "功能概览")
-------------------
 ####容器操作
-![容器操作](http://git.oschina.net/uploads/images/2017/0227/125522_866b27ec_116083.gif "容器操作")
+![输入图片说明](https://git.oschina.net/uploads/images/2017/0510/160224_3efe4007_116083.png "在这里输入图片标题")
+####容器资源
+![输入图片说明](https://git.oschina.net/uploads/images/2017/0510/160205_e463d60d_116083.png "在这里输入图片标题")
+####容器状态
+![输入图片说明](https://git.oschina.net/uploads/images/2017/0510/160215_d527a3d4_116083.png "在这里输入图片标题")
+####创建容器
+![输入图片说明](https://git.oschina.net/uploads/images/2017/0510/160235_96f70ca0_116083.png "在这里输入图片标题")
+####创建服务
+![输入图片说明](https://git.oschina.net/uploads/images/2017/0510/160244_e717f8a4_116083.png "在这里输入图片标题")
+####拉取镜像
+![输入图片说明](https://git.oschina.net/uploads/images/2017/0510/160253_ea6d3140_116083.png "在这里输入图片标题")
 
 ------------------
 
