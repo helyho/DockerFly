@@ -23,6 +23,7 @@
     doImport("org.voovan.docker.command.Container.CmdContainerUnPause")
     doImport("org.voovan.docker.command.Container.CmdContainerUnPause")
     doImport("org.voovan.docker.command.Container.CmdContainerCommit")
+    doImport("org.voovan.docker.command.Container.CmdContainerKill")
 
     doImport("org.voovan.docker.command.Network.CmdNetworkConnect")
     doImport("org.voovan.docker.command.Network.CmdNetworkDisConnect")
@@ -116,12 +117,35 @@
                             alert("<span class='uk-text-large uk-text-primary'>Container <span class='uk-text-large uk-text-danger'>"+delFirestChar(container.names[0])+"</span> stoped.</span>")
                             cmdContainerStop.close();
                             cmdContainerStop.release();
-                            containerListVue.query()
+                            containerListVue.query();
                         }, function(){
                             blockDialog.hide();
-                            alertError("Stop container "+delFirestChar(container.names[0])+" failed");
+                            alertError("Stop container "+delFirestChar(container.names[0])+" failed, you can wait a moment or try to Kill this container");
                             cmdContainerStop.close();
                             cmdContainerStop.release();
+                        });
+                    } catch (e) {
+                        alertError(e)
+                    }
+                },
+                //停止方法
+                kill: function (container) {
+                    try {
+                        var cmdContainerKill = new CmdContainerKill(container.id);
+                        connect(cmdContainerKill);
+
+                        var blockDialog = openBlockDialog("Killing Container...");
+                        cmdContainerKill.send(function(){
+                            blockDialog.hide();
+                            alert("<span class='uk-text-large uk-text-primary'>Container <span class='uk-text-large uk-text-danger'>"+delFirestChar(container.names[0])+"</span> killed.</span>")
+                            cmdContainerKill.close();
+                            cmdContainerKill.release();
+                            containerListVue.query();
+                        }, function(){
+                            blockDialog.hide();
+                            alertError("Kill container "+delFirestChar(container.names[0])+" failed");
+                            cmdContainerKill.close();
+                            cmdContainerKill.release();
                         });
                     } catch (e) {
                         alertError(e)
@@ -381,6 +405,9 @@
                                     <li v-if="container.state=='running'">
                                         <a href="#" class=" uk-text-warning"
                                            @click="stop(container)"><span class="uk-icon-stop"></span> Stop</a></li>
+                                    <li v-if="container.state=='running'">
+                                        <a href="#" class=" uk-text-danger"
+                                           @click="kill(container)"><span class="uk-icon-flash"></span>  Kill</a></li>
                                     <li v-if="container.state=='running'">
                                         <a href="#" class=" uk-text-success"
                                            @click="pause(container)"><span class="uk-icon-pause"></span> Pause</a></li>
