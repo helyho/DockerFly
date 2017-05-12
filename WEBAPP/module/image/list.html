@@ -51,8 +51,10 @@
                 remove: function (image) {
                     var selector = "<span class='uk-form'><select id='imageRepoTag' class='uk-form-width-medium'>";
                     selector =selector + "<option value='image'>this image</option>";
-                    for(var i=0;i<image.repoTags.length;i++){
-                        selector = selector + "<option value='"+image.repoTags[i]+"'>Tag: "+image.repoTags[i]+"</option>";
+                    if(image.repoTags!=null) {
+                        for (var i = 0; i < image.repoTags.length; i++) {
+                            selector = selector + "<option value='" + image.repoTags[i] + "'>Tag: " + image.repoTags[i] + "</option>";
+                        }
                     }
                     selector = selector + "</select></span>";
                     UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Choice which one you want to remove? </span><hr/>" + selector + "", function () {
@@ -76,7 +78,7 @@
                 },
                 //重命名
                 tag: function (image) {
-                    name = image.repoTags.length > 0 ? image.repoTags[0] : "";
+                    name = image.repoTags!=null? image.repoTags[0] : "";
                     id = image.id
                     UIkit.modal.prompt("<span class='uk-text-large uk-text-primary'>Images tags: (like repo:tag)</span>", name, function(newvalue){
                         try {
@@ -149,11 +151,12 @@
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-success">{{image.id|shortDockerId(12)}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-primary">
-                    <span v-if="image.repoTags.length!=0" v-for="repoTag,index in image.repoTags">
+                    <span v-if="image.repoTags!=null" v-for="repoTag,index in image.repoTags">
                         <code>{{repoTag}}</code> &nbsp;
-                    </span>&nbsp;
-                    <span v-if="image.repoTags.length == 0" v-for="repoDigest,index in image.repoDigests">
-                        <code>{{repoDigest.split("@")[0]}}</code>&nbsp;
+                    </span>
+                    <span v-if="image.repoTags==null" v-for="repoDigest,index in image.repoDigests">
+                        <span class="uk-icon-warning uk-text-warning uk-text-small"></span>&nbsp;
+                        <code>{{repoDigest.split("@")[0]}}:&lt;none&gt;</code>&nbsp;
                     </span>
                 </td>
                 <td class="uk-text-center uk-text-middle">{{new Date(parseInt(image.created*1000)).format("yyyy-MM-dd hh:mm:ss")}}</td>
