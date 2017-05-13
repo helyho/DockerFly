@@ -413,7 +413,7 @@
                                            @click="pause(container)"><span class="uk-icon-pause"></span> Pause</a></li>
                                     <li><a href="#" @click="remove(container)"
                                            class=" uk-text-danger"><span class="uk-icon-trash"></span> Remove</a></li>
-                                    <li class="uk-nav-divider"></li>
+                                    <li class="uk-nav-divider" v-if="container.state=='running'"></li>
                                     <li v-if="container.state=='running'">
                                         <a href="#" class=" uk-text-primary"
                                            @click="connect(container)"><span class="uk-icon-link"></span> Connect</a></li>
