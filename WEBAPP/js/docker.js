@@ -6,16 +6,20 @@ function connect(cmd) {
     var user = getUser();
     var host = '127.0.0.1'
     var port = 2735
+    var timeout = 15
+    var debug = false;
 
     if(user!=null){
         host = user.hosts[user.usingHost].ipAddress;
         port = user.hosts[user.usingHost].port;
+        timeout = user.hosts[user.usingHost].timeout;
+        debug = user.hosts[user.usingHost].debug;
     }
 
     if(host==null || port == null) {
         cmd.connect();
     }else{
-        cmd.connect(host, port);
+        cmd.connect(host, port, timeout, debug);
     }
 }
 

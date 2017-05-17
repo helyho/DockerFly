@@ -24,7 +24,7 @@
                 changeHost:function(){
                     setSessionStorage("User",this.user)
                     var header = "<h3 class='uk-text-primary uk-text-bold'>Change host success</h3>";
-                    var content = "<h4 style='margin: 0px 15px 0px 15px;'>host changed to <span class='uk-text-bold'>"+
+                    var content = "<h4 style='margin: 0px 15px 0px 15px;'>Host changed to <span class='uk-text-bold'>"+
                         this.user.hosts[this.user.usingHost].name + "</span> success.</h4>"
                     alert(header, content)
                     document.moduleFrame.location.reload();

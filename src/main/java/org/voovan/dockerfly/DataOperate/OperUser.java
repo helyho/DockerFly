@@ -124,7 +124,7 @@ public class OperUser {
         userI.setPassword("654321");
         userI.setUsingHost(0);
         userI.getHosts().add(new Host("default","127.0.0.1",2735));
-        userI.getHosts().add(new Host("vm","10.0.0.101",2735));
+        userI.getHosts().add(new Host("vm","10.0.0.102",2736));
         OperUser.addUser(userI);
         User suser = OperUser.getUser(1);
         User cuser = OperUser.checkUser("helyho","1234567");
