@@ -11,6 +11,12 @@
 	"Gzip"              	: true,					// 是否启用Gzip压缩
 	"AccessLog"				: false,						// 是否记录access.log
 
+	"Filters":[
+		{
+			"Name":"DO_Filter",
+			"ClassName":"org.voovan.dockerfly.HttpFilter.RoleFilter"
+		}
+	]
     "Modules": [
         {
             "Name": "Vestful 模块",                                      //模块名称

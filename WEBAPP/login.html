@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+    <link rel="stylesheet" href="css/uikit/uikit.css"/>
+    <script src="js/common/jquery.min.js"></script>
+    <script src="js/common/vue.min.js"></script>
+    <script src="js/common/uikit.js"></script>
+
+    <link rel="stylesheet" href="css/main.css"/>
+    <script lang="javascript" src="js/utils.js"></script>
+    <script lang="javascript" src="../../js/docker.js"></script>
+    <style>
+        body {
+            background-color: #1d8acb;
+        }
+    </style>
+    <script language="JavaScript">
+        function init() {
+            loginVue = new Vue({
+                el: '#login',
+                data:{
+                    username:"",
+                    password:""
+                },
+                methods:{
+                    login : function(){
+                        if(typeof(OperUser)=="undefined") {
+                            doImport("org.voovan.dockerfly.DataOperate.OperUser")
+                        }
+                        try {
+                            var operUser = new OperUser();
+                            var user = operUser.checkUser(this.username, this.password);
+                            if(user!=null) {
+                                location = "index.html"
+                                setSessionStorage("User",user)
+                            }else{
+                                alertError("Login failed. please check you username or password !")
+                            }
+                            operUser.release();
+                        }catch(e){
+                            alertError(e)
+                        }
+
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body onload="init()" >
+    <div id="login" class="uk-grid">
+        <div class="uk-width-2-5 uk-container-center uk-vertical-align uk-text-center uk-margin-large-bottom">
+            <div class="uk-vertical-align-middle" style="width:100%;">
+                <div class="uk-panel uk-panel-box uk-grid uk-form uk-form-horizontal uk-text-center">
+                    <div class="uk-width-1-1 uk-margin-small-top uk-padding-remove">
+                        <img src="img/logo.png" style="margin-bottom: 15px;">
+                    </div>
+                    <div class="uk-form-row uk-width-1-1 uk-padding-remove">
+                        <div class="uk-form-label uk-text-bold uk-text-right uk-padding-remove">User :</div>
+                            <div class="uk-form-controls uk-text-left">
+                                <input type="text" class="uk-form-width-medium" v-model="username">
+                            </div>
+                    </div>
+                    <div class="uk-form-row uk-width-1-1 uk-padding-remove" style="margin-bottom: 15px;">
+                        <div class="uk-form-label uk-text-bold uk-text-right uk-padding-remove">Password :</div>
+                        <div class="uk-form-controls uk-text-left">
+                            <input type="password" class="uk-form-width-medium" v-model="password">
+                        </div>
+                    </div>
+                    <div class="uk-width-4-4 uk-margin-small-top uk-padding-remove">
+                        <div class="uk-button-group">
+                            <a href="#" class="uk-button uk-button-primary" @click="login()">Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

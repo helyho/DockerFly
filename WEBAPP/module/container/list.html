@@ -158,7 +158,8 @@
                         name = container.names[0]
                         id = container.id
 
-                        UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Are you sure to remove </span> <span class='uk-text-large uk-text-primary'>[ " + delFirestChar(name) + " ]</span> ?", function () {
+                        UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Are you sure to remove ?</span><hr/> " +
+                            "<span class='uk-text-large uk-text-primary'> " + delFirestChar(name) + " </span> ", function () {
                             try {
                                 var cmdContainerRemove = new CmdContainerRemove(id);
                                 connect(cmdContainerRemove);
@@ -202,7 +203,8 @@
                     }
                     selector = selector + '</select></span>';
                     try {
-                        UIkit.modal.confirm("<span class='uk-text-large uk-text-primary'>Choice which network to connect ?&nbsp;&nbsp;</span><hr/>"+selector, function () {
+                        UIkit.modal.confirm("<span class='uk-text-large uk-text-primary uk-text-bold'>Choice which network to connect ?&nbsp;&nbsp;</span><hr/>"+
+                            selector, function () {
                             try {
                                 var cmdNetworkConnect = new CmdNetworkConnect($('#networkToConnect').val());
                                 connect(cmdNetworkConnect);
@@ -233,7 +235,8 @@
                     }
                     selector = selector + '</select></span>';
                     try {
-                        UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Choice which network to disconnect  &nbsp;&nbsp;</span><hr/>"+selector, function () {
+                        UIkit.modal.confirm("<span class='uk-text-large uk-text-danger uk-text-bold'>Choice which network to disconnect  &nbsp;&nbsp;</span><hr/>"+
+                            selector, function () {
                             try {
                                 var cmdNetworkDisConnect = new CmdNetworkDisConnect($('#networkToDisconnect').val());
                                 connect(cmdNetworkDisConnect);

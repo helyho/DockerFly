@@ -12,6 +12,7 @@
 
 <link rel="stylesheet" href="../../css/main.css"/>
 <script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript" src="../../js/docker.js"></script>
 <script lang="javascript">
     doImport("org.voovan.docker.command.Image.CmdHubImageInfo")
     doImport("org.voovan.docker.command.Image.CmdImageList")
@@ -57,7 +58,8 @@
                         }
                     }
                     selector = selector + "</select></span>";
-                    UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Choice which one you want to remove? </span><hr/>" + selector + "", function () {
+                    UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Choice which one you want to remove? </span><hr/>" +
+                        selector + "", function () {
                         try {
                             var imageRepoTag = $('#imageRepoTag').val();
 
@@ -80,7 +82,7 @@
                 tag: function (image) {
                     name = image.repoTags!=null? image.repoTags[0] : "";
                     id = image.id
-                    UIkit.modal.prompt("<span class='uk-text-large uk-text-primary'>Images tags: (like repo:tag)</span>", name, function(newvalue){
+                    UIkit.modal.prompt("<span class='uk-text-large uk-text-primary uk-text-bold'>Images tags: (like repo:tag)</span><hr/></hghr>", name, function(newvalue){
                         try {
                             if(newvalue!=""){
                                 var reppAndTag = newvalue.split(":");

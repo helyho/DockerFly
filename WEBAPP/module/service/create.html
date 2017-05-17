@@ -242,13 +242,9 @@
                         var blockDialog = openBlockDialog(" Creating service ...");
                         cmdServiceCreate.send(function(){
                             blockDialog.hide()
-                            alert("<span class='uk-text-large uk-text-primary'>Service <span class='uk-text-bold uk-text-danger'>" +
-                                serviceListVue.createParams.name +
-                                "</span> created.</span>");
-                            window.location = "list.html"
                             cmdServiceCreate.close();
                             cmdServiceCreate.release();
-                            serviceListVue.query()
+                            window.location = "list.html"
                         }, function(){
                             blockDialog.hide()
                             alertError("Create service failed");

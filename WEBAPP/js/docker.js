@@ -1,6 +1,28 @@
 /**
  * Created by helyho on 2017/5/4.
  */
+
+function connect(cmd) {
+    var user = getUser();
+    var host = '127.0.0.1'
+    var port = 2735
+
+    if(user!=null){
+        host = user.hosts[user.usingHost].ipAddress;
+        port = user.hosts[user.usingHost].port;
+    }
+
+    if(host==null || port == null) {
+        cmd.connect();
+    }else{
+        cmd.connect(host, port);
+    }
+}
+
+function getUser(){
+    return  getSessionStorage("User");
+}
+
 function runCmd(cmdStr){
     if(typeof(CmdExecCreate)=="undefined") {
         doImport("org.voovan.docker.command.Exec.CmdExecCreate")

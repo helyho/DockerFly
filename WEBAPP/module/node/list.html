@@ -12,6 +12,7 @@
 
 <link rel="stylesheet" href="../../css/main.css"/>
 <script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript" src="../../js/docker.js"></script>
 <script lang="javascript">
     doImport("org.voovan.docker.command.Node.CmdNodeList")
     doImport("org.voovan.docker.command.Node.CmdNodeRemove")
@@ -60,7 +61,8 @@
                 //移除方法
                 remove: function (node) {
                     id = node.id
-                    UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Are you sure to remove </span><span class='uk-text-large uk-text-primary'>[ " + id + " ]</span> ?", function () {
+                    UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Are you sure to remove </span><hr/>" +
+                        "<span class='uk-text-large uk-text-primary'>[ " + id + " ]</span> ?", function () {
                         try {
                             var cmdNodeRemove = new CmdNodeRemove(id);
                             connect(cmdNodeRemove);
@@ -105,7 +107,7 @@
                     }
                 },
                 updateName: function (node) {
-                    UIkit.modal.prompt("<span class='uk-text-large uk-text-primary'>Node name:</span>", node.spec.name, function(newvalue){
+                    UIkit.modal.prompt("<span class='uk-text-large uk-text-primary uk-text-bold'>Node name:</span>", node.spec.name, function(newvalue){
                         try {
                             var cmdNodeUpdate = new CmdNodeUpdate(node.id, parseInt(node.version.index));
                             connect(cmdNodeUpdate);
@@ -165,12 +167,12 @@
             <thead>
             <tr>
                 <th class="uk-text-center table_colume_index">NO.</th>
-                <th class="uk-width-1-10">ID</th>
-                <th class="uk-width-2-10">Name ( node / host ) </th>
-                <th class="uk-width-1-10">Role</th>
-                <th class="uk-width-1-10">Status</th>
-                <th class="uk-width-1-10">Availability</th>
-                <th class="uk-width-1-10" style="width: 100px">Resource</th>
+                <th style="width:113px">ID</th>
+                <th class="uk-width-2-10">Name <span class="uk-text-muted uk-text-small">( node / host ) </span></th>
+                <th class="uk-width-1-10 uk-text-center">Role</th>
+                <th class="uk-width-1-10 uk-text-center">Status</th>
+                <th class="uk-width-1-10 uk-text-center">Availability</th>
+                <th class="uk-width-2-10" style="width: 110px">Resource</th>
                 <th class="uk-width-1-10">Platform</th>
                 <th class="uk-text-center uk-width-1-10">Opertaion</th>
             </tr>
@@ -186,15 +188,15 @@
                 <td class="uk-text-middle ">
                     <span class="uk-text-warning">
                         <a href='#' class="uk-button uk-button-success uk-button-mini"
-                           v-if="node.spec.name==null" @click='updateName(node)'>set node name</a>
+                           v-if="node.spec.name==null" @click='updateName(node)'>set name</a>
                         <span v-else>{{node.spec.name}}</span>
                     </span>
                     /
                     <span class="uk-text-success">{{node.description.hostname}}</span>
                 </td>
-                <td class="uk-text-middle uk-text-warning">{{node.spec.role}}</td>
-                <td class="uk-text-middle">{{node.status.state}}</td>
-                <td class="uk-text-bold uk-text-middle uk-text-danger">
+                <td class="uk-text-middle uk-text-center uk-text-warning">{{node.spec.role}}</td>
+                <td class="uk-text-middle uk-text-center">{{node.status.state}}</td>
+                <td class="uk-text-bold uk-text-middle uk-text-center uk-text-danger">
                     {{node.spec.availability}}
                 </td>
                 <td class="uk-text-small uk-text-middle uk-text-danger">

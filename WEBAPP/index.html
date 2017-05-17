@@ -12,8 +12,23 @@
 
 <link rel="stylesheet" href="css/main.css"/>
 <script lang="javascript" src="js/utils.js"></script>
+<script lang="javascript" src="../../js/docker.js"></script>
 <script lang="javascript">
     function init() {
+        appVue = new Vue({
+            el: "#app",
+            data:{
+                user: getUser()
+            },
+            methods:{
+                changeHost:function(){
+                    setSessionStorage("User",this.user)
+                    alert("host changed to "+ this.user.hosts[this.user.usingHost].ipAddress)
+                    document.moduleFrame.location.reload();
+                }
+            }
+        });
+
         $(".uk-nav-side").children("li").each(
             function (index, eli) {
                 $(eli).click(
@@ -26,11 +41,21 @@
     }
 </script>
 <body onload="init()">
-<div id="ContainerApp" class="uk-grid">
+<div id="app" class="uk-grid">
     <div class="uk-width-1-6 sidebar">
         <div class="uk-panel uk-panel-box" style="height: 95%;  background-color: #444;">
             <h3 class="uk-panel-title"><img src="img/sidebar_logo.png"/></h3>
             <ul class="uk-nav uk-nav-side uk-nav-parent-icon" data-uk-nav>
+                <h3 class="uk-nav-divider"></h3>
+                <div class="uk-form uk-text-center">
+                    <select class="uk-form-width-small" v-model="user.usingHost" autocomplete="off"
+                        @change="changeHost()">
+                        <option v-for="(host,index) in user.hosts"
+                                :value="index">
+                            <span class="uk-text-bold">{{host.name}}</span>
+                        </option>
+                    </select>
+                </div>
                 <h3 class="uk-nav-divider"></h3>
                 <li class="uk-active"><a href="summary.html" target="moduleFrame"><span class="icon uk-icon-dashboard"></span>Summery</a></li>
                 <h3 class="uk-nav-divider"></h3>
@@ -52,7 +77,7 @@
     </div>
     <div class="uk-width-5-6" style="padding:0px;height: 100%">
         <div style="height: 100%;">
-            <iframe name="moduleFrame" class="uk-width-6-6" style="height: 100%;float:right" src="summary.html"></iframe>
+            <iframe id="moduleFrame" name="moduleFrame" class="uk-width-6-6" style="height: 100%;float:right" src="summary.html"></iframe>
         </div>
     </div>
 </div>

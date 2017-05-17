@@ -22,6 +22,7 @@ html, body {
 
 body > .uk-grid {
     height: 100%;
+    scroll: none;
 }
 
 th{
@@ -34,6 +35,10 @@ th{
 
 table{
     border-right: 4px;
+}
+
+.sidebar{
+
 }
 
 .frameBody{
@@ -137,7 +142,7 @@ table{
 }
 
 .table_colume_index{
-    width: 34px
+    width: 30px
 }
 
 

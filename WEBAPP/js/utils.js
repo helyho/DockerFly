@@ -1,6 +1,26 @@
 /**
  * =======================工具函数=======================
  */
+
+
+    //保存到SessionStorage中
+    function setSessionStorage(key, value){
+        window.sessionStorage.setItem(key, ( typeof(value)=="string")?value:JSON.stringify(value));
+    }
+
+    //读取SessionStorage中的数据
+    function getSessionStorage(key){
+        var value = window.sessionStorage.getItem(key);
+        var result = null;
+        try{
+            result = eval("sessionStorageTmp = "+window.sessionStorage.getItem("User"));
+        }catch(e){
+            result = value;
+        }
+
+        return result;
+    }
+
     //菜单选中标识
     function mainMenuActive(event){
         $(event.target).parent().parent().children("li[class*='uk-active']").each(function(index,eli){
@@ -32,30 +52,60 @@
         return new Date().getTime();
     }
 
-    function alert(msg){
-        if(window.parent!=window) {
-            window.parent.UIkit.modal.alert(msg);
-        }else{
-            UIkit.modal.alert(msg);
-        }
-    }
+    function dockerFlyAlert(header, content, hideFunction ,options) {
 
-    function openBlockDialog(msg){
-        var content = "<div class='uk-text-center'> \
-                        <img src='../../img/loading.gif'/><br/><br/> \
-                        <div class='uk-text-warning uk-text-bold uk-text-large' style='margin-top:-80px'>"
-                        + msg +
-                        "</div></div>";
-        return window.parent.UIkit.modal.blockUI(content);
+        options = UIkit.$.extend(true, {bgclose:false, keyboard:false, modal:false, labels:UIkit.modal.labels}, options);
+
+        var modal = UIkit.modal.dialog(([
+            '<div class="uk-modal-header">',
+            '    <span>'+header+'</span>',
+            '</div>',
+            '<p>'+content+'</p>',
+            '<div class="uk-modal-footer uk-text-right">',
+            '    <button type="button" class="uk-button uk-button-primary uk-modal-close">Close</button>',
+            '</div>'
+        ]).join(""), options);
+
+        modal.on('show.uk.modal', function(){
+            setTimeout(function(){
+                modal.element.find('button:first').focus();
+            }, 50);
+        });
+
+        modal.on('hide.uk.modal', function(){
+            if(hideFunction!=null) {
+                hideFunction();
+            }
+        });
+
+        return modal.show();
+    };
+
+    function alert(header, msg) {
+        if(arguments.length == 1){
+            msg = header;
+            header = "";
+        }
+
+        if(window.parent!=window) {
+            dockerFlyAlert(header, msg);
+        }else{
+            dockerFlyAlert(header, msg);
+        }
     }
 
     //展示错误信息
     function alertError(e){
-        var errMsg = "<h3 class='uk-text-danger uk-text-bold'>Ops , We hava an error!</h3>" +
-            "<h3 style='margin: 0px 15px 0px 15px;'>";
+        var noRightErro = false;
+        var header = "<h3 class='uk-text-danger uk-text-bold'>Ops , The operation failure !</h3>";
+        var errMsg = "<h3 style='margin: 0px 15px 0px 15px;'>";
         if(e instanceof Error) {
             if(e.name == "Error") {
                 var errObj = eval("err_" + currentTimeMills() + " = " + e.message);
+
+                if(errObj.errClass == 'NOT_LOGIN'){
+                    noRightErro = true;
+                }
 
                 if(errObj.errClass == "java.nio.channels.InterruptedByTimeoutException"){
                     errMsg = errMsg + "Network time out, try connect again."
@@ -73,18 +123,28 @@
             errMsg = errMsg + "[" + e.name+ "] "+ e.message;
         }
         errMsg = errMsg+"</h3>"
-        alert(errMsg);
+
+        if(noRightErro) {
+            //如果是未登录,则返回登录页面
+            dockerFlyAlert(header, errMsg, function () {
+                if (window.parent != window) {
+                    window.parent.location = "login.html";
+                } else {
+                    window.location = "login.html";
+                }
+            });
+        }else{
+            dockerFlyAlert(header, errMsg)
+        }
     }
 
-    function connect(cmd) {
-        host = getQueryString("host");
-        port = getQueryString("port");
-
-        if(host==null || port == null) {
-            cmd.connect();
-        }else{
-            cmd.connect(host, port);
-        }
+    function openBlockDialog(msg){
+        var content = "<div class='uk-text-center'> \
+                            <img src='../../img/loading.gif'/><br/><br/> \
+                            <div class='uk-text-warning uk-text-bold uk-text-large' style='margin-top:-80px'>"
+            + msg +
+            "</div></div>";
+        return window.parent.UIkit.modal.blockUI(content);
     }
 
     //创建终端

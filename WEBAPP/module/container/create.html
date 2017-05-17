@@ -257,11 +257,19 @@
                         }
 
                         entity.release();
-                        cmdContainerCreate.send();
-                        alert("Create container success.");
-                        window.location = "list.html"
-                        cmdContainerCreate.close();
-                        cmdContainerCreate.release();
+
+                        var blockDialog = openBlockDialog("Creating Container...");
+                        cmdContainerCreate.send(function(){
+                            blockDialog.hide();
+                            cmdContainerCreate.close();
+                            cmdContainerCreate.release();
+                            window.location = "list.html"
+                        }, function(){
+                            blockDialog.hide();
+                            alertError("Create container failed, you can try this operation again.");
+                            cmdContainerCreate.close();
+                            cmdContainerCreate.release();
+                        });
 
                     } catch (e) {
                         alertError(e);

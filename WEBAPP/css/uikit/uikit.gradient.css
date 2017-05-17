@@ -7621,7 +7621,7 @@ a.uk-thumbnail:focus {
    Component: Modal
  ========================================================================== */
 /*
- * This is the modal overlay and modal dialog container
+ * This is the modal overlay and model dialog container
  * 1. Hide by default
  * 2. Set fixed position
  * 3. Allow scrolling for the modal dialog
@@ -7796,7 +7796,7 @@ a.uk-thumbnail:focus {
     width: 1130px;
   }
 }
-/* Sub-Object: `uk-modal-header` and `uk-modal-footer`
+/* Sub-Object: `uk-modal-header` and `uk-model-footer`
  ========================================================================== */
 .uk-modal-header {
   margin-bottom: 15px;

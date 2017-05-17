@@ -12,6 +12,7 @@
 
 <link rel="stylesheet" href="../../css/main.css"/>
 <script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript" src="../../js/docker.js"></script>
 <script lang="javascript">
     doImport("org.voovan.docker.command.Network.CmdNetworkCreate")
     doImport("org.voovan.docker.command.Network.CmdNetworkList")
@@ -68,7 +69,8 @@
                 remove: function (network) {
                     name = network.name
                     id = network.id
-                    UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Are you sure to remove </span><span class='uk-text-large uk-text-primary'>[ " + name + " ]</span> ?", function () {
+                    UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Are you sure to remove ?</span><hr/>" +
+                        "<span class='uk-text-large uk-text-primary'> " + name + " </span>", function () {
                         try {
                             var cmdNetworkRemove = new CmdNetworkRemove(id);
                             connect(cmdNetworkRemove);

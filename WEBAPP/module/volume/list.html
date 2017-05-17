@@ -12,6 +12,7 @@
 
 <link rel="stylesheet" href="../../css/main.css"/>
 <script lang="javascript" src="../../js/utils.js"></script>
+<script lang="javascript" src="../../js/docker.js"></script>
 <script lang="javascript">
     doImport("org.voovan.docker.command.Volume.CmdVolumeCreate")
     doImport("org.voovan.docker.command.Volume.CmdVolumeList")
@@ -53,7 +54,8 @@
                 //移除方法
                 remove: function (volume) {
                     name = volume.name
-                    UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Are you sure to remove ?</span> <br> <span class='uk-text-primary'>" + name + "</span>", function () {
+                    UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Are you sure to remove ?</span> <hr> " +
+                        "<span class='uk-text-primary'>" + name + "</span>", function () {
                         try {
                             var cmdVolumeRemove = new CmdVolumeRemove(name);
                             connect(cmdVolumeRemove)
