@@ -1,11 +1,13 @@
 package org.voovan.dockerfly.HttpFilter;
 
+import org.voovan.docker.command.Cmd;
 import org.voovan.dockerfly.model.User;
 import org.voovan.http.server.HttpFilter;
 import org.voovan.http.server.HttpRequest;
 import org.voovan.http.server.HttpResponse;
 import org.voovan.http.server.HttpSession;
 import org.voovan.http.server.context.HttpFilterConfig;
+import org.voovan.tools.ObjectPool;
 import org.voovan.tools.json.JSON;
 import org.voovan.tools.log.Logger;
 import org.voovan.vestful.VestfulGlobal;
@@ -34,15 +36,20 @@ public class RoleFilter implements HttpFilter {
         //DirectObject 调用对象方法
         if(request.protocol().getPath().endsWith("invoke")){
 
+            ObjectPool objectPool = VestfulGlobal.getObjectPool();
             String methodName = request.getParameter("methodName");
             String objectId = request.getParameter("pooledObjectId");
-            Object obj = VestfulGlobal.getObjectPool().get(objectId);
+            Object obj = objectPool.get(objectId);
             String className = obj.getClass().getName();
 
             //登录权限控制
             if( !(className.equals("org.voovan.dockerfly.DataOperate.OperUser") && methodName.equals("checkUser")) ){
                 if(user == null){
                     noRightError(request, response);
+                    if(obj instanceof Cmd){
+                        ((Cmd)obj).close();
+                    }
+                    objectPool.remove(objectId);
                 }
             }
         }
