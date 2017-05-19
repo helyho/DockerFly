@@ -113,11 +113,15 @@
                     errMsg = errMsg + "Network time out, try connect again."
                 } else if (errObj.errMsg != null) {
                     errMsg = errMsg + errObj.errMsg.replaceAll("\\\"", "\"");
+                } else if(errObj.errClass=="org.voovan.docker.network.DockerClientException"){
+                   e.name="NetworkError";
                 } else {
                     errMsg = errMsg + errObj.errClass;
                 }
-            } else if(e.name == "NetworkError"){
-                errMsg = "Network has some problem, check it."
+            }
+
+            if(e.name == "NetworkError"){
+                errMsg = errMsg + "Network has some problem, check it."
             }
         } else if(typeof(e)=="string"){
             errMsg = errMsg + e;
@@ -140,6 +144,8 @@
             }
             //如果是权限不具备
             else if(errObj.errClass=="NO_RIGHT"){
+                dockerFlyAlert(header, errMsg);
+            } else {
                 dockerFlyAlert(header, errMsg);
             }
         }else{

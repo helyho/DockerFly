@@ -220,7 +220,7 @@ function getSwarmInfo(){
         cmdSwarmInfo.release();
         return swarmInfo;
     } catch (e) {
-        console.log(e)
+        alertError(e)
         return null;
     }
 }
