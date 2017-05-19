@@ -19,7 +19,7 @@ public class User {
     private String userName;
     private String password;
     private String role;
-    private Integer usingHost;
+    private Integer defaultHost;
     private List<Host> hosts;
     private Timestamp createDate;
 
@@ -67,12 +67,12 @@ public class User {
         this.role = role;
     }
 
-    public Integer getUsingHost() {
-        return usingHost;
+    public Integer getDefaultHost() {
+        return defaultHost;
     }
 
-    public void setUsingHost(Integer usingHost) {
-        this.usingHost = usingHost;
+    public void setDefaultHost(Integer defaultHost) {
+        this.defaultHost = defaultHost;
     }
 
     public List<Host> getHosts() {

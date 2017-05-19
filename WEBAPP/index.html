@@ -25,7 +25,7 @@
                     setSessionStorage("User",this.user)
                     var header = "<h3 class='uk-text-primary uk-text-bold'>Change host success</h3>";
                     var content = "<h4 style='margin: 0px 15px 0px 15px;'>Host changed to <span class='uk-text-bold'>"+
-                        this.user.hosts[this.user.usingHost].name + "</span> success.</h4>"
+                        this.user.hosts[this.user.defaultHost].name + "</span> success.</h4>"
                     alert(header, content)
                     document.moduleFrame.location.reload();
                 }
@@ -50,8 +50,9 @@
             <h3 class="uk-panel-title"><img src="img/sidebar_logo.png"/></h3>
             <ul class="uk-nav uk-nav-side uk-nav-parent-icon" data-uk-nav>
                 <h3 class="uk-nav-divider"></h3>
-                <div class="uk-form uk-text-center">
-                    <select class="uk-form-width-small" v-model="user.usingHost" autocomplete="off"
+                <div class="uk-form" style="padding-left: 10px; color:#FFFFFF">
+                    <span class="uk-icon-server uk-margin-small-left uk-margin-small-right uk-text-middle"></span>
+                    <select class="uk-form-width-small" v-model="user.defaultHost" autocomplete="off"
                         @change="changeHost()">
                         <option v-for="(host,index) in user.hosts"
                                 :value="index">
@@ -60,21 +61,41 @@
                     </select>
                 </div>
                 <h3 class="uk-nav-divider"></h3>
-                <li class="uk-active"><a href="summary.html" target="moduleFrame"><span class="icon uk-icon-dashboard"></span>Summery</a></li>
+                <li class="uk-active">
+                    <a href="summary.html" target="moduleFrame"><span class="icon uk-icon-dashboard"></span>Summery</a>
+                </li>
                 <h3 class="uk-nav-divider"></h3>
-                <li><a href="swarm.html" target="moduleFrame"><span class="icon uk-icon-connectdevelop"></span> Swarm</a></li>
-                <li><a href="module/node/list.html" target="moduleFrame"><span class="icon uk-icon-cube"></span > Node</a></li>
-                <li><a href="module/service/list.html" target="moduleFrame"><span class="icon uk-icon-gears"></span> Service</a></li>
-                <li><a href="module/task/list.html" target="moduleFrame"><span class="icon uk-icon-tasks"></span> Task</a></li>
+                <li v-if="user.role=='Admin'">
+                    <a href="swarm.html" target="moduleFrame"><span class="icon uk-icon-connectdevelop"></span> Swarm</a>
+                </li>
+                <li v-if="user.role=='Admin'">
+                    <a href="module/node/list.html" target="moduleFrame"><span class="icon uk-icon-cube"></span > Node</a>
+                </li>
+                <li>
+                    <a href="module/service/list.html" target="moduleFrame"><span class="icon uk-icon-gears"></span> Service</a>
+                </li>
+                <li v-if="user.role=='Admin'">
+                    <a href="module/task/list.html" target="moduleFrame"><span class="icon uk-icon-tasks"></span> Task</a>
+                </li>
                 <h3 class="uk-nav-divider"></h3>
-                <li><a href="module/container/list.html" target="moduleFrame">
+                <li>
+                    <a href="module/container/list.html" target="moduleFrame">
                     <span class="icon uk-icon-desktop"></span> Contianer
-                </a></li>
-                <li><a href="module/network/list.html" target="moduleFrame"><span class="icon uk-icon-sitemap"></span> Network</a></li>
-                <li><a href="module/volume/list.html" target="moduleFrame"><span class="icon uk-icon-clone"></span> Volume</a></li>
-                <li><a href="module/image/list.html" target="moduleFrame"><span class="icon uk-icon-object-group"></span> Image</a></li>
+                    </a>
+                </li>
+                <li>
+                    <a href="module/network/list.html" target="moduleFrame"><span class="icon uk-icon-sitemap"></span> Network</a>
+                </li>
+                <li>
+                    <a href="module/volume/list.html" target="moduleFrame"><span class="icon uk-icon-clone"></span> Volume</a>
+                </li>
+                <li>
+                    <a href="module/image/list.html" target="moduleFrame"><span class="icon uk-icon-object-group"></span> Image</a>
+                </li>
                 <h3 class="uk-nav-divider"></h3>
-                <li><a href="setting.html" target="moduleFrame"><span class="icon uk-icon-cog"></span> Setting</a></li>
+                <li>
+                    <a href="setting.html" target="moduleFrame"><span class="icon uk-icon-cog"></span> Setting</a>
+                </li>
             </ul>
         </div>
     </div>

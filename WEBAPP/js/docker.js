@@ -10,21 +10,119 @@ function connect(cmd) {
     var debug = false;
 
     if(user!=null){
-        host = user.hosts[user.usingHost].ipAddress;
-        port = user.hosts[user.usingHost].port;
-        timeout = user.hosts[user.usingHost].timeout;
-        debug = user.hosts[user.usingHost].debug;
+        host = user.hosts[user.defaultHost].ipAddress;
+        port = user.hosts[user.defaultHost].port;
+        timeout = user.hosts[user.defaultHost].timeout;
+        debug = user.hosts[user.defaultHost].debug;
     }
 
     if(host==null || port == null) {
         cmd.connect();
     }else{
-        cmd.connect(host, port, timeout, debug);
+        cmd.connect(host, port, timeout, debug, "JSON");
     }
 }
 
 function getUser(){
     return  getSessionStorage("User");
+}
+
+function checkUser(username, password){
+    if(typeof(OperUser)=="undefined") {
+        doImport("org.voovan.dockerfly.DataOperate.OperUser")
+    }
+    try {
+        var operUser = new OperUser();
+        var user = operUser.checkUser(username, password);
+        operUser.release();
+        return user;
+    }catch(e){
+        alertError(e)
+    }
+}
+
+function modifyPassword(user, password){
+    if(typeof(OperUser)=="undefined") {
+        doImport("org.voovan.dockerfly.DataOperate.OperUser")
+    }
+    try {
+        var operUser = new OperUser();
+        var user = operUser.modifyPassword(user.userId, password);
+        operUser.release();
+        return user;
+    }catch(e){
+        alertError(e)
+    }
+}
+
+function modifyHosts(user){
+    if(typeof(OperUser)=="undefined") {
+        doImport("org.voovan.dockerfly.DataOperate.OperUser")
+    }
+    try {
+        var operUser = new OperUser();
+        var user = operUser.modifyHosts(user.userId, user.hosts);
+        operUser.release();
+        return user;
+    }catch(e){
+        alertError(e)
+    }
+}
+
+function modifyDefaultHost(user, defaultHost){
+    if(typeof(OperUser)=="undefined") {
+        doImport("org.voovan.dockerfly.DataOperate.OperUser")
+    }
+    try {
+        var operUser = new OperUser();
+        var user = operUser.modifyDefaultHost(user.userId, defaultHost);
+        operUser.release();
+        return user;
+    }catch(e){
+        alertError(e)
+    }
+}
+
+function getUserList(){
+    if(typeof(OperUser)=="undefined") {
+        doImport("org.voovan.dockerfly.DataOperate.OperUser")
+    }
+    try {
+        var operUser = new OperUser();
+        var userList = operUser.getUserList();
+        operUser.release();
+        return userList;
+    }catch(e){
+        alertError(e)
+    }
+}
+
+function addUser(user){
+    if(typeof(OperUser)=="undefined") {
+        doImport("org.voovan.dockerfly.DataOperate.OperUser")
+    }
+    try {
+        var operUser = new OperUser();
+        var userList = operUser.addUser(user);
+        operUser.release();
+        return userList;
+    }catch(e){
+        alertError(e)
+    }
+}
+
+function delUser(user){
+    if(typeof(OperUser)=="undefined") {
+        doImport("org.voovan.dockerfly.DataOperate.OperUser")
+    }
+    try {
+        var operUser = new OperUser();
+        var userList = operUser.delUser(user.userId);
+        operUser.release();
+        return userList;
+    }catch(e){
+        alertError(e)
+    }
 }
 
 function runCmd(cmdStr){

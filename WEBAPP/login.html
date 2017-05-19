@@ -27,23 +27,17 @@
                 },
                 methods:{
                     login : function(){
-                        if(typeof(OperUser)=="undefined") {
-                            doImport("org.voovan.dockerfly.DataOperate.OperUser")
-                        }
-                        try {
-                            var operUser = new OperUser();
-                            var user = operUser.checkUser(this.username, this.password);
+                        try{
+                            var user = checkUser(this.username, this.password);
                             if(user!=null) {
-                                location = "index.html"
+                                location = getHost()+"/index.html"
                                 setSessionStorage("User",user)
                             }else{
                                 alertError("Login failed. please check you username or password !")
                             }
-                            operUser.release();
                         }catch(e){
                             alertError(e)
                         }
-
                     }
                 }
             });

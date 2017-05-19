@@ -19,14 +19,18 @@ import java.util.Map;
  * Licence: Apache v2 License
  */
 public class OperUser {
-    private static String addUser = "insert into df_user (UserName, Password, Role, UsingHost, Hosts)\n" +
-            "select ::userName, ::password, ::role, ::usingHost, ::hosts";
 
-    private static String getUser = "select UserId, UserName, /*Password,*/ Role, UsingHost, Hosts, CreateDate from df_user where UserId=::1";
-    private static String getUserList = "select UserId, UserName, /*Password,*/ Role, UsingHost, Hosts, CreateDate from df_user";
-    private static String checkUser = "select UserId, UserName, /*Password,*/ Role, UsingHost, Hosts, CreateDate from df_user where UserName=::1 and Password=::2";
+    private static String queryFieldList = "UserId, UserName, Role, DefaultHost, Hosts, CreateDate";
+
+    private static String addUser = "insert into df_user (UserName, Password, Role, DefaultHost, Hosts)\n" +
+            "select ::userName, ::password, ::role, ::defaultHost, ::hosts";
+    private static String delUser = "delete from df_user where userId = ::1";
+    private static String getUser = "select "+queryFieldList+" from df_user where UserId=::1";
+    private static String getUserList = "select "+queryFieldList+" from df_user";
+    private static String checkUser = "select "+queryFieldList+" from df_user where UserName=::1 and Password=::2";
     private static String modifyPassword = "update DF_USER set password =::2 where userId=::1";
     private static String modifyHosts = "update DF_USER set hosts =::2 where userId=::1";
+    private static String modifyDefaultHost = "update DF_USER set DefaultHost =::2 where userId=::1";
 
     /**
      * 修改用户密码
@@ -62,6 +66,23 @@ public class OperUser {
         }
     }
 
+    /**
+     * 修改用户密码
+     * @param userId 用户ID
+     * @param hostId 主机序号
+     * @return true: 成功, false: 失败
+     * @throws SQLException SQL异常
+     */
+    public static boolean modifyDefaultHost(int userId, int hostId ) throws SQLException {
+        JdbcOperate jdbcOperate = DataBaseUtils.getOperator();
+        int count = jdbcOperate.update(modifyDefaultHost, userId, hostId);
+        if(count==0){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
 
     /**
      * 新增用户
@@ -73,6 +94,23 @@ public class OperUser {
     public static boolean addUser(User user) throws SQLException, ReflectiveOperationException {
         JdbcOperate jdbcOperate = DataBaseUtils.getOperator();
         int count = jdbcOperate.update(addUser, user);
+        if(count==0){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    /**
+     * 删除用户
+     * @param userId 用户ID
+     * @return true: 成功, false: 失败
+     * @throws SQLException
+     * @throws ReflectiveOperationException
+     */
+    public static boolean delUser(int userId) throws SQLException, ReflectiveOperationException {
+        JdbcOperate jdbcOperate = DataBaseUtils.getOperator();
+        int count = jdbcOperate.update(delUser, userId);
         if(count==0){
             return false;
         }else{
@@ -122,7 +160,7 @@ public class OperUser {
         User userI = new User();
         userI.setUserName("test");
         userI.setPassword("654321");
-        userI.setUsingHost(0);
+        userI.setDefaultHost(0);
         userI.getHosts().add(new Host("default","127.0.0.1",2735));
         userI.getHosts().add(new Host("vm","10.0.0.102",2736));
         OperUser.addUser(userI);

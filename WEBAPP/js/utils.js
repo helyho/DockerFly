@@ -1,8 +1,6 @@
 /**
  * =======================工具函数=======================
  */
-
-
     //保存到SessionStorage中
     function setSessionStorage(key, value){
         window.sessionStorage.setItem(key, ( typeof(value)=="string")?value:JSON.stringify(value));
@@ -19,6 +17,15 @@
         }
 
         return result;
+    }
+
+    function getHost() {
+        url = window.location.href;
+        first = url.indexOf("//");
+        last = url.indexOf("/", first + 2);
+        host = url.substring(first + 2, last);
+        protocol = url.substring(0, first);
+        return protocol+"//"+host;
     }
 
     //菜单选中标识
@@ -96,16 +103,11 @@
 
     //展示错误信息
     function alertError(e){
-        var noRightErro = false;
         var header = "<h3 class='uk-text-danger uk-text-bold'>Ops , The operation failure !</h3>";
         var errMsg = "<h3 style='margin: 0px 15px 0px 15px;'>";
         if(e instanceof Error) {
             if(e.name == "Error") {
                 var errObj = eval("err_" + currentTimeMills() + " = " + e.message);
-
-                if(errObj.errClass == 'NOT_LOGIN'){
-                    noRightErro = true;
-                }
 
                 if(errObj.errClass == "java.nio.channels.InterruptedByTimeoutException"){
                     errMsg = errMsg + "Network time out, try connect again."
@@ -124,15 +126,22 @@
         }
         errMsg = errMsg+"</h3>"
 
-        if(noRightErro) {
+        if(e instanceof Error && e.name == "Error") {
+            var errObj = eval("err_" + currentTimeMills() + " = " + e.message);
             //如果是未登录,则返回登录页面
-            dockerFlyAlert(header, errMsg, function () {
-                if (window.parent != window) {
-                    window.parent.location = "login.html";
-                } else {
-                    window.location = "login.html";
-                }
-            });
+            if( errObj.errClass=="NOT_LOGIN") {
+                dockerFlyAlert(header, errMsg, function () {
+                    if (window.parent != window) {
+                        window.parent.location = getHost() + "/login.html";
+                    } else {
+                        window.location = getHost() + "/login.html";
+                    }
+                });
+            }
+            //如果是权限不具备
+            else if(errObj.errClass=="NO_RIGHT"){
+                dockerFlyAlert(header, errMsg);
+            }
         }else{
             dockerFlyAlert(header, errMsg)
         }

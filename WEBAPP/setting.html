@@ -9,6 +9,7 @@
 <script src="js/common/jquery.min.js"></script>
 <script src="js/common/vue.min.js"></script>
 <script src="js/common/uikit.js"></script>
+<script src="js/component/switch.js"></script>
 
 <link rel="stylesheet" href="css/main.css"/>
 <script lang="javascript" src="js/utils.js"></script>
@@ -16,73 +17,347 @@
 <script lang="javascript">
 
     function init() {
+
         dockerSettingVue = new Vue({
             el: '#dockerSetting',
+            data:{
+                user:null,
+                userList:{},
+                createParams:{
+                    newHost:{
+                        name:null,
+                        ipAddress:null,
+                        port:2735,
+                        timeout:15,
+                        debug: true
+                    },
+                    password:{
+                        password:null,
+                        reTypePassword:null
+                    },
+                    newUser:{
+                        userName:null,
+                        password:null,
+                        role:"User",
+                        defaultHost:0,
+                        hosts:[],
+                        addHost:null
+                    }
+                }
+            },
+            beforeMount:function(){
+                this.getUser();
+                if(this.user.role=='Admin') {
+                    this.getUserList()
+                }
+            },
             computed: {
                 config: function () {
                   return getDockerFlyConfig();
                 }
             },
             methods:{
-                connect: function(){
-                    connectToHost(this.config)
-                    location = "summary.html"
+                getUser: function(){
+                    this.user=getUser();
+                },
+                addHost: function(){
+                    this.user.hosts.push(this.createParams.newHost);
+                    this.createParams.newHost = {
+                                                    name:null,
+                                                    ipAddress:null,
+                                                    port:2735,
+                                                    timeout:15,
+                                                    debug:true
+                                                };
+                    this.modifyHosts();
+                    closeDialog("addHostDialog")
+                },
+                removeHost: function(hostIndex){
+                    if(hostIndex != this.user.defaultHost) {
+                        this.user.hosts.remove(hostIndex)
+                        this.modifyHosts();
+                    }else{
+                        alert("Can't remove the host which state is using.")
+                    }
+                },
+                modifyHosts:function(){
+                    modifyHosts(this.user)
+                    setSessionStorage("User", this.user);
+                    this.getUser();
+                },
+                modifyDefaultHost:function(hostId){
+                    modifyDefaultHost(this.user, hostId);
+                    this.user.defaultHost = hostId;
+                    setSessionStorage("User", this.user);
+                },
+                modifyPassword: function(){
+                    var password = this.createParams.password;
+                    if(password.password == password.reTypePassword){
+                        modifyPassword(this.user, password.password);
+                        alert("Password is changed.");
+                    }else{
+                        alertError("Password does not match !")
+                    }
+                },
+                getUserList(){
+                    this.userList = getUserList();
+                },
+                removeUser:function(user){
+                    if(user.userId != 1) {
+                        delUser(user);
+                        this.getUserList()
+                    }else{
+                        alert("Can't remove default manager user.")
+                    };
+                },
+                addUser: function(){
+                    addUser(this.createParams.newUser);
+                    closeDialog("addUserDialog");
+                    alert("Add user "+this.createParams.newUser.userName+" success !")
+                    this.getUserList();
+                },
+                addHostToNewUser: function(){
+                    this.createParams.newUser.hosts.push(this.createParams.newUser.addHost)
                 }
             }
         });
     }
 </script>
 <body onload="init()" class="frameBody">
-<div id="dockerSetting" class="uk-grid" style="display: none" v-show="this.config!=null">
+<div id="dockerSetting" class="uk-grid" style="display: none" v-show="this.user!=null">
     <div class="uk-width-6-6">
         <div class="uk-panel"></div>
         <h3></h3>
         <h3 class="uk-text-middle"><span class="icon uk-icon-cog"></span>  System setting</h3>
         <ul class="uk-tab" data-uk-tab="{connect:'#tab-content'}">
             <li class="uk-active">
-                <a href="#">Server</a>
+                <a href="#"><span class="uk-icon-ship"></span> Host manager</a>
             </li>
             <li>
-                <a href="#">Host</a>
+                <a href="#"><span class="uk-icon-user-secret"></span> Change password</a>
+            </li>
+            <li v-if="user.role=='Admin'">
+                <a href="#"><span class="uk-icon-users"></span> User manager</a>
             </li>
         </ul>
         <ul id="tab-content" class="uk-switcher">
+            <!-- 主机管理 -->
             <li class="uk-active">
-                <h3 class="uk-text-middle">Connect docker server</h3>
+                <div class="uk-panel-box">
+                    <a class="uk-button uk-button-primary uk-button-small"
+                       onclick="openDialog('addHostDialog')"><i class="uk-icon-plus-square"></i> Add a Host</a>
+                </div>
                 <table id="config" class="uk-form uk-table uk-overflow-container uk-panel-box">
                     <tbody>
-                    <tr>
-                        <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Host:</td>
-                        <td class="uk-width-1-4">
-                            <input type="text" class="" placeholder="DockerFly host" v-model="config.host"/>
+                    <thead>
+                        <th class="uk-width-1-10  table_colume_index">NO.</th>
+                        <th class="uk-width-2-10 ">Name</th>
+                        <th class="uk-width-1-10 uk-text-center">isDefault</th>
+                        <th class="uk-width-2-10 uk-text-center">Host</th>
+                        <th class="uk-width-1-10 uk-text-center">Port</th>
+                        <th class="uk-width-1-10 uk-text-center">Timeout</th>
+                        <th class="uk-width-1-10 uk-text-center">Debug</th>
+                        <th class="uk-width-2-10 uk-text-center">Operation</th>
+                    </thead>
+                    <tr v-for="(host,index) in user.hosts">
+                        <td class="uk-text-center uk-text-small">{{index}}</td>
+                        <td class=" uk-text-bold">
+                            {{host.name}}
                         </td>
-                        <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Port:</td>
-                        <td class="uk-width-1-4">
-                            <input type="text" class="" placeholder="DockerFly port" v-model="config.port"/>
+                        <td class="uk-text-center">
+                            <span :class="[index==user.defaultHost? 'uk-icon-check-square-o' : 'uk-icon-square-o', 'uk-text-primary', 'uk-text-large']"></span>
+                        </td>
+                        <td class="uk-text-primary uk-text-center">{{host.ipAddress}}</td>
+                        <td class="uk-text-center uk-text-success">{{host.port}}</td>
+                        <td class="uk-text-center uk-text-warning">{{host.timeout}}</td>
+                        <td class="uk-text-center uk-text-danger uk-text-large"><span :class="[host.debug?'uk-icon-toggle-on':'uk-icon-toggle-off']"></span></td>
+                        <td class="uk-text-center uk-text-warning">
+                            <a href="#" class="uk-button uk-button-danger uk-button-small"
+                                @click="removeHost(index)">
+                                <span class="uk-icon-trash"></span> Remove
+                            </a>
+                            <button href="#" class="uk-button uk-button-primary uk-button-small"
+                                    @click="modifyDefaultHost(index)" :disabled="index==user.defaultHost">Default</button>
                         </td>
                     </tr>
+                    </tbody>
+                </table>
+            </li>
+            <!-- 密码管理 -->
+            <li>
+                <table class="uk-table uk-overflow-container uk-panel-box uk-form">
                     <tr>
-                        <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Timeout:</td>
-                        <td class="uk-width-1-4">
-                            <input type="text" class="" placeholder="DockerFly timeout" v-model="config.timeout"/>
-                        </td>
-                        <td class="uk-width-1-10 uk-text-right summeryField uk-text-middle">Debug:</td>
-                        <td class="uk-width-1-4">
-                            <select v-model="config.isDebug">
-                                <option value="true">true</option>
-                                <option value="false">false</option>
-                            </select>
-                        </td>
+                        <td class="dialogField">Password:</td>
+                        <td><input class="uk-form-width-medium" type="password"
+                                   placeholder="e.g. Dockerfly" v-model="createParams.password.password"/></td>
                     </tr>
                     <tr>
-                        <td colspan="4" class="uk-text-right">
-                            <a href="#" class="uk-button uk-button-primary" @click="connect()">Connect</a>
+                        <td class="dialogField">Retype password:</td>
+                        <td><input class="uk-form-width-medium" type="password"
+                                   placeholder="e.g. 127.0.0.1" v-model="createParams.password.reTypePassword"/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="uk-text-center">
+                            <a href="#" class="uk-button uk-button-primary uk-button-small" @click="modifyPassword()">Change</a>
+                        </td>
+                    </tr>
+                </table>
+            </li>
+            <!-- 用户管理 -->
+            <li class="uk-active">
+                <div class="uk-panel-box">
+                    <a href="#" class="uk-button uk-button-small " @click="getUserList()">
+                        <i class="uk-icon-search" ></i> Query</a>
+                    <a class="uk-button uk-button-primary uk-button-small"
+                       onclick="openDialog('addUserDialog')"><i class="uk-icon-plus-square"></i> Add user </a>
+                </div>
+                <table id="config" class="uk-form uk-table uk-overflow-container uk-panel-box">
+                    <tbody>
+                    <thead>
+                    <th class="uk-width-1-10  table_colume_index">No:</th>
+                    <th class="uk-width-1-10 uk-text-center">Name</th>
+                    <th class="uk-width-1-5 uk-text-center">Role</th>
+                    <th class="uk-width-1-5 uk-text-center">Host</th>
+                    <th class="uk-width-1-5 uk-text-center">Create Date</th>
+                    <th class="uk-width-1-5 uk-text-center">Operation</th>
+                    </thead>
+                    <tr v-for="(user,index) in userList">
+                        <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
+                        <td class="uk-text-center uk-text-middle uk-text-bold">{{user.userName}}</td>
+                        <td class="uk-text-center uk-text-middle uk-text-primary">{{user.role}}</td>
+                        <td class="uk-text-success">
+                            <div v-for="(host, index) in user.hosts">
+                                <span :class="[index==user.defaultHost? 'uk-icon-check-square-o' : 'uk-icon-square-o']"></span>
+                                <span class="uk-badge">{{host.name}}</span>
+                                <code>{{host.ipAddress}}:{{host.port}}</code>
+                            </div>
+                        </td>
+                        <td class="uk-text-center uk-text-middle uk-text-warning">{{user.createDate}}</td>
+                        <td class="uk-text-center uk-text-middle uk-text-warning">
+                            <a href="#" class="uk-button uk-button-danger uk-button-small"
+                               @click="removeUser(user)">
+                                <span class="uk-icon-trash"></span> Remove
+                            </a>
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </li>
         </ul>
+    </div>
+    <div id="addHostDialog" class="uk-modal">
+        <div class="uk-modal-dialog uk-overflow-container">
+            <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
+            <div class="uk-modal-header">
+                <h3 class="uk-text-bold uk-text-primary">
+                    <span class="icon uk-icon-ship"></span>&nbsp;Add a new host
+                </h3>
+            </div>
+            <div class="uk-form">
+                <table class="uk-table uk-overflow-container uk-panel-box">
+                    <tr>
+                        <td class="dialogField">Name:</td>
+                        <td><input class="uk-form-width-medium" type="text"
+                                   placeholder="e.g. Dockerfly" v-model="createParams.newHost.name"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">IP:</td>
+                        <td><input class="uk-form-width-medium" type="text"
+                                   placeholder="e.g. 127.0.0.1" v-model="createParams.newHost.ipAddress"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Port:</td>
+                        <td><input class="uk-form-width-medium" type="number"
+                                   placeholder="e.g. 2735" v-model="createParams.newHost.port"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Timeout:</td>
+                        <td><input class="uk-form-width-medium" type="number"
+                                   placeholder="e.g. 15" v-model="createParams.newHost.timeout"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Debug:</td>
+                        <td>
+                            <c-switch bind="createParams.newHost.debug" :switch='{"ON":true,"OFF":false}'
+                                      theme="uk-button-primary uk-button-small"></c-switch>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="uk-text-right" colspan="2">
+                            <a href="#"  class="uk-button uk-button-primary"
+                               type="button" value="" @click="addHost()">Create</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="addUserDialog" class="uk-modal">
+        <div class="uk-modal-dialog uk-overflow-container">
+            <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
+            <div class="uk-modal-header">
+                <h3 class="uk-text-bold uk-text-primary">
+                    <span class="icon uk-icon-users"></span>&nbsp;Add a new user
+                </h3>
+            </div>
+            <div class="uk-form">
+                <table class="uk-table uk-overflow-container uk-panel-box">
+                    <tr>
+                        <td class="dialogField">Name:</td>
+                        <td><input class="uk-form-width-medium" type="text"
+                                   placeholder="e.g. Dockerfly" v-model="createParams.newUser.userName"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Password:</td>
+                        <td><input class="uk-form-width-medium" type="text"
+                                   v-model="createParams.newUser.password"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Role:</td>
+                        <td>
+                            <select class="uk-form-width-medium" v-model="createParams.newUser.role">
+                                <option value="Admin">Admin</option>
+                                <option value="User">User</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Host:</td>
+                        <td>
+                            <div>
+                                <select class="uk-form-width-medium" v-model="createParams.newUser.addHost">
+                                    <option v-for="(host,index) in user.hosts" :value="host">
+                                        {{host.name}}
+                                    </option>
+                                </select>
+                                <a class="uk-button uk-button-success uk-button-small"
+                                   @click="addHostToNewUser()"><i class="uk-icon-plus-square"></i></a>
+                            </div>
+                            <div v-for="host in createParams.newUser.hosts">
+                                <span class="uk-badge">{{host.name}}</span>
+                                <code>{{host.ipAddress}}:{{host.port}}</code>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Default Host:</td>
+                        <td>
+                            <select class="uk-form-width-medium" v-model="createParams.newUser.defaultHost">
+                                <option v-for="(host,index) in createParams.newUser.hosts" :value="index">
+                                    {{host.name}}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="uk-text-right" colspan="2">
+                            <a href="#"  class="uk-button uk-button-primary"
+                               type="button" value="" @click="addUser()">Create</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
     <div class="uk-width-6-6">
         <div style="min-height:40px;" class="uk-text-center uk-margin-bottom">
