@@ -65,8 +65,16 @@
 
                     //读取并统计任务数
                     try {
+
+                        if(this.serviceList==null){
+                            return;
+                        }
+
                         var taskList = getTaskList();
                         var servicdTaskCountList = {};
+                        if(taskList==null){
+                            return;
+                        }
 
                         for(var i=0;i<taskList.length;i++) {
                             task = taskList[i];
