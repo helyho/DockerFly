@@ -69,7 +69,7 @@ public class DataBaseUtils {
                 adminUser.setPassword("1234");
                 adminUser.setDefaultHost(0);
                 adminUser.setRole("Admin");
-                adminUser.getHosts().add(new Host("default", "127.0.0.1", 2735));
+                adminUser.getHosts().add(new Host("Default", "127.0.0.1", 2735));
                 OperUser.addUser(adminUser);
             }
 

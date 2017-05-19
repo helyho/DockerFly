@@ -61,17 +61,17 @@
                     </select>
                 </div>
                 <h3 class="uk-nav-divider"></h3>
-                <li class="uk-active">
-                    <a href="summary.html" target="moduleFrame"><span class="icon uk-icon-dashboard"></span>Summery</a>
+                <li class="uk-active" v-if="user.role=='Admin'">
+                    <a href="summary.html" target="moduleFrame"><span class="icon uk-icon-dashboard"></span> Summery</a>
                 </li>
-                <h3 class="uk-nav-divider"></h3>
+                <h3 class="uk-nav-divider" v-if="user.role=='Admin'"></h3>
                 <li v-if="user.role=='Admin'">
                     <a href="swarm.html" target="moduleFrame"><span class="icon uk-icon-connectdevelop"></span> Swarm</a>
                 </li>
                 <li v-if="user.role=='Admin'">
                     <a href="module/node/list.html" target="moduleFrame"><span class="icon uk-icon-cube"></span > Node</a>
                 </li>
-                <li>
+                <li :class="[user.role=='Admin'?'':'uk-active']">
                     <a href="module/service/list.html" target="moduleFrame"><span class="icon uk-icon-gears"></span> Service</a>
                 </li>
                 <li v-if="user.role=='Admin'">
@@ -101,7 +101,8 @@
     </div>
     <div class="uk-width-5-6" style="padding:0px;height: 100%">
         <div style="height: 100%;">
-            <iframe id="moduleFrame" name="moduleFrame" class="uk-width-6-6" style="height: 100%;float:right" src="summary.html"></iframe>
+            <iframe id="moduleFrame" name="moduleFrame" class="uk-width-6-6" style="height: 100%;float:right"
+                    :src="user.role=='Admin'?'summary.html':'/module/service/list.html'"></iframe>
         </div>
     </div>
 </div>
