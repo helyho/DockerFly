@@ -9,7 +9,6 @@ import org.voovan.http.server.HttpResponse;
 import org.voovan.http.server.HttpSession;
 import org.voovan.http.server.context.HttpFilterConfig;
 import org.voovan.tools.ObjectPool;
-import org.voovan.tools.TString;
 import org.voovan.tools.json.JSON;
 import org.voovan.tools.log.Logger;
 import org.voovan.tools.reflect.TReflect;
@@ -29,12 +28,13 @@ import java.util.List;
  */
 public class RoleFilter implements HttpFilter {
     @Override
-    public Object onRequest(HttpFilterConfig filterConfig, HttpRequest request, HttpResponse response, Object prevFilterResult) {
+    public Object onRequest(HttpFilterConfig filterConfig, HttpRequest request,
+                            HttpResponse response, Object prevFilterResult)  {
         HttpSession session = request.getSession();
         User user = getUserFromSession(request);
         String requestPath = request.protocol().getPath();
 
-        //DirectObject 创建对象
+        //DirectObject 创建对象方法捕获类名
         if(requestPath.endsWith("createObject")){
             String className = request.getParameter("className");
 
@@ -53,6 +53,7 @@ public class RoleFilter implements HttpFilter {
         //DirectObject 调用对象方法权限判断
         if(requestPath.endsWith("invoke")){
 
+            //参数准备
             ObjectPool objectPool = VestfulGlobal.getObjectPool();
             String methodName = request.getParameter("methodName");
             String objectId = request.getParameter("pooledObjectId");
@@ -61,60 +62,63 @@ public class RoleFilter implements HttpFilter {
             String className = obj.getClass().getName();
 
             //登录函数开放
-            if( !(
-                        className.equals("org.voovan.dockerfly.DataOperate.OperUser") &&
-                        methodName.equals("checkUser")
-                     )
-                ){
-                //检查是否登录
-                if(user == null){
-                    if(obj instanceof Cmd){
-                        ((Cmd)obj).close();
-                    }
-                    objectPool.remove(objectId);
+            if(className.equals("org.voovan.dockerfly.DataOperate.OperUser") &&
+                        methodName.equals("checkUser")) {
+                return null;
+            }
 
-                    error("NOT_LOGIN", request, response);
-                } else {
-                    //创建和查看 Docker 实体在 Label 中增加用户标志 (针对User用户类型进行处理)
-                    if(className.matches("org\\.voovan\\.docker\\.command\\..*?\\.Cmd[^(Image)].*?(Create|List)") &&
-                            methodName.equals("send") &&
-                            user.getRole().equals("User")){
-                        try {
-                            Method method = TReflect.findMethod(obj.getClass(), "label", new Class[]{String.class, String.class});
-                            if(method!=null){
-                                TReflect.invokeMethod(obj, method, "org.voovan.dockerfly.label.UserId", String.valueOf(user.getUserId()));
-                                TReflect.invokeMethod(obj, method, "org.voovan.dockerfly.label.UserName", user.getUserName());
-                            }
-                        } catch (ReflectiveOperationException e) {
-                            e.printStackTrace();
+            //检查是否登录
+            if(user == null){
+                if(obj instanceof Cmd){
+                    ((Cmd)obj).close();
+                }
+                objectPool.remove(objectId);
+
+                error("NOT_LOGIN", request, response);
+            }
+
+            //检查登录后的操作
+            if(user != null){
+                //创建和查看 Docker 实体在 Label 中增加用户标志 (针对User用户类型进行处理)
+                if(className.matches("org\\.voovan\\.docker\\.command\\..*?\\.Cmd[^(Image)].*?(Create|List)") &&
+                        methodName.equals("send") &&
+                        user.getRole().equals("User")){
+                    try {
+                        Method method = TReflect.findMethod(obj.getClass(), "label", new Class[]{String.class, String.class});
+                        if(method!=null){
+                            TReflect.invokeMethod(obj, method, "org.voovan.dockerfly.label.UserId", String.valueOf(user.getUserId()));
+                            TReflect.invokeMethod(obj, method, "org.voovan.dockerfly.label.UserName", user.getUserName());
                         }
+                    } catch (ReflectiveOperationException e) {
+                        e.printStackTrace();
                     }
+                }
 
-                    //对于修改用户操作是否合法
-                    if(className.equals("org.voovan.dockerfly.DataOperate.OperUser")){
-                        switch (methodName){
-                            //判断单用户操作是否合法
-                            case "modifyPassword" :;
-                            case "modifyHosts":;
-                            case "modifyDefaultHost":;
-                            case "getUser": {
-                                //用户 ID 和参数中提供的 ID 不同的时候,且不是 Admin 类型的用户,返回错误
-                                if(params!=null && user.getUserId() != (Integer)params.get(0)){
-                                    if(!user.getRole().equals("Admin")) {
-                                        error("NO_RIGHT", request, response);
-                                    }
-                                }
-                            };
+                //检查修改用户属性的操作是否合法
+                if(className.equals("org.voovan.dockerfly.DataOperate.OperUser")){
+                    switch (methodName){
 
-                            case "getUserList":;
-                            case "addUser":;
-                            case "delUser":{
-                                //只有管理员用户可以执行的操作
-                                if(!user.getRole().equals("Admin")){
+                        //判断单用户操作是否合法
+                        case "modifyPassword" :;
+                        case "modifyHosts":;
+                        case "modifyDefaultHost":;
+                        case "getUser": {
+                            //用户 ID 和参数中提供的 ID 不同的时候,且不是 Admin 类型的用户,返回错误
+                            if(params!=null && user.getUserId() != (Integer)params.get(0)){
+                                if(!user.getRole().equals("Admin")) {
                                     error("NO_RIGHT", request, response);
                                 }
-                            };
-                        }
+                            }
+                        };
+
+                        //只有管理员用户可以执行的操作
+                        case "getUserList":;
+                        case "addUser":;
+                        case "delUser":{
+                            if(!user.getRole().equals("Admin")){
+                                error("NO_RIGHT", request, response);
+                            }
+                        };
                     }
                 }
             }
