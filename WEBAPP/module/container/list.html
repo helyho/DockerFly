@@ -24,6 +24,7 @@
     doImport("org.voovan.docker.command.Container.CmdContainerUnPause")
     doImport("org.voovan.docker.command.Container.CmdContainerCommit")
     doImport("org.voovan.docker.command.Container.CmdContainerKill")
+    doImport("org.voovan.docker.command.Container.CmdContainerRename")
 
     doImport("org.voovan.docker.command.Network.CmdNetworkConnect")
     doImport("org.voovan.docker.command.Network.CmdNetworkDisConnect")
@@ -289,6 +290,22 @@
                     } catch (e) {
                         alertError(e)
                     }
+                },
+
+                rename: function(container){
+                    UIkit.modal.prompt("<span class='uk-text-large uk-text-primary uk-text-bold'>Replicas:</span>", delFirestChar(container.names[0]), function(newvalue){
+                        try {
+                            var cmdContainerRename = new CmdContainerRename(container.id);
+                            connect(cmdContainerRename);
+                            cmdContainerRename.newName(newvalue)
+                            cmdContainerRename.send();
+                            cmdContainerRename.close();
+                            cmdContainerRename.release();
+                            containerListVue.query();
+                        } catch (e) {
+                            alertError(e)
+                        }
+                    });
                 }
 
             }
@@ -424,6 +441,9 @@
                                         <a href="#" class=" uk-text-warning"
                                            @click="disconnect(container)"><span class="uk-icon-chain-broken"></span> Disconnect</a></li>
                                     <li class="uk-nav-divider"></li>
+                                    <li>
+                                        <a href="#" class=" uk-text-success"
+                                           @click="rename(container)"><span class="uk-icon-edit"></span> Rename</a></li>
                                     <li>
                                         <a href="#" class=" uk-text-primary"
                                            @click="openCommitDialog(container)"><span class="uk-icon-tag"></span> Commit</a></li>
