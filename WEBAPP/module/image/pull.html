@@ -101,9 +101,6 @@
                     <span class="icon uk-icon-object-group"></span>&nbsp;Pull image from docker hub
                 </h3>
             </div>
-            <div class="uk-width-1-2 uk-text-right">
-                <a href="list.html"><span class="uk-icon-refresh"></span></a>
-            </div>
         </div>
         <div class="">
             <div class="uk-panel uk-panel-box uk-text-bold uk-margin-bottom">
@@ -130,8 +127,8 @@
                     <div class="uk-panel uk-panel-box uk-panel-space uk-text-left uk-margin-bottom">
                         <div class="uk-grid uk-alert"
                             :class="{'uk-alert-danger':!hubImage.is_official}">
-                            <span class="uk-width-8-10 uk-text-bold">
-                                <span class="uk-icon-clone"></span> {{hubImage.name}}
+                            <span class="uk-width-8-10 uk-text-bold"  style="padding-left:10px">
+                                <span class="uk-icon-file-text"></span> {{hubImage.name}}
                             </span>
                             <span class="uk-width-2-10 uk-text-small uk-badge uk-badge-notification">
                                 <span class="uk-icon-star"></span> {{hubImage.star_count}}
@@ -141,7 +138,7 @@
                             <div>
                                 {{hubImage.description}}
                             </div>
-                            <div class="uk-text-right uk-position-bottom-right uk-margin-bottom uk-margin-right">
+                            <div class="uk-text-right uk-position-bottom-right uk-margin-bottom uk-margin-large-right">
                                 <a href="#" class="uk-button uk-button-small uk-button-success"
                                    @click="pull(hubImage)"><span class="uk-icon-cloud-download"></span> Pull </a>
                             </div>
