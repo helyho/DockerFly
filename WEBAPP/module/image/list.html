@@ -27,6 +27,11 @@
                 imageList: null,
                 queryParams:{
                     name:""
+                },
+                registryParam:{
+                    host:"",
+                    repository:"",
+                    tag:""
                 }
             },
             methods: {
@@ -99,6 +104,32 @@
                             alertError(e)
                         }
                     });
+                },
+                registryPull: function () {
+                    try {
+                        var cmdImageCreate = new CmdImageCreate();
+                        cmdImageCreate.connect(1800);
+                        var image = this.registryParam.host+"/"+this.registryParam.repository;
+                        cmdImageCreate.fromImage(image);
+                        cmdImageCreate.tag(this.registryParam.tag);
+
+                        var blockDialog = openBlockDialog("Pulling image...");
+                        cmdImageCreate.send(function(){
+                            blockDialog.hide();
+                            alert("<span class='uk-text-large uk-text-primary'>" +
+                                "Pull image " +
+                                "finished.</span>")
+                            cmdImageCreate.close();
+                            cmdImageCreate.release();
+                        }, function(){
+                            blockDialog.hide();
+                            alertError("Pull image failed");
+                            cmdImageCreate.close();
+                            cmdImageCreate.release();
+                        });
+                    } catch (e) {
+                        alertError(e)
+                    }
                 }
             }
         });
@@ -121,7 +152,7 @@
                 <a href="list.html"><span class="uk-icon-refresh"></span></a>
             </div>
         </div>
-        <div class="uk-panel uk-panel-box uk-text-bold">
+        <div class="uk-panel uk-panel-box ">
             <div class="uk-grid">
                 <div class="uk-width-5-6 uk-form">
                     <span class="mr5">Name:</span>
@@ -129,10 +160,28 @@
                            type="text" placeholder="image's name" v-model="queryParams.name"/>
                     <a class="uk-button uk-button-small" @click="query()"><i class="uk-icon-search"></i></a>
                 </div>
-                <div class="uk-width-1-6 uk-text-right">
-                    <a href="pull.html"  class="uk-button uk-button-small uk-button-primary">
-                        <i class="uk-icon-plus-square"></i>
-                    </a>
+                <div class="uk-width-1-6 uk-text-right uk-text-medium">
+                    <div class="uk-button-group">
+                        <div data-uk-dropdown="{mode:'click'}">
+                            <!-- 触发下拉菜单的按钮 -->
+                            <a href="" class="uk-button uk-button-primary uk-button-small">
+                                <span class="uk-icon-plus-square"></span>
+                                <span class="uk-icon-caret-down"></span>
+                            </a>
+                            <!-- 下拉菜单 -->
+                            <div class="uk-dropdown uk-dropdown-small">
+                                <ul class="uk-nav uk-nav-dropdown uk-text-left">
+                                    <li><a href="pull.html" class=" uk-text-primary">
+                                        <span class="uk-icon-ship"></span> Docker Hub</a></li>
+                                </ul>
+                                <ul class="uk-nav uk-nav-dropdown uk-text-left">
+                                    <li><a href="#" class="uk-text-success" onclick="openDialog('pullRegistryDialog')">
+                                        <span class="uk-icon-suitcase"></span> Registry</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -185,10 +234,43 @@
                         </div>
                     </div>
                 </td>
-
             </tr>
             </tbody>
         </table>
+    </div>
+    <div id="pullRegistryDialog" class="uk-modal">
+        <div class="uk-modal-dialog uk-overflow-container">
+            <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
+            <div class="uk-modal-header">
+                <h3 class="uk-text-bold uk-text-primary">
+                    <span class="icon uk-icon-suitcase"></span>&nbsp;Pull a image from registry
+                </h3>
+            </div>
+            <div class="uk-form">
+                <table class="uk-table uk-overflow-container uk-panel-box">
+                    <tr>
+                        <td class="dialogField">Registry Host:</td>
+                        <td><input class="uk-form-width-medium" type="text" v-model="registryParam.host"
+                                   placeholder="e.g. 127.0.0.1:5000"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Repository:</td>
+                        <td><input class="uk-form-width-medium" type="text" v-model="registryParam.repository"
+                                   placeholder="e.g. Ubuntu"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Tag:</td>
+                        <td><input class="uk-form-width-medium" type="text" v-model="registryParam.tag"
+                                   placeholder="e.g. latest"/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="uk-text-center">
+                            <a href="#" class="uk-button uk-button-primary" @click="registryPull()">Pull</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
     <div class="uk-width-6-6">
         <div style="min-height:40px;" class="uk-text-center uk-margin-bottom">
