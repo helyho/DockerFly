@@ -58,7 +58,7 @@ public class DataBaseUtils {
                                     "\t \"Role\" varchar(50,0) NOT NULL,\n" +
                                     "\t \"DefaultHost\" integer,\n" +
                                     "\t \"Hosts\" varchar(5000,0),\n" +
-                                    "\t \"Registry\" varchar(5000,0),\n" +
+                                    "\t \"Registrys\" varchar(5000,0),\n" +
                                     "\t \"CreateDate\" varchar(50,0) NOT NULL DEFAULT (datetime('now', 'localtime')||'.000')\n" +
                                     ")");
 

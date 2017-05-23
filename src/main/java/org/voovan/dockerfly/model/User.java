@@ -21,10 +21,12 @@ public class User {
     private String role;
     private Integer defaultHost;
     private List<Host> hosts;
+    private List<Registry> registrys;
     private Timestamp createDate;
 
     public User(){
         hosts = new ArrayList<Host>();
+        registrys = new ArrayList<Registry>();
         role = "User";
     }
 
@@ -32,6 +34,7 @@ public class User {
         this.userName = userName;
         this.password = password;
         hosts = new ArrayList<Host>();
+        registrys = new ArrayList<Registry>();
         role = "User";
     }
 
@@ -73,6 +76,14 @@ public class User {
 
     public void setDefaultHost(Integer defaultHost) {
         this.defaultHost = defaultHost;
+    }
+
+    public List<Registry> getRegistrys() {
+        return registrys;
+    }
+
+    public void setRegistrys(List<Registry> registrys) {
+        this.registrys = registrys;
     }
 
     public List<Host> getHosts() {

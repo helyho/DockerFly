@@ -24,6 +24,7 @@
         imageListVue = new Vue({
             el: '#imageApp',
             data: {
+                user: getUser(),
                 imageList: null,
                 queryParams:{
                     name:""
@@ -250,9 +251,13 @@
             <div class="uk-form">
                 <table class="uk-table uk-overflow-container uk-panel-box">
                     <tr>
-                        <td class="dialogField">Registry Host:</td>
-                        <td><input class="uk-form-width-medium" type="text" v-model="registryParam.host"
-                                   placeholder="e.g. 127.0.0.1:5000"/></td>
+                        <td class="dialogField">Registry:</td>
+                        <td>
+                            <select class="uk-form-width-medium" v-model="registryParam.host">
+                                <option v-for="(registry,index) in user.registrys"
+                                    :value="registry.ipAddress+':'+registry.port">{{registry.name}}</option>
+                            </select>
+                        </td>
                     </tr>
                     <tr>
                         <td class="dialogField">Repository:</td>

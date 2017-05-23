@@ -31,6 +31,11 @@
                         timeout:15,
                         debug: true
                     },
+                    newRegistry:{
+                        name:null,
+                        ipAddress:null,
+                        port:5000
+                    },
                     password:{
                         password:null,
                         reTypePassword:null
@@ -63,14 +68,24 @@
                 addHost: function(){
                     this.user.hosts.push(this.createParams.newHost);
                     this.createParams.newHost = {
-                                                    name:null,
-                                                    ipAddress:null,
-                                                    port:2735,
-                                                    timeout:15,
-                                                    debug:true
-                                                };
+                            name:null,
+                            ipAddress:null,
+                            port:2735,
+                            timeout:15,
+                            debug:true
+                    };
                     this.modifyHosts();
                     closeDialog("addHostDialog")
+                },
+                addRegistry: function(){
+                    this.user.registrys.push(this.createParams.newRegistry);
+                    this.createParams.newRegistry = {
+                        name:null,
+                        ipAddress:null,
+                        port:5000
+                    };
+                    this.modifyRegistrys();
+                    closeDialog("addRegistryDialog")
                 },
                 removeHost: function(hostIndex){
                     if(hostIndex != this.user.defaultHost) {
@@ -80,8 +95,18 @@
                         alert("Can't remove the host which state is using.")
                     }
                 },
+                removeRegistry: function(registryIndex){
+                    this.user.registrys.remove(registryIndex);
+                    this.modifyRegistrys();
+                },
+
                 modifyHosts:function(){
                     modifyHosts(this.user)
+                    setSessionStorage("User", this.user);
+                    this.getUser();
+                },
+                modifyRegistrys:function(){
+                    modifyRegistrys(this.user)
                     setSessionStorage("User", this.user);
                     this.getUser();
                 },
@@ -135,6 +160,9 @@
             </li>
             <li>
                 <a href="#"><span class="uk-icon-user-secret"></span> Change password</a>
+            </li>
+            <li v-if="user.role=='Admin'">
+                <a href="#"><span class="uk-icon-building"></span> Registry</a>
             </li>
             <li v-if="user.role=='Admin'">
                 <a href="#"><span class="uk-icon-users"></span> User manager</a>
@@ -203,8 +231,40 @@
                     </tr>
                 </table>
             </li>
+            <!-- Registry管理 -->
+            <li>
+                <div class="uk-panel-box">
+                    <a class="uk-button uk-button-primary uk-button-small"
+                       onclick="openDialog('addRegistryDialog')"><i class="uk-icon-plus-square"></i> Add a Registry</a>
+                </div>
+                <table id="config" class="uk-form uk-table uk-overflow-container uk-panel-box">
+                    <tbody>
+                    <thead>
+                    <th class="uk-width-1-10  table_colume_index">NO.</th>
+                    <th class="uk-width-2-10 ">Name</th>
+                    <th class="uk-width-2-10 uk-text-center">Host</th>
+                    <th class="uk-width-1-10 uk-text-center">Port</th>
+                    <th class="uk-width-2-10 uk-text-center">Operation</th>
+                    </thead>
+                    <tr v-for="(registry,index) in user.registrys">
+                        <td class="uk-text-center uk-text-small">{{index}}</td>
+                        <td class=" uk-text-bold">
+                            {{registry.name}}
+                        </td>
+                        <td class="uk-text-primary uk-text-center">{{registry.ipAddress}}</td>
+                        <td class="uk-text-center uk-text-success">{{registry.port}}</td>
+                        <td class="uk-text-center uk-text-warning">
+                            <a href="#" class="uk-button uk-button-danger uk-button-small"
+                               @click="removeRegistry(index)">
+                                <span class="uk-icon-trash"></span> Remove
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </li>
             <!-- 用户管理 -->
-            <li class="uk-active">
+            <li>
                 <div class="uk-panel-box">
                     <a href="#" class="uk-button uk-button-small " @click="getUserList()">
                         <i class="uk-icon-search" ></i> Query</a>
@@ -245,6 +305,7 @@
             </li>
         </ul>
     </div>
+    <!-- 新增主机对话框 -->
     <div id="addHostDialog" class="uk-modal">
         <div class="uk-modal-dialog uk-overflow-container">
             <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
@@ -292,6 +353,43 @@
             </div>
         </div>
     </div>
+    <!-- 新增Registry对话框 -->
+    <div id="addRegistryDialog" class="uk-modal">
+        <div class="uk-modal-dialog uk-overflow-container">
+            <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>
+            <div class="uk-modal-header">
+                <h3 class="uk-text-bold uk-text-primary">
+                    <span class="icon uk-icon-building"></span>&nbsp;Add a Registry
+                </h3>
+            </div>
+            <div class="uk-form">
+                <table class="uk-table uk-overflow-container uk-panel-box">
+                    <tr>
+                        <td class="dialogField">Name:</td>
+                        <td><input class="uk-form-width-medium" type="text"
+                                   placeholder="e.g. Dockerfly" v-model="createParams.newRegistry.name"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">IP:</td>
+                        <td><input class="uk-form-width-medium" type="text"
+                                   placeholder="e.g. 127.0.0.1" v-model="createParams.newRegistry.ipAddress"/></td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Port:</td>
+                        <td><input class="uk-form-width-medium" type="number"
+                                   placeholder="e.g. 5000" v-model="createParams.newRegistry.port"/></td>
+                    </tr>
+                    <tr>
+                        <td class="uk-text-right" colspan="2">
+                            <a href="#"  class="uk-button uk-button-primary"
+                               type="button" value="" @click="addRegistry()">Create</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- 新增用户对话框 -->
     <div id="addUserDialog" class="uk-modal">
         <div class="uk-modal-dialog uk-overflow-container">
             <a href="#" class="uk-modal-close uk-close uk-close-alt"></a>

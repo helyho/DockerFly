@@ -69,6 +69,20 @@ function modifyHosts(user){
     }
 }
 
+function modifyRegistrys(user){
+    if(typeof(OperUser)=="undefined") {
+        doImport("org.voovan.dockerfly.DataOperate.OperUser")
+    }
+    try {
+        var operUser = new OperUser();
+        var user = operUser.modifyRegistrys(user.userId, user.registrys);
+        operUser.release();
+        return user;
+    }catch(e){
+        alertError(e)
+    }
+}
+
 function modifyDefaultHost(user, defaultHost){
     if(typeof(OperUser)=="undefined") {
         doImport("org.voovan.dockerfly.DataOperate.OperUser")

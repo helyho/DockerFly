@@ -3,6 +3,7 @@ package org.voovan.dockerfly.DataOperate;
 import org.voovan.db.JdbcOperate;
 import org.voovan.dockerfly.db.DataBaseUtils;
 import org.voovan.dockerfly.model.Host;
+import org.voovan.dockerfly.model.Registry;
 import org.voovan.dockerfly.model.User;
 
 import java.sql.SQLException;
@@ -20,10 +21,10 @@ import java.util.Map;
  */
 public class OperUser {
 
-    private static String queryFieldList = "UserId, UserName, Role, DefaultHost, Hosts, CreateDate";
+    private static String queryFieldList = "UserId, UserName, Role, DefaultHost, Hosts, Registrys, CreateDate";
 
-    private static String addUser = "insert into df_user (UserName, Password, Role, DefaultHost, Hosts)\n" +
-            "select ::userName, ::password, ::role, ::defaultHost, ::hosts";
+    private static String addUser = "insert into df_user (UserName, Password, Role, DefaultHost, Hosts, Registrys)\n" +
+            "select ::userName, ::password, ::role, ::defaultHost, ::hosts, ::registrys";
     private static String delUser = "delete from df_user where userId = ::1";
     private static String getUser = "select "+queryFieldList+" from df_user where UserId=::1";
     private static String getUserList = "select "+queryFieldList+" from df_user";
@@ -31,6 +32,7 @@ public class OperUser {
     private static String modifyPassword = "update DF_USER set password =::2 where userId=::1";
     private static String modifyHosts = "update DF_USER set hosts =::2 where userId=::1";
     private static String modifyDefaultHost = "update DF_USER set DefaultHost =::2 where userId=::1";
+    private static String modifyRegistrys = "update DF_USER set registrys =::2 where userId=::1";
 
     /**
      * 修改用户密码
@@ -50,7 +52,24 @@ public class OperUser {
     }
 
     /**
-     * 修改用户密码
+     * 修改Registry信息
+     * @param userId 用户ID
+     * @param registrys 主机信息
+     * @return true: 成功, false: 失败
+     * @throws SQLException SQL异常
+     */
+    public static boolean modifyRegistrys(int userId, List<Registry> registrys ) throws SQLException {
+        JdbcOperate jdbcOperate = DataBaseUtils.getOperator();
+        int count = jdbcOperate.update(modifyRegistrys, userId, registrys);
+        if(count==0){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    /**
+     * 修改主机信息
      * @param userId 用户ID
      * @param Hosts 主机信息
      * @return true: 成功, false: 失败
