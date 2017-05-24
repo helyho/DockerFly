@@ -156,7 +156,7 @@ function runCmd(cmdStr){
     cmdExecCreate.release();
 
     var cmdExecStart = new CmdExecStart(eval("k="+execId).Id);
-    cmdExecStart.connect(60);
+    cmdExecStart.connect1(60);
     cmdExecStart.tty(true);
     cmdExecStart.send();
 

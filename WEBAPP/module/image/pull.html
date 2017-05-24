@@ -63,7 +63,7 @@
                         UIkit.modal.prompt("Pull an image with tag:", this.pullTag, function(newvalue) {
                             this.pullTag = newvalue;
                             var cmdImageCreate = new CmdImageCreate();
-                            cmdImageCreate.connect(1800);
+                            cmdImageCreate.connect1(1800);
                             cmdImageCreate.fromImage(hubImage.name);
                             cmdImageCreate.tag(this.pullTag);
 

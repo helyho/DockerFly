@@ -74,7 +74,7 @@
                         }
 
                         var cmdContainerLogs = new CmdContainerLogs(this.viewContainer.id);
-                        cmdContainerLogs.connect(60);
+                        cmdContainerLogs.connect1(60);
                         cmdContainerLogs.tail(this.logInfo.lineCount);
 
                         var logData = cmdContainerLogs.send();
@@ -189,7 +189,7 @@
                         cmdExecCreate.release();
 
                         var cmdExecStart = new CmdExecStart(eval("k="+execId).Id);
-                        cmdExecStart.connect(60);
+                        cmdExecStart.connect1(60);
                         this.execInfo.cmdObject = cmdExecStart;
                         cmdExecStart.tty(true);
                         cmdExecStart.send();

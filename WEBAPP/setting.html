@@ -62,9 +62,12 @@
                 }
             },
             methods:{
+                //获取当前用户
                 getUser: function(){
                     this.user=getUser();
                 },
+
+                //增加主机
                 addHost: function(){
                     this.user.hosts.push(this.createParams.newHost);
                     this.createParams.newHost = {
@@ -77,6 +80,8 @@
                     this.modifyHosts();
                     closeDialog("addHostDialog")
                 },
+
+                //增加 Registry
                 addRegistry: function(){
                     this.user.registrys.push(this.createParams.newRegistry);
                     this.createParams.newRegistry = {
@@ -87,6 +92,8 @@
                     this.modifyRegistrys();
                     closeDialog("addRegistryDialog")
                 },
+
+                //移除主机
                 removeHost: function(hostIndex){
                     if(hostIndex != this.user.defaultHost) {
                         this.user.hosts.remove(hostIndex)
@@ -95,26 +102,35 @@
                         alert("Can't remove the host which state is using.")
                     }
                 },
+
+                //移除 Registry
                 removeRegistry: function(registryIndex){
                     this.user.registrys.remove(registryIndex);
                     this.modifyRegistrys();
                 },
 
+                //修改主机配置
                 modifyHosts:function(){
                     modifyHosts(this.user)
                     setSessionStorage("User", this.user);
                     this.getUser();
                 },
+
+                //修改 Registry
                 modifyRegistrys:function(){
                     modifyRegistrys(this.user)
                     setSessionStorage("User", this.user);
                     this.getUser();
                 },
+
+                //修改默认主机配置
                 modifyDefaultHost:function(hostId){
                     modifyDefaultHost(this.user, hostId);
                     this.user.defaultHost = hostId;
                     setSessionStorage("User", this.user);
                 },
+
+                //修改密码
                 modifyPassword: function(){
                     var password = this.createParams.password;
                     if(password.password == password.reTypePassword){
@@ -124,9 +140,13 @@
                         alertError("Password does not match !")
                     }
                 },
+
+                //获取用户列表
                 getUserList(){
                     this.userList = getUserList();
                 },
+
+                //移除用户
                 removeUser:function(user){
                     if(user.userId != 1) {
                         delUser(user);

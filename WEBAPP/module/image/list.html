@@ -41,7 +41,6 @@
                     try {
                         var cmdImageList = new CmdImageList();
                         connect(cmdImageList);
-//                        cmdImageList.all(true);
 
                         if(this.queryParams.name!=""){
                             cmdImageList.filter(this.queryParams.name);
@@ -109,7 +108,7 @@
                 registryPull: function () {
                     try {
                         var cmdImageCreate = new CmdImageCreate();
-                        cmdImageCreate.connect(1800);
+                        cmdImageCreate.connect1(1800);
                         var image = this.registryParam.host+"/"+this.registryParam.repository;
                         cmdImageCreate.fromImage(image);
                         cmdImageCreate.tag(this.registryParam.tag);
