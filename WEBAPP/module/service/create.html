@@ -260,7 +260,9 @@
 
         //默认镜像创建
         var image = getQueryString("image");
-        serviceListVue.createParams.image = image;
+        if(image==null) {
+            serviceListVue.createParams.image = image;
+        }
     }
 </script>
 <body onload="init()" class="frameBody">
