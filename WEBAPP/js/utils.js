@@ -223,7 +223,10 @@
 
     function strToDate(value){
         value = value.replace("T"," ");
-        value = value.substr(0,value.indexOf("."));
+        value = value.replace("Z","");
+        if(value.indexOf('.')>0) {
+            value = value.substr(0, value.indexOf("."));
+        }
         return value
     }
 
