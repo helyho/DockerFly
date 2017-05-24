@@ -142,7 +142,7 @@
                 <td class=" uk-text-middle uk-text-bold uk-text-primary">{{task.id | shortDockerId(12)}}</td>
                 <td class=" uk-text-middle uk-text-bold ">
                     <a class="uk-text-success" :href="'../node/list.html?id='+task.nodeId">
-                        <span class="uk-text-warning">{{nodes[task.nodeId].name}}</span> /
+                        <span class="uk-text-warning" v-if="nodes[task.nodeId].name!=null">{{nodes[task.nodeId].name}} /</span>
                         <span class="uk-text-success">{{nodes[task.nodeId].hostname}}</span>
                     </a>
                 </td>
