@@ -42,7 +42,7 @@
         <div class="uk-panel"></div>
         <h3 class="uk-text-middle">
             <span class="uk-text-danger uk-text-bold uk-text-large">{{viewImage.repoTags[0]}}</span>
-            <span class="uk-text"> [ {{(viewImage.size/1024/1024).toFixed(0)}} MB ] </span>
+            <span class="uk-text"> [ {{(viewImage.size/1000/1000).toFixed(0)}} MB ] </span>
         </h3>
 
         <ul class="uk-tab" data-uk-switcher="{connect:'#Viewers'}">
@@ -87,7 +87,7 @@
                         </tr>
                         <tr>
                             <td class="uk-width-1-10 uk-text-right summeryField">Size </td>
-                            <td class="uk-text-bold uk-text-warning">{{(viewImage.size/1024/1024).toFixed(0)}}MB</td>
+                            <td class="uk-text-bold uk-text-warning">{{(viewImage.size/1000/1000).toFixed(0)}}MB</td>
                         </tr>
                         <tr>
                             <td class="uk-width-1-10 uk-text-right summeryField">GraphDriver </td>
@@ -128,7 +128,7 @@
                         </tr>
 
                         <tr v-if="viewImage.config.workingDir!=''">
-                            <td class="uk-width-1-10 uk-text-right summeryField">Directory</td>
+                            <td class="uk-width-1-10 uk-text-right summeryField">WorkDir</td>
                             <td>
                                 <span class="">
                                     {{viewImage.config.workingDir}}

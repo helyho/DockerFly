@@ -212,7 +212,7 @@
                     </span>
                 </td>
                 <td class="uk-text-center uk-text-middle">{{new Date(parseInt(image.created*1000)).format("yyyy-MM-dd hh:mm:ss")}}</td>
-                <td class="uk-text-bold uk-text-middle uk-text-danger">{{(parseInt(image.size)/1024/1024).toFixed(2)}}</td>
+                <td class="uk-text-bold uk-text-middle uk-text-danger">{{(parseInt(image.size)/1000/1000).toFixed(2)}}</td>
                 <td class="uk-text-center uk-text-middle">
                     <div class="uk-button-group">
                         <a :href="'viewer.html?id='+image.id" class="uk-button uk-button-primary uk-button-small">
