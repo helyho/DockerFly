@@ -46,7 +46,8 @@ public class RoleFilter implements HttpFilter {
         }
 
         // 除登录页面,在没有登录时,全部转向到登录页面
-        if(requestPath.endsWith(".html") && !requestPath.endsWith("login.html") && user == null){
+        if(( requestPath.endsWith(".html") || requestPath.endsWith("/") )
+                && !requestPath.endsWith("login.html") && user == null){
             response.redirct("/login.html");
         }
 
