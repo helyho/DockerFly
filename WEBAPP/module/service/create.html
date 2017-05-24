@@ -69,11 +69,11 @@
                     },
                     port: {
                         ports:[],
-                        add: function(hostPort,protocol,canRemove){
+                        add: function(containerPort,protocol,canRemove){
                             var port = {};
-                            port.hostPort = hostPort;
-                            port.containerPort = null;
-                            port.protocol = "tcp";
+                            port.hostPort = null;
+                            port.containerPort = containerPort;
+                            port.protocol = protocol;
                             port.canRemove = canRemove==null?true:canRemove;;
                             this.ports.push(port);
                         },
@@ -100,6 +100,9 @@
             watch:{
                 "createParams.image" : function(newVal, oldVal){
                     var imageDetail = getImageDetail(newVal);
+
+                    this.createParams.workDir = imageDetail.config.workingDir;
+                    this.createParams.user = imageDetail.config.user;
 
                     //处理 EntryPoint
                     this.createParams.entrypoint = "";
@@ -245,9 +248,10 @@
                             cmdServiceCreate.close();
                             cmdServiceCreate.release();
                             window.location = "list.html"
-                        }, function(){
+                        }, function(status, errMsg){
                             blockDialog.hide()
-                            alertError("Create service failed");
+                            var errorObj = eval("error="+errMsg)
+                            alertError("Create service failed. "+errorObj.errMsg);
                             cmdServiceCreate.close();
                             cmdServiceCreate.release();
                         });
@@ -434,10 +438,10 @@
                                                                   theme="uk-button-success  uk-button-mini"></c-switch>
                                                         &nbsp;&nbsp;
                                                         <input class="uk-form-width-medium" type="number"
-                                                               :disabled="!port.canRemove"
                                                                placeholder="e.g. 80 on host" v-model="port.hostPort"/>
                                                         &nbsp;:&nbsp;
                                                         <input class="uk-form-width-medium" type="number"
+                                                               :disabled="!port.canRemove"
                                                                placeholder="e.g. 80 on container" v-model="port.containerPort"/>
                                                     </div>
                                                     <div class="uk-width-1-10" v-if="port.canRemove">

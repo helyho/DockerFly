@@ -59,11 +59,11 @@
                     },
                     port: {
                         ports:[],
-                        add: function(hostPort,protocol,canRemove){
+                        add: function(containerPort,protocol,canRemove){
                             var port = {};
-                            port.hostPort = hostPort;
-                            port.containerPort = "";
-                            port.protocol = "tcp";
+                            port.hostPort = "";
+                            port.containerPort = containerPort;
+                            port.protocol = protocol;
                             port.canRemove = canRemove==null?true:canRemove;;
                             this.ports.push(port);
                         },
@@ -117,6 +117,9 @@
                 "createParams.image" : function(newVal, oldVal){
                     var imageDetail = getImageDetail(newVal);
 
+                    this.createParams.workDir = imageDetail.config.workingDir;
+                    this.createParams.user = imageDetail.config.user;
+
                     //处理 EntryPoint
                     this.createParams.entrypoint = "";
                     for(var index in imageDetail.config.entrypoint) {
@@ -139,7 +142,7 @@
                     this.createParams.port.ports = [];
                     for(var exposedPort in imageDetail.config.exposedPorts){
                         var portConfig = exposedPort.split("/");
-                        this.createParams.port.add(portConfig[0], portConfig[1], false)
+                        this.createParams.port.add(portConfig[0] , portConfig[1], false)
                     }
 
                     //处理卷
@@ -264,9 +267,10 @@
                             cmdContainerCreate.close();
                             cmdContainerCreate.release();
                             window.location = "list.html"
-                        }, function(){
+                        }, function(status, errMsg){
                             blockDialog.hide();
-                            alertError("Create container failed, you can try this operation again.");
+                            var errorObj = eval("errorObj="+errMsg)
+                            alertError("Create container failed. "+errorObj.errMsg);
                             cmdContainerCreate.close();
                             cmdContainerCreate.release();
                         });
@@ -448,10 +452,10 @@
                                                               theme="uk-button-success uk-button-mini"></c-switch>
                                                     &nbsp;&nbsp;
                                                     <input class="uk-form-width-medium" type="number"
-                                                           :disabled="!port.canRemove"
                                                            placeholder="e.g. 80 on host" v-model="port.hostPort"/>
                                                     &nbsp;:&nbsp;
                                                     <input class="uk-form-width-medium" type="number"
+                                                           :disabled="!port.canRemove"
                                                            placeholder="e.g. 80 on container" v-model="port.containerPort"/>
 
                                                 </div>
