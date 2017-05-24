@@ -19,7 +19,7 @@ function connect(cmd) {
     if(host==null || port == null) {
         cmd.connect();
     }else{
-        cmd.connect(host, port, timeout, debug, "JSON");
+        cmd.connect4(host, port, timeout, debug, "JSON");
     }
 }
 
