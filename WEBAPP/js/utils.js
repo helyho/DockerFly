@@ -1,9 +1,14 @@
 /**
  * =======================工具函数=======================
  */
-    //保存到SessionStorage中
+    //保存数据到SessionStorage中
     function setSessionStorage(key, value){
         window.sessionStorage.setItem(key, ( typeof(value)=="string")?value:JSON.stringify(value));
+    }
+
+    //删除到SessionStorage中的数据
+    function removeSessionStorage(key) {
+        window.sessionStorage.removeItem(key);
     }
 
     //读取SessionStorage中的数据
