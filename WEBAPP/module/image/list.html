@@ -90,11 +90,11 @@
                     UIkit.modal.prompt("<span class='uk-text-large uk-text-primary uk-text-bold'>Images tags: (like repo:tag)</span><hr/></hghr>", name, function(newvalue){
                         try {
                             if(newvalue!=""){
-                                var reppAndTag = newvalue.split(":");
+                                var repoAndTag = newvalue.split(":");
                                 var cCmdImageTag = new CmdImageTag(shortDockerId(image.id,12));
                                 connect(cCmdImageTag);
-                                cCmdImageTag.repo(reppAndTag[0])
-                                cCmdImageTag.tag(reppAndTag[1])
+                                cCmdImageTag.repo(repoAndTag[0])
+                                cCmdImageTag.tag(repoAndTag[1])
                                 cCmdImageTag.send();
                                 cCmdImageTag.close();
                                 cCmdImageTag.release();
@@ -203,16 +203,20 @@
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-success">{{image.id|shortDockerId(12)}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-primary">
-                    <span v-if="image.repoTags!=null" v-for="repoTag,index in image.repoTags">
-                        <code>{{repoTag}}</code> &nbsp;
+                    <span v-if="image.repoTags!=null" v-for="(repoTag,index) in image.repoTags">
+                        <code v-if="repoTag!=null">{{repoTag}}</code> &nbsp;
                     </span>
-                    <span v-if="image.repoTags==null" v-for="repoDigest,index in image.repoDigests">
+                    <span v-if="image.repoTags==null" v-for="(repoDigest,index) in image.repoDigests">
                         <span class="uk-icon-warning uk-text-warning uk-text-small"></span>&nbsp;
-                        <code>{{repoDigest.split("@")[0]}}:&lt;none&gt;</code>&nbsp;
+                        <code v-if="repoDigest!=null">{{repoDigest.split("@")[0]}}:&lt;none&gt;</code>&nbsp;
                     </span>
                 </td>
-                <td class="uk-text-center uk-text-middle">{{new Date(parseInt(image.created*1000)).format("yyyy-MM-dd hh:mm:ss")}}</td>
-                <td class="uk-text-bold uk-text-middle uk-text-danger">{{(parseInt(image.size)/1000/1000).toFixed(2)}}</td>
+                <td class="uk-text-center uk-text-middle">
+                    {{new Date(parseInt(image.created*1000)).format("yyyy-MM-dd hh:mm:ss")}}
+                </td>
+                <td class="uk-text-bold uk-text-middle uk-text-danger">
+                    {{(parseInt(image.size)/1000/1000).toFixed(2)}}
+                </td>
                 <td class="uk-text-center uk-text-middle">
                     <div class="uk-button-group">
                         <a :href="'viewer.html?id='+image.id" class="uk-button uk-button-primary uk-button-small">
@@ -228,10 +232,10 @@
                                            class=" uk-text-success"><span class="uk-icon-tags"></span> Tag</a></li>
                                     <li><a href="#" @click="remove(image)"
                                            class=" uk-text-danger"><span class="uk-icon-trash"></span> Remove</a></li>
-                                    <li class="uk-nav-divider"></li>
-                                    <li><a :href="'../container/create.html?image='+image.repoTags[0]"
+                                    <li v-if="image.repoTags!=null" class="uk-nav-divider"></li>
+                                    <li v-if="image.repoTags!=null"><a :href="'../container/create.html?image='+image.repoTags[0]"
                                            class=" uk-text-primary"><span class="uk-icon-desktop"></span> Create Container</a></li>
-                                    <li><a :href="'../service/create.html?image='+image.repoTags[0]"
+                                    <li v-if="image.repoTags!=null"><a :href="'../service/create.html?image='+image.repoTags[0]"
                                            class=" uk-text-primary"><span class="uk-icon-gears"></span> Create Service</a></li>
                                 </ul>
                             </div>
