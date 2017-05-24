@@ -49,6 +49,7 @@ public class RoleFilter implements HttpFilter {
         if(( requestPath.endsWith(".html") || requestPath.endsWith("/") )
                 && !requestPath.endsWith("login.html") && user == null){
             response.redirct("/login.html");
+            DataBaseUtils.initDataBase();
         }
 
         //DirectObject 调用对象方法权限判断
