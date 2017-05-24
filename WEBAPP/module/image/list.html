@@ -226,15 +226,17 @@
                             <div class="uk-dropdown uk-dropdown-small">
                                 <ul class="uk-nav uk-nav-dropdown uk-text-left">
                                     <li><a href="#" @click="tag(image)"
-                                           class=" uk-text-primary"><span class="uk-icon-tags"></span> Tag</a></li>
-                                </ul>
-                                <ul class="uk-nav uk-nav-dropdown uk-text-left">
+                                           class=" uk-text-success"><span class="uk-icon-tags"></span> Tag</a></li>
                                     <li><a href="#" @click="remove(image)"
                                            class=" uk-text-danger"><span class="uk-icon-trash"></span> Remove</a></li>
+                                    <li class="uk-nav-divider"></li>
+                                    <li><a :href="'../container/create.html?image='+image.repoTags[0]"
+                                           class=" uk-text-primary"><span class="uk-icon-desktop"></span> Create Container</a></li>
+                                    <li><a :href="'../service/create.html?image='+image.repoTags[0]"
+                                           class=" uk-text-primary"><span class="uk-icon-gears"></span> Create Service</a></li>
                                 </ul>
                             </div>
-                        </div>
-                    </div>
+                        </div>                    </div>
                 </td>
             </tr>
             </tbody>

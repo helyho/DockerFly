@@ -277,6 +277,10 @@
                 }
             }
         });
+
+        //默认镜像创建
+        var image = getQueryString("image");
+        containerCreateVue.createParams.image = image;
     }
 </script>
 <body onload="init()" class="frameBody">
