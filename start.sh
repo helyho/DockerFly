@@ -1,5 +1,4 @@
 mkdir classes
-mkdir db
 find . -name "*.java" > source.list
 javac -d classes -classpath ./bin/voovan-framework.jar:./lib/JDocker.jar:./lib/vestful.jar:./lib/sqlite-jdbc-3.16.1.jar @source.list
 rm source.list
