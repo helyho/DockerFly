@@ -142,7 +142,7 @@
                 },
 
                 //获取用户列表
-                getUserList(){
+                getUserList: function(){
                     this.userList = getUserList();
                 },
 
@@ -237,12 +237,12 @@
                     <tr>
                         <td class="dialogField">Password:</td>
                         <td><input class="uk-form-width-medium" type="password"
-                                   placeholder="e.g. Dockerfly" v-model="createParams.password.password"/></td>
+                                   placeholder="e.g. your_password" v-model="createParams.password.password"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Retype password:</td>
                         <td><input class="uk-form-width-medium" type="password"
-                                   placeholder="e.g. 127.0.0.1" v-model="createParams.password.reTypePassword"/></td>
+                                   placeholder="e.g. your_password" v-model="createParams.password.reTypePassword"/></td>
                     </tr>
                     <tr>
                         <td colspan="2" class="uk-text-center">
@@ -261,10 +261,10 @@
                     <tbody>
                     <thead>
                     <th class="uk-width-1-10  table_colume_index">NO.</th>
-                    <th class="uk-width-2-10 ">Name</th>
-                    <th class="uk-width-2-10 uk-text-center">Host</th>
-                    <th class="uk-width-1-10 uk-text-center">Port</th>
-                    <th class="uk-width-2-10 uk-text-center">Operation</th>
+                    <th class="uk-width-1-4 ">Name</th>
+                    <th class="uk-width-1-4 uk-text-center">Host</th>
+                    <th class="uk-width-1-4 uk-text-center">Port</th>
+                    <th class="uk-width-1-4 uk-text-center">Operation</th>
                     </thead>
                     <tr v-for="(registry,index) in user.registrys">
                         <td class="uk-text-center uk-text-small">{{index}}</td>
@@ -294,17 +294,17 @@
                 <table id="config" class="uk-form uk-table uk-overflow-container uk-panel-box">
                     <tbody>
                     <thead>
-                    <th class="uk-width-1-10  table_colume_index">No:</th>
-                    <th class="uk-width-1-10 uk-text-center">Name</th>
-                    <th class="uk-width-1-5 uk-text-center">Role</th>
+                    <th class="uk-width-1-10  table_colume_index">No.</th>
+                    <th class="uk-width-1-5 ">Name</th>
+                    <th class="uk-width-1-5 ">Role</th>
                     <th class="uk-width-1-5 uk-text-center">Host</th>
                     <th class="uk-width-1-5 uk-text-center">Create Date</th>
                     <th class="uk-width-1-5 uk-text-center">Operation</th>
                     </thead>
                     <tr v-for="(user,index) in userList">
                         <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
-                        <td class="uk-text-center uk-text-middle uk-text-bold">{{user.userName}}</td>
-                        <td class="uk-text-center uk-text-middle uk-text-primary">{{user.role}}</td>
+                        <td class="uk-text-middle uk-text-bold">{{user.userName}}</td>
+                        <td class="uk-text-middle uk-text-primary">{{user.role}}</td>
                         <td class="uk-text-success">
                             <div v-for="(host, index) in user.hosts">
                                 <span :class="[index==user.defaultHost? 'uk-icon-check-square-o' : 'uk-icon-square-o']"></span>
