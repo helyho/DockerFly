@@ -103,7 +103,7 @@
                             <td class="uk-width-1-10 uk-text-right summeryField">Created </td>
                             <td class="">{{viewImage.created | strToDate}}</td>
                         </tr>
-                        <tr>
+                        <tr v-if="viewImage.comment != ''">
                             <td class="uk-width-1-10 uk-text-right summeryField">Comment </td>
                             <td class="">{{viewImage.comment}}</td>
                         </tr>
