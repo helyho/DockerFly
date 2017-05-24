@@ -73,7 +73,7 @@
                             var port = {};
                             port.hostPort = null;
                             port.containerPort = containerPort;
-                            port.protocol = protocol;
+                            port.protocol = protocol==null?"tcp":protocol;
                             port.canRemove = canRemove==null?true:canRemove;;
                             this.ports.push(port);
                         },
