@@ -144,6 +144,22 @@
                 imageList: function () {
                     return getImages();
                 },
+                imageRepoTags: function () {
+                    var imageRepoTags = [];
+                    for(imageIndex in this.imageList){
+                        var image = this.imageList[imageIndex]
+                        if(typeof(image)!="function" && image.repoTags!=null) {
+                            for (repoTagIndex in image.repoTags) {
+
+                                var repoTag = image.repoTags[repoTagIndex]
+                                if(typeof(repoTag)!="function" && repoTag!=null) {
+                                    imageRepoTags.push(repoTag);
+                                }
+                            }
+                        }
+                    }
+                    return imageRepoTags;
+                },
                 networkList: function () {
                     return getNetworks();
                 },
@@ -278,17 +294,16 @@
                 <table class="uk-table uk-overflow-service uk-panel-box">
                     <tr>
                         <td class="dialogField uk-width-1-10">Name:</td>
-                        <td><input class="uk-form-width-medium" type="text"
+                        <td><input class="uk-form-width-large" type="text"
                                    placeholder="e.g. myService" v-model="createParams.name"/></td>
                     </tr>
                     <tr>
                         <td class="dialogField">Image:</td>
                         <td>
-                            <select class="uk-form-width-medium" v-model="createParams.image" autocomplete="off">
-                                <option v-for="(image,index) in imageList"
-                                        :value="image.repoTags[0]"
-                                        v-if="image.repoTags!=null">
-                                    <span class="uk-text-bold">{{image.repoTags[0]}}</span>
+                            <select class="uk-form-width-large" v-model="createParams.image" autocomplete="off">
+                                <option v-for="(repoTag,index) in imageRepoTags"
+                                        :value="repoTag">
+                                    <span class="uk-text-bold">{{repoTag}}</span>
                                 </option>
                             </select>
                         </td>

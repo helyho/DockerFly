@@ -55,11 +55,12 @@
                 },
                 //移除方法
                 remove: function (image) {
-                    var selector = "<span class='uk-form'><select id='imageRepoTag' class='uk-form-width-medium'>";
-                    selector =selector + "<option value='image'>this image</option>";
+                    var selector = "<span class='uk-form'>" +
+                                        "<select id='imageRepoTag' class='uk-form-width-large'>"+
+                                            "<option value='image'>This image</option>";
                     if(image.repoTags!=null) {
                         for (var i = 0; i < image.repoTags.length; i++) {
-                            selector = selector + "<option value='" + image.repoTags[i] + "'>Tag: " + image.repoTags[i] + "</option>";
+                            selector = selector + "<option value='" + image.repoTags[i] + "'>" + image.repoTags[i] + "</option>";
                         }
                     }
                     selector = selector + "</select></span>";
@@ -105,6 +106,7 @@
                         }
                     });
                 },
+                //从 Registry 拉去镜像
                 registryPull: function () {
                     try {
                         var cmdImageCreate = new CmdImageCreate();
@@ -130,6 +132,34 @@
                     } catch (e) {
                         alertError(e)
                     }
+                },
+                //创建容器和服务
+                create: function (type, image) {
+                    var selector = "<span class='uk-form'>" +
+                        "<select id='imageRepoTag' class='uk-form-width-large'>";
+                    if(image.repoTags!=null) {
+                        for (var i = 0; i < image.repoTags.length; i++) {
+                            var selected="";
+                            if(i==0){
+                                selected="selected"
+                            }
+                            selector = selector + "<option value='" + image.repoTags[i] +"' "+selected+ ">" + image.repoTags[i] + "</option>";
+                        }
+                    }
+                    selector = selector + "</select></span>";
+                    UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Choice which one you want to remove? </span><hr/>" +
+                        selector + "", function () {
+                        try {
+                            var imageRepoTag = $('#imageRepoTag').val();
+                            if(type=="CONTAINER") {
+                                window.location = '../container/create.html?image=' + encodeURIComponent(imageRepoTag);
+                            } else if(type=="SERVICE") {
+                                window.location = '../service/create.html?image=' + encodeURIComponent(imageRepoTag);
+                            }
+                        } catch (e) {
+                            alertError(e)
+                        }
+                    });
                 }
             }
         });
@@ -233,9 +263,11 @@
                                     <li><a href="#" @click="remove(image)"
                                            class=" uk-text-danger"><span class="uk-icon-trash"></span> Remove</a></li>
                                     <li v-if="image.repoTags!=null" class="uk-nav-divider"></li>
-                                    <li v-if="image.repoTags!=null"><a :href="'../container/create.html?image='+image.repoTags[0]"
+                                    <li v-if="image.repoTags!=null">
+                                        <a href="#" @click="create('CONTAINER',image)"
                                            class=" uk-text-primary"><span class="uk-icon-desktop"></span> Create Container</a></li>
-                                    <li v-if="image.repoTags!=null"><a :href="'../service/create.html?image='+image.repoTags[0]"
+                                    <li v-if="image.repoTags!=null">
+                                        <a href="#" @click="create('SERVICE',image)"
                                            class=" uk-text-primary"><span class="uk-icon-gears"></span> Create Service</a></li>
                                 </ul>
                             </div>
