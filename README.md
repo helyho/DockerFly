@@ -22,6 +22,8 @@
    - 增加了直接从 Image 管理页面创建容器和服务的功能
    - 增加start.sh启动前编译 java 文件的能力
    - 其他优化 和 bug 修复, 具体请查看 release
+
+
  - `20170508`
    - 界面风格显示优化
    - 本次新增功能：
@@ -47,7 +49,7 @@
 
  - 权限管理，每个用户只能管理自己创建的容器、服务、卷、网络等资源。
  - 通过 swarm 服务节点管理所有加入该服务节点的容器、卷等等资源。
- 
+
 
 
 ------------------
@@ -70,11 +72,11 @@ cd DockerFly
     docker run \
             --name dockerfly -d \
             -v /var/run/docker.sock:/var/run/docker.sock \
+            --restart always
             -p 28083:28083 \
     dockerfly
 ```
-    访问:http://127.0.0.1:28083
-    使用: `admin` / `1234` 登录到 dockerfly
+    访问:http://127.0.0.1:28083, 使用: `admin` / `1234` 登录到 dockerfly
 
 ------------------
 
