@@ -27,67 +27,124 @@ import java.util.List;
  * Licence: Apache v2 License
  */
 public class RoleFilter implements HttpFilter {
-    @Override
-    public Object onRequest(HttpFilterConfig filterConfig, HttpRequest request,
-                            HttpResponse response, Object prevFilterResult)  {
-        HttpSession session = request.getSession();
-        User user = getUserFromSession(request);
+
+    /**
+     * 尝试初始化数据库
+     * @param request 请求对象
+     * @param response 响应对象
+     */
+    public void tryInitDataBase(HttpRequest request, HttpResponse response){
         String requestPath = request.protocol().getPath();
-
-        //DirectObject 创建对象方法捕获类名
-        if(requestPath.endsWith("createObject")){
-            String className = request.getParameter("className");
-
-        }
-
         // 登录页面尝试初始化数据库
         if(requestPath.endsWith("login.html")){
             DataBaseUtils.initDataBase();
         }
+    }
+
+    /**
+     * 检查静态页面是否登录
+     * @param request 请求对象
+     * @param response 响应对象
+     */
+    public void checkPageIsLogin(HttpRequest request, HttpResponse response) {
+        String requestPath = request.protocol().getPath();
+        User user = getUserFromSession(request);
 
         // 除登录页面,在没有登录时,全部转向到登录页面
-        if(( requestPath.endsWith(".html") || requestPath.endsWith("/") )
-                && !requestPath.endsWith("login.html") && user == null){
+        if ((requestPath.endsWith(".html") || requestPath.endsWith("/"))
+                && !requestPath.endsWith("login.html") && user == null) {
             response.redirct("/login.html");
             DataBaseUtils.initDataBase();
         }
+    }
 
-        //DirectObject 调用对象方法权限判断
-        if(requestPath.endsWith("invoke")){
+    /**
+     * 创建对象权限管理
+     * @param request 请求对象
+     * @param response 响应对象
+     */
+    public void onCreateObject(HttpRequest request, HttpResponse response){
+        String requestPath = request.protocol().getPath();
+        //DirectObject 创建对象方法捕获类名
+        if(requestPath.endsWith("createObject")){
+            String className = request.getParameter("className");
+        }
+    }
 
-            //参数准备
-            ObjectPool objectPool = VestfulGlobal.getObjectPool();
-            String methodName = request.getParameter("methodName");
-            String objectId = request.getParameter("pooledObjectId");
-            List params = request.getParameterAsObject("params",List.class);
-            Object obj = objectPool.get(objectId);
-            String className = obj.getClass().getName();
+    /**
+     * 用户管理操作(OperUser类的方法)控制
+     * @param request 请求对象
+     * @param response 响应对象
+     */
+    public void userOperation(HttpRequest request, HttpResponse response){
+        ObjectPool objectPool = VestfulGlobal.getObjectPool();
+        String objectId = request.getParameter("pooledObjectId");
+        Object obj = objectPool.get(objectId);
+        String className = obj.getClass().getName();
+        String methodName = request.getParameter("methodName");
+        List params = request.getParameterAsObject("params",List.class);
+        User user = getUserFromSession(request);
 
-            //登录函数开放
-            if(className.equals("org.voovan.dockerfly.DataOperate.OperUser") &&
-                        methodName.equals("checkUser")) {
-                return null;
+        //检查修改用户属性的操作是否合法
+        if(className.equals("org.voovan.dockerfly.DataOperate.OperUser")){
+            switch (methodName){
+                case "checkUser" :
+                    return;
+                //判断单用户操作是否合法
+                case "modifyPassword" :;
+                case "modifyHosts":;
+                case "modifyDefaultHost":;
+                case "getUser": {
+                    if(user != null) {
+                        //用户 ID 和参数中提供的 ID 不同的时候,且不是 Admin 类型的用户,返回错误
+                        if (params != null && user.getUserId() != (Integer) params.get(0)) {
+                            if (!user.getRole().equals("Admin")) {
+                                error("NO_RIGHT", request, response);
+                            }
+                        }
+                    } else {
+                        disposeNotLogin(request, response);
+                    }
+                };
+
+                //只有管理员用户可以执行的操作
+                case "getUserList":;
+                case "addUser":;
+                case "delUser":{
+                    if(user!=null) {
+                        if (!user.getRole().equals("Admin")) {
+                            error("NO_RIGHT", request, response);
+                        }
+                    } else {
+                        disposeNotLogin(request, response);
+                    }
+                };
             }
+        }
+    }
 
-            //检查是否登录
-            if(user == null){
-                if(obj instanceof Cmd){
-                    ((Cmd)obj).close();
-                }
-                objectPool.remove(objectId);
+    /**
+     * JDocker方法操作控制
+     * * @param request 请求对象
+     * @param response 响应对象
+     */
+    public void dockerOperation(HttpRequest request, HttpResponse response){
+        ObjectPool objectPool = VestfulGlobal.getObjectPool();
+        String objectId = request.getParameter("pooledObjectId");
+        Object obj = objectPool.get(objectId);
+        String className = obj.getClass().getName();
+        String methodName = request.getParameter("methodName");
+        User user = getUserFromSession(request);
 
-                error("NOT_LOGIN", request, response);
-            }
-
-            //检查登录后的操作
-            if(user != null){
+        if(className.matches("org\\.voovan\\.docker\\.command")) {
+            if (user != null) {
                 //创建和查看 Docker 实体在 Label 中增加用户标志 (针对User用户类型进行处理)
-                if(className.matches("org\\.voovan\\.docker\\.command\\..*?\\.Cmd[^(Image)].*?(Create|List)") &&
+                if (className.matches("org\\.voovan\\.docker\\.command\\..*?\\.Cmd[^(Image)].*?(Create|List)") &&
                         methodName.equals("send") &&
-                        user.getRole().equals("User")){
+                        user.getRole().equals("User")) {
                     try {
                         Method method = TReflect.findMethod(obj.getClass(), "label", new Class[]{String.class, String.class});
-                        if(method!=null){
+                        if (method != null) {
                             TReflect.invokeMethod(obj, method, "org.voovan.dockerfly.label.UserId", String.valueOf(user.getUserId()));
                             TReflect.invokeMethod(obj, method, "org.voovan.dockerfly.label.UserName", user.getUserName());
                         }
@@ -95,36 +152,63 @@ public class RoleFilter implements HttpFilter {
                         e.printStackTrace();
                     }
                 }
-
-                //检查修改用户属性的操作是否合法
-                if(className.equals("org.voovan.dockerfly.DataOperate.OperUser")){
-                    switch (methodName){
-
-                        //判断单用户操作是否合法
-                        case "modifyPassword" :;
-                        case "modifyHosts":;
-                        case "modifyDefaultHost":;
-                        case "getUser": {
-                            //用户 ID 和参数中提供的 ID 不同的时候,且不是 Admin 类型的用户,返回错误
-                            if(params!=null && user.getUserId() != (Integer)params.get(0)){
-                                if(!user.getRole().equals("Admin")) {
-                                    error("NO_RIGHT", request, response);
-                                }
-                            }
-                        };
-
-                        //只有管理员用户可以执行的操作
-                        case "getUserList":;
-                        case "addUser":;
-                        case "delUser":{
-                            if(!user.getRole().equals("Admin")){
-                                error("NO_RIGHT", request, response);
-                            }
-                        };
-                    }
-                }
+            } else {
+                disposeNotLogin(request, response);
             }
         }
+    }
+
+    /**
+     * 处理为登录操作
+     * @param request 请求对象
+     * @param response 响应对象
+     */
+    public void disposeNotLogin(HttpRequest request, HttpResponse response){
+        ObjectPool objectPool = VestfulGlobal.getObjectPool();
+        String objectId = request.getParameter("pooledObjectId");
+        Object obj = objectPool.get(objectId);
+        if(obj instanceof Cmd){
+            ((Cmd)obj).close();
+        }
+        objectPool.remove(objectId);
+        error("NOT_LOGIN", request, response);
+    }
+
+    /**
+     * 方法调用权限控制
+     * @param request 请求对象
+     * @param response 响应对象
+     */
+    public void onInvoke(HttpRequest request, HttpResponse response){
+        String requestPath = request.protocol().getPath();
+
+        //DirectObject 调用对象方法权限判断
+        if(requestPath.endsWith("invoke")){
+            userOperation(request, response);
+            dockerOperation(request, response);
+        }
+
+    }
+
+    @Override
+    public Object onRequest(HttpFilterConfig filterConfig, HttpRequest request,
+                            HttpResponse response, Object prevFilterResult)  {
+        HttpSession session = request.getSession();
+        User user = getUserFromSession(request);
+        String requestPath = request.protocol().getPath();
+
+        // 登录页面尝试初始化数据库
+        tryInitDataBase(request, response);
+
+        //检查是否登录
+        //除登录页面,在没有登录时,全部转向到登录页面
+        checkPageIsLogin(request, response);
+
+        //DirectObject 创建对象方法捕获类名
+        onCreateObject(request, response);
+
+        onInvoke(request, response);
+
         return null;
     }
 
