@@ -1,7 +1,7 @@
 {
 	"Host"   				: "0.0.0.0",              	// 服务 IP 地址,默认0.0.0.0
 	"Port"   				: 28083,					// 服务端口,默认8080
-	"Timeout"				: 30,						// 连接超时时间(s),默认30秒
+	"Timeout"				: 1800,						// 连接超时时间(s),默认30秒
 	"ContextPath"			: "WEBAPP",					// 上下文路径,绝对路径 "/"起始,相对路径 非"/" 起始
 	"MatchRouteIgnoreCase"  : true,                     // 匹配路由不区分大小写,默认是 false
 	"CharacterSet"			: "UTF-8",					// 默认字符集,默认 UTF-8
