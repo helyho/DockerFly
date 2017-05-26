@@ -74,7 +74,7 @@ cd DockerFly
             -v /var/run/docker.sock:/var/run/docker.sock \
             --restart always \
             -p 28083:28083 \
-    dockerfly
+    helyho/dockerfly
 ```
     访问:http://127.0.0.1:28083, 使用: `admin` / `1234` 登录到 dockerfly
 
