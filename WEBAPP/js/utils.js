@@ -109,7 +109,7 @@
     //展示错误信息
     function alertError(e){
         var header = "<h3 class='uk-text-danger uk-text-bold'>Ops , The operation failure !</h3>";
-        var errMsg = "<h3 style='margin: 0px 15px 0px 15px;'>";
+        var errMsg = "<h3 style='margin: 0px 15px 0px 15px;word-wrap: break-word;word-break: normal;'>";
         if(e instanceof Error) {
             if(e.name == "Error") {
                 var errObj = eval("err_" + currentTimeMills() + " = " + e.message);
