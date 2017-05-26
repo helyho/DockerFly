@@ -125,7 +125,7 @@ public class RoleFilter implements HttpFilter {
 
     /**
      * JDocker方法操作控制
-     * * @param request 请求对象
+     * @param request 请求对象
      * @param response 响应对象
      */
     public void dockerOperation(HttpRequest request, HttpResponse response){
@@ -237,6 +237,11 @@ public class RoleFilter implements HttpFilter {
         return null;
     }
 
+    /**
+     * 从会话对象获取用户对象
+     * @param request 请求对象
+     * @return 用户对象
+     */
     public static User getUserFromSession(HttpRequest request){
         HttpSession session = request.getSession();
         User user = null;
@@ -246,6 +251,12 @@ public class RoleFilter implements HttpFilter {
         return user;
     }
 
+    /**
+     * 构造错误信息
+     * @param type 错误类型,此类型需要和前端 js 匹配
+     * @param request 请求对象
+     * @param response 响应对象
+     */
     public static void error(String type, HttpRequest request,HttpResponse response){
         String result = Error.newInstance(request.protocol().getPath(), type, "You didn't hava right.").toString();
         response.protocol().setStatus(506);

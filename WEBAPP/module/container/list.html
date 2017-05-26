@@ -95,7 +95,21 @@
                         } else {
                             var cmdContainerStart = new CmdContainerStart(container.id);
                             connect(cmdContainerStart);
-                            cmdContainerStart.send()
+
+                            var blockDialog = openBlockDialog("Starting Container...");
+                            cmdContainerStart.send(function(){
+                                blockDialog.hide();
+                                alert("<span class='uk-text-large uk-text-primary'>Container <span class='uk-text-large uk-text-danger'>"+delFirestChar(container.names[0])+"</span> started.</span>")
+                                cmdContainerStart.close();
+                                cmdContainerStart.release();
+                                containerListVue.query();
+                            }, function(){
+                                blockDialog.hide();
+                                alertError("Kill container "+delFirestChar(container.names[0])+" failed");
+                                cmdContainerStart.close();
+                                cmdContainerStart.release();
+                            });
+
                             cmdContainerStart.close();
                             cmdContainerStart.release()
                         }
@@ -124,6 +138,7 @@
                             alertError("Stop container "+delFirestChar(container.names[0])+" failed, you can wait a moment or try to Kill this container");
                             cmdContainerStop.close();
                             cmdContainerStop.release();
+                            containerListVue.query();
                         });
                     } catch (e) {
                         alertError(e)
@@ -164,7 +179,21 @@
                             try {
                                 var cmdContainerRemove = new CmdContainerRemove(id);
                                 connect(cmdContainerRemove);
-                                cmdContainerRemove.send();
+
+                                var blockDialog = openBlockDialog("Killing Container...");
+                                cmdContainerRemove.send(function(){
+                                    blockDialog.hide();
+                                    alert("<span class='uk-text-large uk-text-primary'>Container <span class='uk-text-large uk-text-danger'>"+delFirestChar(container.names[0])+"</span> removed.</span>")
+                                    cmdContainerRemove.close();
+                                    cmdContainerRemove.release();
+                                    containerListVue.query();
+                                }, function(){
+                                    blockDialog.hide();
+                                    alertError("Kill container "+delFirestChar(container.names[0])+" failed");
+                                    cmdContainerRemove.close();
+                                    cmdContainerRemove.release();
+                                });
+
                                 cmdContainerRemove.close();
                                 cmdContainerRemove.release();
                                 containerListVue.query();
@@ -282,7 +311,20 @@
                         cmdContainerCommit.author(this.commitParams.author);
                         cmdContainerCommit.pause(this.commitParams.pause);
                         connect(cmdContainerCommit);
-                        cmdContainerCommit.send();
+
+                        var blockDialog = openBlockDialog("Killing Container...");
+                        cmdContainerCommit.send(function(){
+                            blockDialog.hide();
+                            alert("<span class='uk-text-large uk-text-primary'>Container <span class='uk-text-large uk-text-danger'>"+delFirestChar(container.names[0])+"</span> commited.</span>")
+                            cmdContainerCommit.close();
+                            cmdContainerCommit.release();
+                        }, function(){
+                            blockDialog.hide();
+                            alertError("Kill container "+delFirestChar(container.names[0])+" failed");
+                            cmdContainerCommit.close();
+                            cmdContainerCommit.release();
+                        });
+
                         cmdContainerCommit.close();
                         cmdContainerCommit.release();
                         alert("Commit contianer success.");

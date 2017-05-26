@@ -10,7 +10,7 @@ package org.voovan.dockerfly.model;
  */
 public class Registry {
     private String name;
-    private String host;
+    private String ipAddress;
     private int port;
 
     public String getName() {
@@ -21,12 +21,12 @@ public class Registry {
         this.name = name;
     }
 
-    public String getHost() {
-        return host;
+    public String getIpAddress() {
+        return ipAddress;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 
     public int getPort() {
