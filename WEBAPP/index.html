@@ -20,6 +20,11 @@
             data:{
                 user: getUser()
             },
+            beforeMount: function(){
+                if(this.user == null){
+                    window.location='login.html'
+                }
+            },
             methods:{
                 changeHost:function(){
                     setSessionStorage("User",this.user)
