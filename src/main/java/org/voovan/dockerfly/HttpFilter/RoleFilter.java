@@ -56,6 +56,12 @@ public class RoleFilter implements HttpFilter {
             response.redirct("/login.html");
             DataBaseUtils.initDataBase();
         }
+
+        if(requestPath.endsWith("logout.html")){
+            HttpSession session = request.getSession();
+            session.removeAttribute("User");
+            response.redirct("/login.html");
+        }
     }
 
     /**
