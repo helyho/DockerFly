@@ -278,7 +278,7 @@
                         entity.release();
 
                         var blockDialog = openBlockDialog("Creating Container...");
-                        cmdContainerCreate.send(function(){
+                        cmdContainerCreate.send(function(msg){
                             blockDialog.hide();
                             cmdContainerCreate.close();
                             cmdContainerCreate.release();
@@ -286,7 +286,7 @@
                         }, function(status, errMsg){
                             blockDialog.hide();
                             var errorObj = eval("errorObj="+errMsg)
-                            alertError("Create container failed. "+errorObj.errMsg);
+                            alertError("Create container failed. <br/>"+errorObj.errMsg);
                             cmdContainerCreate.close();
                             cmdContainerCreate.release();
                         });

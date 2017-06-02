@@ -259,7 +259,7 @@
                         }
 
                         var blockDialog = openBlockDialog("Creating service ...");
-                        cmdServiceCreate.send(function(){
+                        cmdServiceCreate.send(function(msg){
                             blockDialog.hide()
                             cmdServiceCreate.close();
                             cmdServiceCreate.release();
@@ -267,7 +267,7 @@
                         }, function(status, errMsg){
                             blockDialog.hide()
                             var errorObj = eval("error="+errMsg)
-                            alertError("Create service failed. "+errorObj.errMsg);
+                            alertError("Create service failed. <br/>"+errorObj.errMsg);
                             cmdServiceCreate.close();
                             cmdServiceCreate.release();
                         });

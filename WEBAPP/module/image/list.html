@@ -116,16 +116,17 @@
                         cmdImageCreate.tag(this.registryParam.tag);
 
                         var blockDialog = openBlockDialog("Pulling image...");
-                        cmdImageCreate.send(function(){
+                        cmdImageCreate.send(function(msg){
                             blockDialog.hide();
                             alert("<span class='uk-text-large uk-text-primary'>" +
                                 "Pull image " +
                                 "finished.</span>")
                             cmdImageCreate.close();
                             cmdImageCreate.release();
-                        }, function(){
+                        }, function(status, errMsg){
                             blockDialog.hide();
-                            alertError("Pull image failed");
+                            var errorObj = eval("errorObj="+errMsg)
+                            alertError("Pull image failed <br/>"+errorObj.errMsg);
                             cmdImageCreate.close();
                             cmdImageCreate.release();
                         });
