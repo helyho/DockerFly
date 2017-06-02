@@ -37,6 +37,13 @@ table{
     border-right: 4px;
 }
 
+.summery_badge{
+    height: 130px;
+    width: 130px;
+    color: #fff;
+    border:2px #000 solid;
+}
+
 .sidebar{
 
 }

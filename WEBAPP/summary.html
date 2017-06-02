@@ -39,77 +39,74 @@
         <div class="uk-panel"></div>
         <h3></h3>
         <div>
-            <h3 class="uk-text-middle"><span class="icon uk-icon-codepen"></span> Host info</h3>
+            <h3 class="uk-text-middle"><span class="icon uk-icon-dashboard"></span> Summery</h3>
             <table class="uk-table uk-overflow-container uk-panel-box">
-                <tbody>
                 <tr>
-                    <td class="uk-width-1-10 uk-text-right summeryField">ID:</td>
-                    <td class="uk-width-1-4 uk-text-bold uk-text-primary uk-text-small" colspan="3">
-                        {{dockerInfo.id}}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="uk-width-1-10 uk-text-right summeryField">OS:</td>
-                    <td class="uk-width-1-4 uk-text-muted" colspan="3">
-                        {{dockerInfo.osType}}({{dockerInfo.architecture}})_{{dockerInfo.operatingSystem}}({{dockerInfo.kernelVersion}})
-                    </td>
-                </tr>
-                <!--<tr>
                     <td colspan="4">
                         <div class="uk-grid uk-text-center">
-                            <div class="uk-width-1-4 ">
-                                <div class="uk-border-circle"
-                                     style="background-color: #337ab7; height: 140px; width: 140px; color: #fff;">
-                                    <div>
-                                        <div style="padding-top:50px">
-                                            <div class="uk-text-large uk-text-bold">CPU</div>
-                                            <div>1</div>
-                                        </div>
+                            <div class="uk-width-1-4 uk-container">
+                                <div class="uk-border-circle uk-container-center summery_badge uk-vertical-align"
+                                     style="background-color: #337ab7;">
+                                    <div class="uk-vertical-align-middle">
+                                        <div class="uk-text-large uk-text-bold">CPU</div>
+                                        <div>{{dockerInfo.nCPU}} core</div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="uk-width-1-4 ">
-                                <div class="uk-border-circle"
-                                     style="background-color: #337ab7; height: 140px; width: 140px; color: #fff;">
-                                    <div>
-                                        <div style="padding-top:50px">
-                                            <div class="uk-text-large uk-text-bold">Memory</div>
-                                            <div>1</div>
-                                        </div>
+                            <div class="uk-width-1-4 uk-container">
+                                <div class="uk-border-circle uk-container-center summery_badge uk-vertical-align"
+                                     style="background-color: #a1b700; ">
+                                    <div class="uk-vertical-align-middle">
+                                        <div class="uk-text-large uk-text-bold">Memory</div>
+                                        <div>{{Math.ceil(dockerInfo.memTotal/1000/1024)}} Mb</div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="uk-width-1-4">
-                                <div class="uk-border-circle uk-text-center"
-                                     style="background-color: #337ab7; height: 140px; width: 140px; color: #fff;">
-                                    <div>
-                                        <div style="padding-top:50px">
-                                            <div class="uk-text-large uk-text-bold">Container</div>
-                                            <div>1</div>
-                                        </div>
+                            <div class="uk-width-1-4 uk-container">
+                                <div class="uk-border-circle uk-container-center summery_badge uk-vertical-align"
+                                     style="background-color: #b73200; ">
+                                    <div class="uk-vertical-align-middle">
+                                        <div class="uk-text-large uk-text-bold">Container</div>
+                                        <div>{{dockerInfo.containers}}</div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="uk-width-1-4">
-                                <div class="uk-border-circle uk-text-center"
-                                     style="background-color: #337ab7; height: 140px; width: 140px; color: #fff;">
-                                    <div>
-                                        <div style="padding-top:50px">
-                                            <div class="uk-text-large uk-text-bold">Images</div>
-                                            <div>1</div>
-                                        </div>
+                            <div class="uk-width-1-4 uk-container">
+                                <div class="uk-border-circle uk-container-center summery_badge uk-vertical-align"
+                                     style="background-color: #00b784; ">
+                                    <div class="uk-vertical-align-middle">
+                                        <div class="uk-text-large uk-text-bold">Images</div>
+                                        <div>{{imageList.length}}</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </td>
-                </tr>-->
+                </tr>
+            </table>
+            <h3 class="uk-text-middle"><span class="icon uk-icon-codepen"></span> Host info</h3>
+            <table class="uk-table uk-overflow-container uk-panel-box">
+                <tbody>
+                <tr>
+                    <td class="uk-width-1-10 uk-text-right summeryField">ID:</td>
+                    <td class="uk-width-9-10 uk-text-bold uk-text-primary uk-text-small" colspan="3">
+                        {{dockerInfo.id}}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="uk-width-1-10 uk-text-right summeryField">OS:</td>
+                    <td class="uk-width-9-10 uk-text-muted" colspan="3">
+                        {{dockerInfo.osType}}({{dockerInfo.architecture}})_{{dockerInfo.operatingSystem}}({{dockerInfo.kernelVersion}})
+                    </td>
+                </tr>
+               <!--
                 <tr>
                     <td class="uk-width-1-10 uk-text-right summeryField uk-text-primary">Cpu count:</td>
                     <td class="uk-width-1-4">{{dockerInfo.nCPU}}</td>
                     <td class="uk-width-1-10 uk-text-right summeryField uk-text-primary">Memory:</td>
                     <td class="uk-width-1-4 ">{{Math.ceil(dockerInfo.memTotal/1000/1024)}}Mb</td>
                 </tr>
+                -->
                 </tbody>
             </table>
             <h3 class="uk-text-middle"><span class="icon uk-icon-info-circle"></span> Docker info</h3>
