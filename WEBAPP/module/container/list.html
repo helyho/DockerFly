@@ -133,7 +133,7 @@
                             containerListVue.query();
                         }, function(status, errMsg){
                             blockDialog.hide();
-                            alertError("Stop container "+delFirestChar(container.names[0])+" failed, you can wait a moment or try to Kill this container");
+                            alertError("Stop container "+delFirestChar(container.names[0])+" failed, Docker still try to stoping this container, you can wait a moment and then refresh this page or try to Kill this container ");
                             cmdContainerStop.close();
                             cmdContainerStop.release();
                             containerListVue.query();
