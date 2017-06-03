@@ -234,7 +234,7 @@ function getSwarmInfo(){
         cmdSwarmInfo.release();
         return swarmInfo;
     } catch (e) {
-        alertError(e)
+        console.log(e)
         return null;
     }
 }
