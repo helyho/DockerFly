@@ -78,10 +78,14 @@
 
                         for(var i=0;i<taskList.length;i++) {
                             task = taskList[i];
-                            if(servicdTaskCountList[task.serviceId]==undefined){
-                                servicdTaskCountList[task.serviceId] = 1;
+                            if (servicdTaskCountList[task.serviceId] == undefined) {
+                                servicdTaskCountList[task.serviceId] = {"running":0,"others":0};
+                            }
+
+                            if(task.status.state == "running") {
+                                servicdTaskCountList[task.serviceId].running = servicdTaskCountList[task.serviceId].running + 1;
                             }else{
-                                servicdTaskCountList[task.serviceId] = servicdTaskCountList[task.serviceId] +1;
+                                servicdTaskCountList[task.serviceId].others = servicdTaskCountList[task.serviceId].others + 1;
                             }
                         }
 
@@ -205,8 +209,10 @@
                         </a>
                     </div>
                 </td>
-                <td class="uk-text-middle uk-text-bold uk-text-success uk-text-center">
-                    {{servicdTaskCountList[service.id]==null?"0":servicdTaskCountList[service.id]}} / {{service.spec.mode.replicated.replicas}}
+                <td class="uk-text-middle uk-text-bold uk-text-success uk-text-small">
+                    <span class="uk-text-success">Running: {{servicdTaskCountList[service.id]==null?"0":servicdTaskCountList[service.id].running}}</span> <br/>
+                    <span class="uk-text-danger">Others: {{servicdTaskCountList[service.id]==null?"0":servicdTaskCountList[service.id].others}} </span> <br/>
+                    <span class="uk-text-primary">Total: {{service.spec.mode.replicated.replicas}}</span>
                 </td>
                 <td class="uk-text-middle uk-text-center">
                    {{service.createdAt|strToDate}}

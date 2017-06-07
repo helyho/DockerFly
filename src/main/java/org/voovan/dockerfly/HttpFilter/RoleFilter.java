@@ -9,6 +9,7 @@ import org.voovan.http.server.HttpResponse;
 import org.voovan.http.server.HttpSession;
 import org.voovan.http.server.context.HttpFilterConfig;
 import org.voovan.tools.ObjectPool;
+import org.voovan.tools.TString;
 import org.voovan.tools.json.JSON;
 import org.voovan.tools.log.Logger;
 import org.voovan.tools.reflect.TReflect;
@@ -142,7 +143,7 @@ public class RoleFilter implements HttpFilter {
         String methodName = request.getParameter("methodName");
         User user = getUserFromSession(request);
 
-        if(className.matches("org\\.voovan\\.docker\\.command")) {
+        if(TString.regexMatch(className,"org\\.voovan\\.docker\\.command") > 0) {
             if (user != null) {
                 //创建和查看 Docker 实体在 Label 中增加用户标志 (针对User用户类型进行处理)
                 if (className.matches("org\\.voovan\\.docker\\.command\\..*?\\.Cmd[^(Image)].*?(Create|List)") &&

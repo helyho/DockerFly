@@ -69,6 +69,10 @@
                 remove: function (network) {
                     name = network.name
                     id = network.id
+                    if(network.internal==false){
+                        alert("This network is an docker default network, please do not remove it.")
+                        return;
+                    }
                     UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Are you sure to remove ?</span><hr/>" +
                         "<span class='uk-text-large uk-text-primary'> " + name + " </span>", function () {
                         try {
@@ -185,7 +189,11 @@
             <tr v-for="(network,index) in networkList">
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-primary">{{network.id|shortDockerId(12)}}</td>
-                <td class="uk-text-bold uk-text-middle uk-text-success">{{network.name}}</td>
+                <td class="uk-text-bold uk-text-middle uk-text-success">
+                    <span class="uk-icon-exclamation-circle uk-text-warning" v-if="network.internal==false"></span>
+                    <span class="uk-icon-sitemap uk-text-primary" v-if="network.internal==true"></span>
+                    {{network.name}}
+                </td>
                 <td class="uk-text-middle">{{network.scope}}</td>
                 <td>{{network.driver}}</td>
                 <td class="uk-text-middle uk-text-success">
