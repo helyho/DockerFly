@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="../../css/uikit/uikit.css"/>
 <script src="../../js/common/jquery.min.js"></script>
 <script src="../../js/common/vue.min.js"></script>
+<script src="../../js/component/switch.js"></script>
 <script src="../../js/common/uikit.js"></script>
 
 <link rel="stylesheet" href="../../css/main.css"/>
@@ -30,7 +31,9 @@
                 },
                 createParams:{
                     name: "",
-                    driver:"null",
+                    driver:"bridge",
+                    internal:false,
+                    attachable: false,
                     gateway:"",
                     subnet:"",
                     ipRange:"",
@@ -69,10 +72,10 @@
                 remove: function (network) {
                     name = network.name
                     id = network.id
-                    if(network.internal==false){
-                        alert("This network is an docker default network, please do not remove it.")
-                        return;
-                    }
+//                    if(network.internal==false){
+//                        alert("This network is an docker default network, please do not remove it.")
+//                        return;
+//                    }
                     UIkit.modal.confirm("<span class='uk-text-large uk-text-danger'>Are you sure to remove ?</span><hr/>" +
                         "<span class='uk-text-large uk-text-primary'> " + name + " </span>", function () {
                         try {
@@ -98,6 +101,9 @@
                         cmdNetworkCreate.checkDuplicate(true);
                         cmdNetworkCreate.name(this.createParams.name);
                         cmdNetworkCreate.driver(this.createParams.driver);
+                        cmdNetworkCreate.internal(this.createParams.internal);
+                        cmdNetworkCreate.attachable(this.createParams.attachable);
+
                         if(this.createParams.bridge!=""){
                            cmdNetworkCreate.options("com.docker.network.bridge.name",this.createParams.bridge);
                            cmdNetworkCreate.options("com.docker.network.bridge.default_bridge", "true");
@@ -106,6 +112,8 @@
                            cmdNetworkCreate.options("com.docker.network.bridge.host_binding_ipv4", "0.0.0.0");
                            cmdNetworkCreate.options("com.docker.network.driver.mtu", "1500");
                         }
+
+
 
                         if (this.createParams.gateway != "" && this.createParams.subnet != ""
                             && this.createParams.ipRange != "") {
@@ -250,6 +258,20 @@
                         <td class="dialogField">Bridge:</td>
                         <td><input class="uk-form-width-medium" type="text"
                                    placeholder="bridge name" v-model="createParams.bridge"/></td>
+                    </tr>
+                    <tr v-if="createParams.driver=='overlay'">
+                        <td class="dialogField">Attachable:</td>
+                        <td>
+                            <c-switch bind="createParams.attachable"
+                                      :switch='{"On":true,"Off":false}'
+                                      theme="uk-button-primary uk-button-small"></c-switch>
+                            </td>
+                    </tr>
+                    <tr>
+                        <td class="dialogField">Internal:</td>
+                        <td> <c-switch bind="createParams.internal"
+                                       :switch='{"On":true,"Off":false}'
+                                       theme="uk-button-primary uk-button-small"></c-switch></td>
                     </tr>
                     <tr>
                         <td class="dialogField">IP Range:</td>
