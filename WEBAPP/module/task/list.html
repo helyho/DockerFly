@@ -127,7 +127,7 @@
             <tr>
                 <th class="uk-text-center table_colume_index"> NO.</th>
                 <th class="uk-width-1-10">ID</th>
-                <th class="uk-width-2-10">Node</th>
+                <th class="uk-width-2-10">Node <span class="uk-text-small uk-text-muted">( name / host )</span></th>
                 <th class="uk-width-1-10">Service</th>
                 <th class="uk-width-1-10">Container</th>
                 <th class="uk-width-1-10 uk-text-center">State</th>
@@ -140,9 +140,9 @@
             <tr v-for="(task,index) in taskList">
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
                 <td class=" uk-text-middle uk-text-bold uk-text-primary">{{task.id | shortDockerId(12)}}</td>
-                <td class=" uk-text-middle uk-text-bold ">
+                <td class=" uk-text-middle">
                     <a class="uk-text-success" :href="'../node/list.html?id='+task.nodeId">
-                        <span class="uk-text-warning" v-if="nodes[task.nodeId].name!=null">{{nodes[task.nodeId].name}} /</span>
+                        <span class="uk-text-warning">{{nodes[task.nodeId].name}}</span> /
                         <span class="uk-text-success">{{nodes[task.nodeId].hostname}}</span>
                     </a>
                 </td>
