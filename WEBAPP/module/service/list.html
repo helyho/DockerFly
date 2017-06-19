@@ -261,18 +261,24 @@
                     </div>
                 </td>
             </tr>
-            <tr :id="'tasks'+index" class="uk-hidden" >
+            <tr :id="'tasks'+index" class="uk-hidden" style="background-color: #FFFFFF">
                 <td colspan="9">
-                    <table class="uk-table uk-panel-box  uk-table-condensed uk-margin-large-left" style="width: 95%">
+                    <div class="uk-grid uk-margin-small-left">
+                    <div class="uk-text-right uk-text-primary uk-vertical-align" style="width: 25px; margin-right: 10px;">
+                        <span class="uk-icon-small uk-icon-arrow-right uk-vertical-align-middle"></span>
+                    </div>
+                    <div class="uk-padding-remove" style="width: 92%;" >
+                    <table class="uk-table uk-panel-box  uk-table-condensed">
                         <tr class="uk-alert">
                             <td class="uk-text-bold">Task ID</td>
                             <td class="uk-text-bold">Slot</td>
                             <td class="uk-text-bold">Node</td>
                             <td class="uk-text-bold">Container</td>
                             <td class="uk-text-bold">State</td>
+                            <td class="uk-text-bold">Create</td>
+
                         </tr>
-                        <tr style="background-color: #FFFFFF"
-                            v-for="(task, index) in service.tasks">
+                        <tr v-for="(task, index) in service.tasks">
                             <td >{{task.id | shortDockerId(12)}}</td>
                             <td >{{task.slot}}</td>
                             <td >
@@ -292,8 +298,11 @@
                                 </span>
                             </td>
                             <td >{{task.status.state}}</td>
+                            <td >{{task.createdAt|strToDate}}</td>
                         </tr>
                     </table>
+                    </div>
+                    </div>
                 </td>
             </tr>
             </tbody>
