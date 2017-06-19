@@ -94,6 +94,16 @@
                         alertError(e)
                     }
                 },
+
+                loadTask: function(service){
+                    try {
+                        var taskList = converTask(getTaskList(service.id));
+                        this.$set(service,"tasks", taskList);
+                    } catch (e) {
+                        alertError(e)
+                    }
+                },
+
                 //移除方法
                 remove: function (service) {
                     try{
@@ -189,11 +199,13 @@
             </tr>
             </thead>
 
-            <tbody>
-            <tr v-for="(service,index) in serviceList">
+            <tbody v-for="(service,index) in serviceList">
+            <tr>
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
-                <td class="uk-text-bold uk-text-middle uk-text-primary ">
-                    {{service.id|shortDockerId(12)}}
+                <td class="uk-text-bold uk-text-middle uk-text-primary">
+                    <a :data-uk-toggle="'{target:\'#tasks'+index+'\'}'" @click="loadTask(service)">
+                        <span class="uk-icon-plus-square-o"></span> {{service.id|shortDockerId(12)}}
+                    </a>
                 </td>
                 <td class="uk-text-bold uk-text-middle uk-text-danger">
                     {{service.spec.name}}
@@ -210,9 +222,15 @@
                     </div>
                 </td>
                 <td class="uk-text-middle uk-text-bold uk-text-success uk-text-small">
-                    <span class="uk-text-success">Running: {{servicdTaskCountList[service.id]==null?"0":servicdTaskCountList[service.id].running}}</span> <br/>
-                    <span class="uk-text-danger">Others: {{servicdTaskCountList[service.id]==null?"0":servicdTaskCountList[service.id].others}} </span> <br/>
-                    <span class="uk-text-primary">Total: {{service.spec.mode.replicated.replicas}}</span>
+                    <span class="uk-text-success">
+                        Running: {{servicdTaskCountList[service.id]==null?"0":servicdTaskCountList[service.id].running}}
+                    </span> <br/>
+                    <span class="uk-text-danger">
+                        Others: {{servicdTaskCountList[service.id]==null?"0":servicdTaskCountList[service.id].others}}
+                    </span> <br/>
+                    <span class="uk-text-primary">
+                        Total: {{service.spec.mode.replicated.replicas}}
+                    </span>
                 </td>
                 <td class="uk-text-middle uk-text-center">
                    {{service.createdAt|strToDate}}
@@ -241,6 +259,41 @@
                             </div>
                         </div>
                     </div>
+                </td>
+            </tr>
+            <tr :id="'tasks'+index" class="uk-hidden" >
+                <td colspan="9">
+                    <table class="uk-table uk-panel-box  uk-table-condensed uk-margin-large-left" style="width: 95%">
+                        <tr class="uk-alert">
+                            <td class="uk-text-bold">Task ID</td>
+                            <td class="uk-text-bold">Slot</td>
+                            <td class="uk-text-bold">Node</td>
+                            <td class="uk-text-bold">Container</td>
+                            <td class="uk-text-bold">State</td>
+                        </tr>
+                        <tr style="background-color: #FFFFFF"
+                            v-for="(task, index) in service.tasks">
+                            <td >{{task.id | shortDockerId(12)}}</td>
+                            <td >{{task.slot}}</td>
+                            <td >
+                                <a class="uk-text-success" :href="'../node/list.html?id='+task.nodeId">
+                                    <span class="uk-text-warning">{{task.nodeName}}</span> /
+                                    <span class="uk-text-success">{{task.hostname}}</span>
+                                </a>
+                            </td>
+                            <td >
+                                <a class="uk-text-danger" :href="'/module/container/viewer.html?id='+task.status.containerStatus.containerId"
+                                       target="viewer"
+                                   v-if="task.status.containerStatus.containerName!=null">
+                                    <span class="uk-text-success running"></span> {{task.status.containerStatus.containerName|delFirestChar|shortDockerId(18)}}
+                                </a>
+                                <span class="uk-text-danger" v-else>
+                                <span class="uk-text-primary stop"></span> {{task.status.containerStatus.containerId|shortDockerId(12)}}
+                                </span>
+                            </td>
+                            <td >{{task.status.state}}</td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
             </tbody>
