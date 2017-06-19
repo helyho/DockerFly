@@ -490,3 +490,27 @@ function getNetworksIdAndName(){
         alertError(e)
     }
 }
+
+function converTask(taskList){
+
+    var containerIdAndNames = getContainersIdAndName();
+    var servicesIdAndNames = getServicesIdAndName();
+    var nodesIdAndName= getNodesIdAndName();
+    for(index in taskList)
+    {
+        task = taskList[index];
+
+        if(!(task instanceof Function)) {
+            task.nodeName = nodesIdAndName[task.nodeId].name;
+            task.hostname = nodesIdAndName[task.nodeId].hostname;
+            task.serviceName = servicesIdAndNames[task.serviceId];
+            if (task.status.containerStatus.containerId != null) {
+                task.status.containerStatus.containerName = containerIdAndNames[task.status.containerStatus.containerId];
+            }else{
+                task.status.containerStatus.containerName = "";
+            }
+        }
+    }
+
+    return taskList;
+}
