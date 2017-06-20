@@ -1,4 +1,4 @@
-FROM nimmis/alpine-java
+FROM anapsix/alpine-java:8_jdk
 
 MAINTAINER helyho <helyho@gmail.com>
 
