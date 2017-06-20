@@ -40,7 +40,7 @@
                 execInfo: {
                     cmd: "/bin/sh",
                     terminal: null,
-                    interval : 150,
+                    interval : 200,
                     loop : null,
                     cmdObject: null
                 }
@@ -77,11 +77,13 @@
                         cmdContainerLogs.connect1(60);
                         cmdContainerLogs.tail(this.logInfo.lineCount);
 
-                        var logData = cmdContainerLogs.send();
-                        logData = logData.replaceAll("\r", "")
-                        logData = logData.replaceAll("\n", "\u0000")
-                        logData = logData.replaceAll("\u0000", "\r\n");
-                        viewerVue.logInfo.terminal.write(logData);
+                        var logData = cmdContainerLogs.send().split("\u000a");
+                        for(var logIndex in logData){
+                            var logLine = logData[logIndex];
+                            if(!(logLine instanceof Function) && logIndex != logData.length-1) {
+                                viewerVue.logInfo.terminal.write(logLine + "\r\n");
+                            }
+                        }
 
                         var cmdContainerAttach = new CmdContainerAttach(this.viewContainer.id);
                         this.logInfo.cmdObject = cmdContainerAttach;
@@ -236,8 +238,8 @@
                     this.execInfo.loop = null;
                         try {
                             if (this.execInfo.cmdObject != null) {
-                                this.execInfo.cmdObject.close();
-                                this.execInfo.cmdObject.release();
+                                //this.execInfo.cmdObject.close();
+                                //this.execInfo.cmdObject.release();
                             }
                         }catch(e){}
                     this.execInfo.cmdObject = null;
