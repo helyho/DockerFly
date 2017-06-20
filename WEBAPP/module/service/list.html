@@ -96,6 +96,7 @@
                 },
 
                 loadTask: function(service){
+                    if($("#tasks0").attr("class").indexOf("uk-hidden") >= 0 )
                     try {
                         var taskList = converTask(getTaskList(service.id));
                         this.$set(service,"tasks", taskList);
