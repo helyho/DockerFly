@@ -1,4 +1,4 @@
-FROM anapsix/alpine-java:8_jdk
+FROM nimmis/alpine-java:oracle-8-jdk
 
 MAINTAINER helyho <helyho@gmail.com>
 
