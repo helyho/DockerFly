@@ -221,6 +221,23 @@
         return value;
     }
 
+    function shortNumber(value){
+        if(value < 1000){
+            return value;
+        }
+        else if(value > 1000){
+            return (value/1000).toFixed(1)+" K"
+        }
+
+        else if(value > 10000){
+            return (value/10000).toFixed(1)+" W"
+        }
+
+        else if(value > 1000000){
+            return (value/1000000).toFixed(1)+" M"
+        }
+    }
+
     function strToDate(value){
         value = value.replace("T"," ");
         value = value.replace("Z","");
@@ -234,6 +251,7 @@
 
     Vue.filter('shortDockerId',shortDockerId);
     Vue.filter('strToDate',strToDate);
+    Vue.filter('shortNumber',shortNumber);
 
 /**
  * =======================基础类扩展函数=======================

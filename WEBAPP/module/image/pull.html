@@ -130,10 +130,13 @@
                         <div class="uk-grid uk-alert"
                             :class="{'uk-alert-danger':!hubImage.is_official}">
                             <span class="uk-width-8-10 uk-text-bold"  style="padding-left:10px">
-                                <span class="uk-icon-file-text"></span> {{hubImage.name}}
+                                <span class="uk-icon-file-text"></span>
+                                <span>
+                                    {{hubImage.name|shortDockerId(28)}}{{hubImage.name.length>28?"...":""}}
+                                </span>
                             </span>
                             <span class="uk-width-2-10 uk-text-small uk-badge uk-badge-notification">
-                                <span class="uk-icon-star"></span> {{hubImage.star_count}}
+                                <span class="uk-icon-star"></span> {{hubImage.star_count | shortNumber}}
                             </span>
                         </div>
                         <div class="uk-panel-body" style="height: 70px;">
