@@ -99,7 +99,7 @@
                     if($("#taskList"+index).attr("class").indexOf("uk-hidden") >= 0 ) {
                         var service = this.serviceList[index];
                         try {
-                            var taskList = converTask(getTaskList(service.id));
+                            var taskList = converTask(getTaskList(service.id).sortBy("slot"));
                             this.$set(service, "tasks", taskList);
                         } catch (e) {
                             alertError(e)
@@ -214,7 +214,10 @@
                     {{service.spec.name}}
                 </td>
                 <td class="uk-text-bold uk-text-middle uk-text-warning">
+                    <a :href="'../image/viewer.html?id='+service.spec.taskTemplate.containerSpec.image"
+                       class="uk-text-warning uk-text-bold uk-text-small">
                     {{service.spec.taskTemplate.containerSpec.image | shortString(64)}}
+                    </a>
                 </td>
                 <td class="uk-text-middle">
                     <div v-for="virtualIP in service.endpoint.virtualIPs">
