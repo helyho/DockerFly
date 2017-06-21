@@ -25,7 +25,7 @@
     doImport("org.voovan.docker.command.Exec.CmdExecStart")
 
     function init() {
-        viewerVue = new Vue({
+        containerViewerVue = new Vue({
             el: '#viewerApp',
             data: {
                 logInfo :{
@@ -69,8 +69,8 @@
                         }
 
                         //构造终端面板
-                        if(viewerVue.logInfo.terminal==null){
-                            viewerVue.logInfo.terminal = terminal("logPanel")
+                        if(this.logInfo.terminal==null){
+                            this.logInfo.terminal = terminal("logPanel")
                         }
 
                         var cmdContainerLogs = new CmdContainerLogs(this.viewContainer.id);
@@ -81,7 +81,7 @@
                         for(var logIndex in logData){
                             var logLine = logData[logIndex];
                             if(!(logLine instanceof Function) && logIndex != logData.length-1) {
-                                viewerVue.logInfo.terminal.write(logLine + "\r\n");
+                                this.logInfo.terminal.write(logLine + "\r\n");
                             }
                         }
 
@@ -101,12 +101,12 @@
                                         logData = logData.replaceAll("\r", "")
                                         logData = logData.replaceAll("\n", "\u0000")
                                         logData = logData.replaceAll("\u0000", "\r\n");
-                                        viewerVue.logInfo.terminal.write(logData);
+                                        this.logInfo.terminal.write(logData);
                                     } else {
-                                        viewerVue.logStop();
+                                        this.logStop();
                                     }
                                 }catch(e){
-                                    viewerVue.logStop();
+                                    this.logStop();
                                     alertError(e)
                                 }
                             }, this.logInfo.interval
@@ -131,8 +131,8 @@
                 },
 
                 logClear: function(){
-                    viewerVue.logInfo.timeStamp = null;
-                    viewerVue.logInfo.terminal.clear();
+                    this.logInfo.timeStamp = null;
+                    this.logInfo.terminal.clear();
                 },
 
                 processView: function(){
@@ -203,8 +203,8 @@
                             //绑定键盘输入动作
                             this.execInfo.terminal.on("data", function(data){
                                 if(data.length==1) {
-                                    if(viewerVue.execInfo.cmdObject!=null) {
-                                        viewerVue.execInfo.cmdObject.sendData(data);
+                                    if(this.execInfo.cmdObject!=null) {
+                                        this.execInfo.cmdObject.sendData(data);
                                     }
                                 }
                             })
@@ -217,13 +217,13 @@
                                 try {
                                     var execData = cmdExecStart.loadStream();
                                     if (execData != null && execData!="") {
-                                        viewerVue.execInfo.terminal.write(execData);
+                                        this.execInfo.terminal.write(execData);
                                     }
                                     if(execData == null){
-                                        viewerVue.execStop();
+                                        this.execStop();
                                     }
                                 }catch (e){
-                                    viewerVue.execStop();
+                                    this.execStop();
                                     alertError(e)
                                 }
                             }, this.execInfo.interval);
@@ -246,14 +246,14 @@
                 },
 
                 execClear: function(){
-                    viewerVue.execInfo.terminal.clear();
+                    this.execInfo.terminal.clear();
                 },
             }
         });
 
-        if(viewerVue.viewContainer.state.status=="running") {
-            viewerVue.processView();
-            viewerVue.statsView();
+        if(containerViewerVue.viewContainer.state.status=="running") {
+            containerViewerVue.processView();
+            containerViewerVue.statsView();
         }
     }
 </script>
