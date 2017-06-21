@@ -101,12 +101,12 @@
                                         logData = logData.replaceAll("\r", "")
                                         logData = logData.replaceAll("\n", "\u0000")
                                         logData = logData.replaceAll("\u0000", "\r\n");
-                                        this.logInfo.terminal.write(logData);
+                                        containerViewerVue.logInfo.terminal.write(logData);
                                     } else {
-                                        this.logStop();
+                                        containerViewerVue.logStop();
                                     }
                                 }catch(e){
-                                    this.logStop();
+                                    containerViewerVue.logStop();
                                     alertError(e)
                                 }
                             }, this.logInfo.interval
@@ -203,8 +203,8 @@
                             //绑定键盘输入动作
                             this.execInfo.terminal.on("data", function(data){
                                 if(data.length==1) {
-                                    if(this.execInfo.cmdObject!=null) {
-                                        this.execInfo.cmdObject.sendData(data);
+                                    if(containerViewerVue.execInfo.cmdObject!=null) {
+                                        containerViewerVue.execInfo.cmdObject.sendData(data);
                                     }
                                 }
                             })
@@ -217,13 +217,13 @@
                                 try {
                                     var execData = cmdExecStart.loadStream();
                                     if (execData != null && execData!="") {
-                                        this.execInfo.terminal.write(execData);
+                                        containerViewerVue.execInfo.terminal.write(execData);
                                     }
                                     if(execData == null){
-                                        this.execStop();
+                                        containerViewerVue.execStop();
                                     }
                                 }catch (e){
-                                    this.execStop();
+                                    containerViewerVue.execStop();
                                     alertError(e)
                                 }
                             }, this.execInfo.interval);
