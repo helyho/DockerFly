@@ -95,13 +95,15 @@
                     }
                 },
 
-                loadTask: function(service){
-                    if($("#tasks0").attr("class").indexOf("uk-hidden") >= 0 )
-                    try {
-                        var taskList = converTask(getTaskList(service.id));
-                        this.$set(service,"tasks", taskList);
-                    } catch (e) {
-                        alertError(e)
+                loadTask: function(index){
+                    if($("#taskList"+index).attr("class").indexOf("uk-hidden") >= 0 ) {
+                        var service = this.serviceList[index];
+                        try {
+                            var taskList = converTask(getTaskList(service.id));
+                            this.$set(service, "tasks", taskList);
+                        } catch (e) {
+                            alertError(e)
+                        }
                     }
                 },
 
@@ -204,7 +206,7 @@
             <tr>
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-primary">
-                    <a :data-uk-toggle="'{target:\'#tasks'+index+'\'}'" @click="loadTask(service)">
+                    <a :data-uk-toggle="'{target:\'#taskList'+index+'\'}'" @click="loadTask(index)">
                         <span class="uk-icon-plus-square-o"></span> {{service.id|shortString(12)}}
                     </a>
                 </td>
@@ -262,7 +264,7 @@
                     </div>
                 </td>
             </tr>
-            <tr :id="'tasks'+index" class="uk-hidden" style="background-color: #FFFFFF">
+            <tr :id="'taskList'+index" class="uk-hidden" style="background-color: #FFFFFF">
                 <td colspan="9">
                     <div class="uk-grid uk-margin-small-left">
                     <div class="uk-text-right uk-text-primary uk-vertical-align" style="width: 35px; margin-right: 10px;">

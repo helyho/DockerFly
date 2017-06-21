@@ -68,6 +68,16 @@
                         alertError(e)
                     }
                 },
+                loadContainer: function(index){
+                    if($("#containerList"+index).attr("class").indexOf("uk-hidden") >= 0 )
+                        try {
+                            var network = this.networkList[index];
+                            var viewNetwork = getNetworkDetail(network.id);
+                            this.$set(network,"containers", viewNetwork.containers);
+                        } catch (e) {
+                            alertError(e)
+                        }
+                },
                 //移除方法
                 remove: function (network) {
                     name = network.name
@@ -193,10 +203,14 @@
             </tr>
             </thead>
 
-            <tbody>
-            <tr v-for="(network,index) in networkList">
+            <tbody v-for="(network,index) in networkList">
+            <tr>
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
-                <td class="uk-text-bold uk-text-middle uk-text-primary">{{network.id|shortString(12)}}</td>
+                <td class="uk-text-bold uk-text-middle uk-text-primary">
+                    <a :data-uk-toggle="'{target:\'#containerList'+index+'\'}'" @click="loadContainer(index)">
+                        <span class="uk-icon-plus-square-o"></span> {{network.id|shortString(12)}}
+                    </a>
+                </td>
                 <td class="uk-text-bold uk-text-middle uk-text-success">
                     <span class="uk-icon-exclamation-circle uk-text-warning" v-if="network.internal==false"></span>
                     <span class="uk-icon-sitemap uk-text-primary" v-if="network.internal==true"></span>
@@ -228,6 +242,41 @@
                         </div>
                     </div>
                 </td>
+            </tr>
+            <tr>
+            <tr :id="'containerList'+index" class="uk-hidden" style="background-color: #FFFFFF">
+                <td colspan="8">
+                    <div class="uk-grid uk-margin-small-left">
+                        <div class="uk-text-right uk-text-primary uk-vertical-align" style="width: 35px; margin-right: 10px;">
+                            <span class="uk-icon-small uk-icon-arrow-right uk-vertical-align-middle"></span>
+                        </div>
+                        <div class="uk-padding-remove" style="width: 92%;" >
+                            <table class="uk-table uk-panel-box  uk-table-condensed">
+                                <tr class="uk-alert">
+                                    <td class="uk-text-bold uk-text-center">Container ID</td>
+                                    <td class="uk-text-bold">Name</td>
+                                    <td class="uk-text-bold uk-text-center">IP</td>
+                                    <td class="uk-text-bold uk-text-center">MacAddress</td>
+                                </tr>
+                                <tr v-for="(container, id) in network.containers">
+                                    <td class="uk-text-center">
+                                        <a :href="'../container/viewer.html?id='+id" class="uk-text-danger uk-text-bold">{{id  |shortString(12)}}</a>
+                                    </td>
+                                    <td class="">
+                                        <span class="uk-text-primary">{{container.name}}</span>
+                                    </td>
+                                    <td class="uk-text-center">
+                                        <span class="uk-text-danger">{{container.ipv4Address}}</span>
+                                    </td>
+                                    <td class="uk-text-center">
+                                        <span class="uk-text-warning">{{container.macAddress}}</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </td>
+            </tr>
             </tr>
             </tbody>
         </table>

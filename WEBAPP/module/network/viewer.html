@@ -163,18 +163,18 @@
                         <th class="uk-width-1-5 uk-text-center">Disconnect</th>
                         </thead>
                         <tbody>
-                        <tr v-for="(value, id) in viewNetwork.containers">
+                        <tr v-for="(container, id) in viewNetwork.containers">
                             <td class="uk-text-center">
                                 <a :href="'../container/viewer.html?id='+id" class="uk-text-danger uk-text-bold">{{id  |shortString(12)}}</a>
                             </td>
                             <td class="">
-                                <span class="uk-text-primary">{{value.name}}</span>
+                                <span class="uk-text-primary">{{container.name}}</span>
                             </td>
                             <td class="uk-text-center">
-                                <span class="uk-text-danger">{{value.ipv4Address}}</span>
+                                <span class="uk-text-danger">{{container.ipv4Address}}</span>
                             </td>
                             <td class="uk-text-center">
-                                <span class="uk-text-warning">{{value.macAddress}}</span>
+                                <span class="uk-text-warning">{{container.macAddress}}</span>
                             </td>
                             <td class="uk-text-center">
                                 <span class="uk-text-primary">
