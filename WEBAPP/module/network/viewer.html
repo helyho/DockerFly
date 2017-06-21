@@ -165,10 +165,12 @@
                         <tbody>
                         <tr v-for="(container, id) in viewNetwork.containers">
                             <td class="uk-text-center">
-                                <a :href="'../container/viewer.html?id='+id" class="uk-text-danger uk-text-bold">{{id  |shortString(12)}}</a>
+                                {{id  |shortString(12)}}
                             </td>
                             <td class="">
-                                <span class="uk-text-primary">{{container.name}}</span>
+                                <a :href="'../container/viewer.html?id='+id" class="uk-text-danger uk-text-bold">
+                                    <span class="uk-text-primary">{{container.name}}</span>
+                                </a>
                             </td>
                             <td class="uk-text-center">
                                 <span class="uk-text-danger">{{container.ipv4Address}}</span>

@@ -147,8 +147,7 @@
                     </span>
                 </td>
                 <td class=" uk-text-middle uk-text-bold ">
-                    <a class="uk-text-danger" :href="'/module/container/viewer.html?id='+task.status.containerStatus.containerId"
-                       target="viewer"
+                    <a class="uk-text-danger" :href="'/module/container/list.html?id='+task.status.containerStatus.containerId"
                        v-if="task.status.containerStatus.containerName!=null">
                         <span class="uk-text-success running"></span> {{task.status.containerStatus.containerName|delFirestChar|shortString(18)}}
                     </a>

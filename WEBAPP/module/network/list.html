@@ -261,10 +261,12 @@
                                 </tr>
                                 <tr v-for="(container, id) in network.containers">
                                     <td class="uk-text-center uk-text-small">
-                                        <a :href="'../container/viewer.html?id='+id" class="uk-text-danger uk-text-bold">{{id  |shortString(12)}}</a>
+                                        {{id  |shortString(12)}}
                                     </td>
                                     <td class="">
-                                        <span class="uk-text-primary uk-text-small" :title="container.name">{{container.name|delFirestChar|shortString(50)}}</span>
+                                        <a :href="'../container/list.html?id='+id" class="uk-text-danger uk-text-bold">
+                                            <span class="uk-text-primary uk-text-small" :title="container.name">{{container.name|delFirestChar|shortString(50)}}</span>
+                                        </a>
                                     </td>
                                     <td class="uk-text-center">
                                         <span class="uk-text-danger uk-text-small">{{container.ipv4Address}}</span>

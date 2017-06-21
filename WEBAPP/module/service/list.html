@@ -288,8 +288,7 @@
                                 </a>
                             </td>
                             <td class="uk-text-small">
-                                <a class="uk-text-danger" :href="'/module/container/viewer.html?id='+task.status.containerStatus.containerId"
-                                       target="viewer"
+                                <a class="uk-text-danger" :href="'/module/container/list.html?id='+task.status.containerStatus.containerId"
                                    v-if="task.status.containerStatus.containerName!=null"
                                    :title="task.status.containerStatus.containerName|delFirestChar">
                                     <span class="uk-text-success running"></span>
