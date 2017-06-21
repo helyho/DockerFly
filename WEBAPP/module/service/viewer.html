@@ -84,7 +84,7 @@
                         <tbody>
                         <tr>
                             <td class="uk-width-1-10 uk-text-right summeryField">ID </td>
-                            <td class="uk-text-bold">{{viewService.id |shortDockerId(12)}}</td>
+                            <td class="uk-text-bold">{{viewService.id |shortString(12)}}</td>
                         </tr>
                         <tr>
                             <td class="uk-width-1-10 uk-text-right summeryField">Name </td>
@@ -215,7 +215,7 @@
 
                     <tbody>
                     <tr v-for="(task,index) in taskList">
-                        <td class=" uk-text-middle uk-text-bold uk-text-primary uk-text-center">{{task.id | shortDockerId(12)}}</td>
+                        <td class=" uk-text-middle uk-text-bold uk-text-primary uk-text-center">{{task.id | shortString(12)}}</td>
                         <td class=" uk-text-middle uk-text-center">{{task.slot}}</td>
                         <td class=" uk-text-middle uk-text-bold ">
                             <a class="uk-text-success" :href="'../node/list.html?id='+task.nodeId">
@@ -227,10 +227,10 @@
                             <a class="uk-text-danger" :href="'/module/container/viewer.html?id='+task.status.containerStatus.containerId"
                                target="viewer"
                                v-if="task.status.containerStatus.containerName!=null">
-                                <span class="uk-text-success running"></span> {{task.status.containerStatus.containerName|delFirestChar|shortDockerId(18)}}
+                                <span class="uk-text-success running"></span> {{task.status.containerStatus.containerName|delFirestChar|shortString(18)}}
                             </a>
                             <span class="uk-text-danger" v-else>
-                                <span class="uk-text-primary stop"></span> {{task.status.containerStatus.containerId|shortDockerId(12)}}
+                                <span class="uk-text-primary stop"></span> {{task.status.containerStatus.containerId|shortString(12)}}
                             </span>
                         </td>
                         <td class=" uk-text-middle uk-text-bold uk-text-center">{{task.status.state}}</td>

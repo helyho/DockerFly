@@ -183,7 +183,7 @@
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
                 <td class="uk-text-middle uk-text-bold uk-text-primary uk-text-small">
                     <span v-if='node.managerStatus.leader=="true"' class="uk-text-danger uk-icon-leaf" title="Leader"></span>
-                    {{node.id|shortDockerId(12)}}
+                    {{node.id|shortString(12)}}
                 </td>
                 <td class="uk-text-middle ">
                     <span class="uk-text-warning">

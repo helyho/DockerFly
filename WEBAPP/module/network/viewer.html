@@ -78,7 +78,7 @@
                         <tbody>
                         <tr>
                             <td class="uk-width-1-10 uk-text-right summeryField">ID </td>
-                            <td class="uk-text-bold">{{viewNetwork.id |shortDockerId(12)}}</td>
+                            <td class="uk-text-bold">{{viewNetwork.id |shortString(12)}}</td>
                         </tr>
                         <tr>
                             <td class="uk-width-1-10 uk-text-right summeryField">Name </td>
@@ -165,7 +165,7 @@
                         <tbody>
                         <tr v-for="(value, id) in viewNetwork.containers">
                             <td class="uk-text-center">
-                                <a :href="'../container/viewer.html?id='+id" class="uk-text-danger uk-text-bold">{{id  |shortDockerId(12)}}</a>
+                                <a :href="'../container/viewer.html?id='+id" class="uk-text-danger uk-text-bold">{{id  |shortString(12)}}</a>
                             </td>
                             <td class="">
                                 <span class="uk-text-primary">{{value.name}}</span>

@@ -199,7 +199,7 @@
         return value.substr(1,value.length)
     }
 
-    function shortDockerId(value,length){
+    function shortString(value,length){
         if(value==undefined){
             return null;
         }
@@ -207,14 +207,12 @@
         if(value.startsWith("sha256:")){
             value = value.replace("sha256:","")
             value = value.substr(0, length);
-        }
-
-        if(value.indexOf("@")>0){
+        } else if(value.indexOf("@")>0){
             value = value.substr(0, value.indexOf("@"));
             value = value.substr(0, length);
-        }
-
-        if(value.indexOf(".") && value.length > 16){
+        } else if(value.indexOf(".") && value.length > 16){
+            value = value.substr(0,length);
+        } else{
             value = value.substr(0,length);
         }
 
@@ -249,7 +247,7 @@
 
     Vue.filter('delFirestChar',delFirestChar);
 
-    Vue.filter('shortDockerId',shortDockerId);
+    Vue.filter('shortString',shortString);
     Vue.filter('strToDate',strToDate);
     Vue.filter('shortNumber',shortNumber);
 

@@ -27,7 +27,7 @@
                             var viewVolume = getVolumeDetail(volumeId);
 
                             if (viewVolume != null) {
-                                document.title = shortDockerId(viewVolume.name,12) + " - Volume";
+                                document.title = shortString(viewVolume.name,12) + " - Volume";
                                 return viewVolume;
                             } else {
                                 return null;

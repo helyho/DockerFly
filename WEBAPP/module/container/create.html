@@ -440,7 +440,7 @@
                                         v-model="createParams.network">
                                     <option value="">Nothing</option>
                                     <option v-for="network in networkList" v-if="network.driver!='overlay'"
-                                            :value="network.id|shortDockerId(12)">{{network.name}}
+                                            :value="network.id|shortString(12)">{{network.name}}
                                     </option>
                                 </select>
                             </td>
@@ -557,8 +557,8 @@
                                                     <select class="uk-form-width-medium uk-text-center" v-model="link.linkContainer">
                                                         <option value="">Nothing</option>
                                                         <option v-for="container in containerList"
-                                                                :value="container.id | shortDockerId(12)">
-                                                            {{container.names[0]|delFirestChar|shortDockerId(18)}}
+                                                                :value="container.id | shortString(12)">
+                                                            {{container.names[0]|delFirestChar|shortString(18)}}
                                                         </option>
                                                     </select>
                                                     &nbsp;:&nbsp;

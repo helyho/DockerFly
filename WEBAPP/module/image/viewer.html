@@ -61,7 +61,7 @@
                         <tbody>
                         <tr>
                             <td class="uk-width-1-10 uk-text-right summeryField">ID </td>
-                            <td class="uk-text-bold">{{viewImage.id |shortDockerId(12)}}</td>
+                            <td class="uk-text-bold">{{viewImage.id |shortString(12)}}</td>
                         </tr>
                         <tr>
                             <td class="uk-width-1-10 uk-text-right summeryField">RepoTags </td>
@@ -71,7 +71,7 @@
                         </tr>
                         <tr v-if="viewImage.parent != ''">
                             <td class="uk-width-1-10 uk-text-right summeryField">Parent </td>
-                            <td class="uk-text-success">{{viewImage.parent |shortDockerId(12)}}</td>
+                            <td class="uk-text-success">{{viewImage.parent |shortString(12)}}</td>
                         </tr>
                         <tr v-if="viewImage.author != ''">
                             <td class="uk-width-1-10 uk-text-right summeryField">Author </td>

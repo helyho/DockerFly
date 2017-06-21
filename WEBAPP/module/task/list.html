@@ -129,7 +129,7 @@
             <tbody>
             <tr v-for="(task,index) in taskList">
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
-                <td class=" uk-text-middle uk-text-bold uk-text-primary">{{task.id | shortDockerId(12)}}</td>
+                <td class=" uk-text-middle uk-text-bold uk-text-primary">{{task.id | shortString(12)}}</td>
                 <td class=" uk-text-middle">
                     <a class="uk-text-success" :href="'../node/list.html?id='+task.nodeId">
                         <span class="uk-text-warning">{{task.nodeName}}</span> /
@@ -143,17 +143,17 @@
                         {{task.serviceName}}
                     </a>
                     <span class="uk-text-warning" v-else>
-                        {{task.serviceId|shortDockerId(12)}}
+                        {{task.serviceId|shortString(12)}}
                     </span>
                 </td>
                 <td class=" uk-text-middle uk-text-bold ">
                     <a class="uk-text-danger" :href="'/module/container/viewer.html?id='+task.status.containerStatus.containerId"
                        target="viewer"
                        v-if="task.status.containerStatus.containerName!=null">
-                        <span class="uk-text-success running"></span> {{task.status.containerStatus.containerName|delFirestChar|shortDockerId(18)}}
+                        <span class="uk-text-success running"></span> {{task.status.containerStatus.containerName|delFirestChar|shortString(18)}}
                     </a>
                     <span class="uk-text-danger" v-else>
-                        <span class="uk-text-primary stop"></span> {{task.status.containerStatus.containerId|shortDockerId(12)}}
+                        <span class="uk-text-primary stop"></span> {{task.status.containerStatus.containerId|shortString(12)}}
                     </span>
                 </td>
                 <td class=" uk-text-middle uk-text-bold uk-text-center">{{task.status.state}}</td>

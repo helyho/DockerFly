@@ -205,14 +205,14 @@
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-primary">
                     <a :data-uk-toggle="'{target:\'#tasks'+index+'\'}'" @click="loadTask(service)">
-                        <span class="uk-icon-plus-square-o"></span> {{service.id|shortDockerId(12)}}
+                        <span class="uk-icon-plus-square-o"></span> {{service.id|shortString(12)}}
                     </a>
                 </td>
                 <td class="uk-text-bold uk-text-middle uk-text-danger">
                     {{service.spec.name}}
                 </td>
                 <td class="uk-text-bold uk-text-middle uk-text-warning">
-                    {{service.spec.taskTemplate.containerSpec.image | shortDockerId(64)}}
+                    {{service.spec.taskTemplate.containerSpec.image | shortString(64)}}
                 </td>
                 <td class="uk-text-middle">
                     <div v-for="virtualIP in service.endpoint.virtualIPs">
@@ -280,7 +280,7 @@
 
                         </tr>
                         <tr v-for="(task, index) in service.tasks">
-                            <td >{{task.id | shortDockerId(12)}}</td>
+                            <td >{{task.id | shortString(12)}}</td>
                             <td >{{task.slot}}</td>
                             <td >
                                 <a class="uk-text-success" :href="'../node/list.html?id='+task.nodeId">
@@ -292,10 +292,10 @@
                                 <a class="uk-text-danger" :href="'/module/container/viewer.html?id='+task.status.containerStatus.containerId"
                                        target="viewer"
                                    v-if="task.status.containerStatus.containerName!=null">
-                                    <span class="uk-text-success running"></span> {{task.status.containerStatus.containerName|delFirestChar|shortDockerId(18)}}
+                                    <span class="uk-text-success running"></span> {{task.status.containerStatus.containerName|delFirestChar|shortString(18)}}
                                 </a>
                                 <span class="uk-text-danger" v-else>
-                                <span class="uk-text-primary stop"></span> {{task.status.containerStatus.containerId|shortDockerId(12)}}
+                                <span class="uk-text-primary stop"></span> {{task.status.containerStatus.containerId|shortString(12)}}
                                 </span>
                             </td>
                             <td >{{task.status.state}}</td>

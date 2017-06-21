@@ -285,7 +285,7 @@
                         <tbody>
                         <tr>
                             <td class="uk-width-1-10 uk-text-right summeryField">ID </td>
-                            <td class="uk-text-bold">{{viewContainer.id |shortDockerId(12)}}</td>
+                            <td class="uk-text-bold">{{viewContainer.id |shortString(12)}}</td>
                         </tr>
                         <tr>
                             <td class="uk-width-1-10 uk-text-right summeryField">Name </td>
@@ -293,7 +293,7 @@
                         </tr>
                         <tr>
                             <td class="uk-width-1-10 uk-text-right summeryField">Image </td>
-                            <td class="uk-text-success">{{viewContainer.image |shortDockerId(12)}}</td>
+                            <td class="uk-text-success">{{viewContainer.image |shortString(12)}}</td>
                         </tr>
                         <tr v-if="viewContainer.config.workingDir!=''">
                             <td class="uk-width-1-10 uk-text-right summeryField">WorkingDir </td>
@@ -397,7 +397,7 @@
                         <tbody>
                         <tr class="uk-text-center" v-for=" (value, key) in viewContainer.networkSettings.networks">
                             <td class="uk-text-success uk-text-bold">
-                                <a :href="'../network/viewer.html?id='+value.networkId">{{value.networkId | shortDockerId(12)}}</a>
+                                <a :href="'../network/viewer.html?id='+value.networkId">{{value.networkId | shortString(12)}}</a>
                             </td>
                             <td>{{key}}</td>
                             <td>{{value.gateway}}</td>
