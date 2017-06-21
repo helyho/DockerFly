@@ -63,7 +63,7 @@
                         cmdSwarmInit.release();
                         alert("Init swarm success.");
                         closeDialog("initSwarmDialog")
-                        location.reload()
+                        parent.location.reload()
                     } catch (e) {
                         alertError(e)
                         return null;
