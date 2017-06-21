@@ -187,7 +187,7 @@
                 </div>
             </div>
         </div>
-        <table id="serviceList" class="uk-table uk-overflow-service uk-panel-box">
+        <table id="serviceList" class="uk-table uk-overflow-service uk-panel-box" style="table-layout: fixed; word-wrap: break-word">
             <thead>
             <tr>
                 <th class="uk-text-center table_colume_index">NO.</th>
@@ -196,8 +196,6 @@
                 <th>Image</th>
                 <th>Network & IP</th>
                 <th class="uk-text-center">Replicas</th>
-                <th class="uk-text-center">Created</th>
-                <th class="uk-text-center">Updated</th>
                 <th class="uk-text-center">Operation</th>
             </tr>
             </thead>
@@ -206,7 +204,8 @@
             <tr>
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
                 <td class="uk-text-bold uk-text-small uk-text-middle uk-text-primary">
-                    <a :data-uk-toggle="'{target:\'#taskList'+index+'\'}'" @click="loadTask(index)">
+                    <a :data-uk-toggle="'{target:\'#taskList'+index+'\'}'" @click="loadTask(index)"
+                        :title="service.id">
                         <span class="uk-icon-plus-square-o"></span> {{service.id|shortString(12)}}
                     </a>
                 </td>
@@ -215,8 +214,9 @@
                 </td>
                 <td class="uk-text-bold uk-text-middle uk-text-warning">
                     <a :href="'../image/viewer.html?id='+service.spec.taskTemplate.containerSpec.image"
-                       class="uk-text-warning uk-text-bold uk-text-small">
-                    {{service.spec.taskTemplate.containerSpec.image | shortString(40)}}
+                       class="uk-text-warning uk-text-bold uk-text-small"
+                       :title="service.spec.taskTemplate.containerSpec.image">
+                        {{service.spec.taskTemplate.containerSpec.image | shortString(64)}}
                     </a>
                 </td>
                 <td class="uk-text-middle">
@@ -237,12 +237,6 @@
                     <span class="uk-text-primary">
                         Total: {{service.spec.mode.replicated.replicas}}
                     </span>
-                </td>
-                <td class="uk-text-middle uk-text-center uk-text-small">
-                   {{service.createdAt|strToDate}}
-                </td>
-                <td class="uk-text-middle uk-text-center uk-text-small">
-                    {{service.updatedAt|strToDate}}
                 </td>
                 <td class="uk-text-center uk-text-middle">
                     <div class="uk-button-group">
@@ -268,7 +262,7 @@
                 </td>
             </tr>
             <tr :id="'taskList'+index" class="uk-hidden" style="background-color: #FFFFFF">
-                <td colspan="9">
+                <td colspan="7">
                     <div class="uk-grid uk-margin-small-left">
                     <div class="uk-text-right uk-text-primary uk-vertical-align" style="width: 35px; margin-right: 10px;">
                         <span class="uk-icon-small uk-icon-arrow-right uk-vertical-align-middle"></span>
@@ -296,8 +290,10 @@
                             <td class="uk-text-small">
                                 <a class="uk-text-danger" :href="'/module/container/viewer.html?id='+task.status.containerStatus.containerId"
                                        target="viewer"
-                                   v-if="task.status.containerStatus.containerName!=null">
-                                    <span class="uk-text-success running"></span> {{task.status.containerStatus.containerName|delFirestChar|shortString(18)}}
+                                   v-if="task.status.containerStatus.containerName!=null"
+                                   :title="task.status.containerStatus.containerName|delFirestChar">
+                                    <span class="uk-text-success running"></span>
+                                    {{task.status.containerStatus.containerName|delFirestChar|shortString(50)}}
                                 </a>
                                 <span class="uk-text-danger" v-else>
                                 <span class="uk-text-primary stop"></span> {{task.status.containerStatus.containerId|shortString(12)}}

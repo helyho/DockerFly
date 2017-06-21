@@ -397,7 +397,7 @@
                 </div>
             </div>
         </div>
-        <table id="containerList" class="uk-table uk-overflow-container uk-panel-box">
+        <table id="containerList" class="uk-table uk-overflow-container uk-panel-box" style="table-layout: fixed; word-wrap: break-word">
             <thead>
             <tr>
                 <th class="uk-text-center table_colume_index">NO.</th>
@@ -413,17 +413,19 @@
             <tbody>
             <tr v-for="(container,index) in containerList">
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index}}</td>
-                <td class="uk-text-bold uk-text-middle uk-text-primary uk-text-small">
+                <td class="uk-text-bold uk-text-middle uk-text-primary uk-text-small"
+                   :title="container.names[0]|delFirestChar">
                     <span v-if="container.labels['com.docker.swarm.task']==''"
                           class="icon uk-icon-gears uk-text-danger" title="Swarm container"></span>
                     <span v-if="container.labels['com.docker.swarm.task']==undefined"
                           class="icon uk-icon-desktop uk-text-success uk-text-small" title="Stander container"></span>
-                     {{container.names[0]|delFirestChar|shortString(30)}}
+                     {{container.names[0]|delFirestChar|shortString(20)}}
                 </td>
                 <td class="uk-text-middle ">
                     <a :href="'../image/viewer.html?id='+container.imageId"
-                    class="uk-text-warning uk-text-bold uk-text-small">
-                        {{container.image | shortString(40)}}
+                    class="uk-text-warning uk-text-bold uk-text-small"
+                       :title="container.image">
+                        {{container.image | shortString(64)}}
                     </a>
                 </td>
                 <td class="uk-text-middle">

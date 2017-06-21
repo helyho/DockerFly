@@ -207,7 +207,8 @@
             <tr>
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-primary">
-                    <a :data-uk-toggle="'{target:\'#containerList'+index+'\'}'" @click="loadContainer(index)">
+                    <a :data-uk-toggle="'{target:\'#containerList'+index+'\'}'" @click="loadContainer(index)"
+                        :title="network.id">
                         <span class="uk-icon-plus-square-o"></span> {{network.id|shortString(12)}}
                     </a>
                 </td>
@@ -259,17 +260,17 @@
                                     <td class="uk-text-bold uk-text-center">MacAddress</td>
                                 </tr>
                                 <tr v-for="(container, id) in network.containers">
-                                    <td class="uk-text-center">
+                                    <td class="uk-text-center uk-text-small">
                                         <a :href="'../container/viewer.html?id='+id" class="uk-text-danger uk-text-bold">{{id  |shortString(12)}}</a>
                                     </td>
                                     <td class="">
-                                        <span class="uk-text-primary">{{container.name}}</span>
+                                        <span class="uk-text-primary uk-text-small" :title="container.name">{{container.name|delFirestChar|shortString(50)}}</span>
                                     </td>
                                     <td class="uk-text-center">
-                                        <span class="uk-text-danger">{{container.ipv4Address}}</span>
+                                        <span class="uk-text-danger uk-text-small">{{container.ipv4Address}}</span>
                                     </td>
                                     <td class="uk-text-center">
-                                        <span class="uk-text-warning">{{container.macAddress}}</span>
+                                        <span class="uk-text-warning uk-text-small">{{container.macAddress}}</span>
                                     </td>
                                 </tr>
                             </table>

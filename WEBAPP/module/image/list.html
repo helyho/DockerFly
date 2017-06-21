@@ -232,7 +232,7 @@
             <tbody>
             <tr v-for="(image,index) in imageList">
                 <td class="uk-text-center uk-text-middle uk-text-small">{{index+1}}</td>
-                <td class="uk-text-bold uk-text-middle uk-text-success">{{image.id|shortString(12)}}</td>
+                <td class="uk-text-bold uk-text-middle uk-text-success" :title="image.id">{{image.id|shortString(12)}}</td>
                 <td class="uk-text-bold uk-text-middle uk-text-primary">
                     <span v-if="image.repoTags!=null" v-for="(repoTag,index) in image.repoTags">
                         <code v-if="repoTag!=null">{{repoTag}}</code> &nbsp;

@@ -207,21 +207,18 @@
         if(value.length > length){
             if(value.startsWith("sha256:")){
                 value = value.replace("sha256:","")
-                value = value.substr(0, length)+"...";
+                value = value.substr(0, length);
             } else if(value.indexOf("@")>0){
                 value = value.substr(0, value.indexOf("@"));
                 value = value.substr(0, length)
-                if(value.length>length){
-                    value = value + "...";
-                }
-            } else if(value.indexOf(".") && value.length > 16){
-                value = value.substr(0,length);
-                if(value.length>length){
-                    value = value + "...";
-                }
+                value = value;
+            } else if(value.indexOf(".")>0 && value.length > 16){
+                value = value.substr(0, length);
             } else{
-                value = value.substr(0,length) + "...";
+                value = value.substr(0,length);
             }
+
+            value = value;
         }
 
         return value;
